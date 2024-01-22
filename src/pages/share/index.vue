@@ -4,11 +4,11 @@
     <!--顶部搜索-->
     <view class="top-search-wrap">
       <view class="category">分类</view>
-      <u-search v-model="value" shape="square" :placeholder="placeholder" :showAction="false" />
+      <u-search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" />
     </view>
 
     <!--广告-->
-    <view>广告1</view>
+    <view class="advertised">广告1</view>
 
     <!--分类-->
     <view>分类</view>
@@ -52,24 +52,48 @@ const placeholder = ref('MLB、NBA');
 <style lang="scss">
 .share-layout {
   // 顶部搜索
-  $searchheight: 80rpx;
+  $searchheight: 90rpx;
+  $searchPaddingTopBottom: 10rpx;
   .top-search-wrap {
     width: 100%;
     height: $searchheight;
-    padding: 10rpx;
+    padding: $searchPaddingTopBottom 10rpx;
     display: flex;
+    align-items: center;
+
+    // 分类
+    .category {
+      font-size: 26rpx;
+      width: $searchheight;
+      height: calc($searchheight - $searchPaddingTopBottom * 2 - 2rpx);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      //border: 1rpx solid #f2f2f2;
+      background-color: #f2f2f2;
+      border-radius: 4rpx;
+      margin-right: 10rpx;
+    }
+
+    // 搜索
+    .search {
+      height: 100%;
+      :deep(.u-search__content) {
+        border-radius: 2px !important;
+      }
+    }
   }
 
-  // 分类
-  .category {
-    font-size: 26rpx;
-    width: $searchheight;
+  // 广告
+  .advertised {
+    background: #f2f2f2;
+    border-top: 1rpx solid #bbb;
+    border-bottom: 1rpx solid #bbb;
+    padding: 20rpx 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1rpx solid #f2f2f2;
-    border-radius: 6rpx;
-    margin-right: 10rpx;
+    font-size: 28rpx;
   }
 }
 </style>
