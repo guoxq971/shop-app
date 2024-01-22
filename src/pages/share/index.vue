@@ -3,15 +3,7 @@
   <view>
     <!--顶部导航栏-->
     <bmNavbar title="share" />
-
-    <view class="content">
-      <image class="logo" src="/static/logo.png"></image>
-      <view class="text-area">
-        <text class="title">{{ title }}</text>
-        {{ count }}
-        <u-button @click="onClick" type="primary">加</u-button>
-      </view>
-    </view>
+    <u-button @click="onClick2">test</u-button>
   </view>
 </template>
 
@@ -27,6 +19,10 @@ function onClick() {
   countStore.increment();
 }
 const { count } = storeToRefs(countStore);
+
+function onClick2() {
+  uni.navigateTo({ url: '/subPackages/share/test' });
+}
 </script>
 
 <style>

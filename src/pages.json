@@ -38,6 +38,19 @@
       }
     }
   ],
+  "subPackages": [
+    {
+      "root": "subPackages/share",
+      "pages": [
+        {
+          "path": "test",
+          "style": {
+            "navigationBarTitleText": "test"
+          }
+        }
+      ]
+    }
+  ],
   "globalStyle": {
     "navigationStyle": "custom",
     "navigationBarTextStyle": "black",
