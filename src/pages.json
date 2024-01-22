@@ -1,0 +1,53 @@
+{
+  "easycom": {
+    "custom": {
+      "^u--(.*)": "uview-plus/components/u-$1/u-$1.vue",
+      "^up-(.*)": "uview-plus/components/u-$1/u-$1.vue",
+      "^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue"
+    }
+  },
+  "pages": [
+    {
+      "path": "pages/share/index",
+      "style": {
+        "navigationBarTitleText": "share"
+      }
+    },
+    {
+      "path": "pages/shop/index",
+      "style": {
+        "navigationBarTitleText": "shop"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8",
+    "app-plus": {
+      "animationType": "fade-in",
+      "animationDuration": "300"
+    }
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#169bd5",
+    "backgroundColor": "#F8F8F8",
+    "list": [
+      {
+        "pagePath": "pages/share/index",
+        "text": "Share",
+        "iconPath": "static/tabbar/share.png",
+        "selectedIconPath": "static/tabbar/share-active.png"
+      },
+      {
+        "pagePath": "pages/shop/index",
+        "text": "Shop",
+        "iconPath": "static/tabbar/shop.png",
+        "selectedIconPath": "static/tabbar/shop-active.png"
+      }
+    ]
+  }
+}
