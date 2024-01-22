@@ -1,6 +1,6 @@
 <template>
   <view>
-    <bmNavbar title="share" is-back />
+    <bmNavbar title="test" is-back />
     <view>测试</view>
   </view>
 </template>

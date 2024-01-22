@@ -1,54 +1,75 @@
 <!--首页-->
 <template>
-  <view>
-    <!--顶部导航栏-->
-    <bmNavbar title="share" />
-    <u-button @click="onClick2">test</u-button>
+  <view class="share-layout">
+    <!--顶部搜索-->
+    <view class="top-search-wrap">
+      <view class="category">分类</view>
+      <u-search v-model="value" shape="square" :placeholder="placeholder" :showAction="false" />
+    </view>
+
+    <!--广告-->
+    <view>广告1</view>
+
+    <!--分类-->
+    <view>分类</view>
+
+    <!--广告-->
+    <view>广告2</view>
+
+    <!--热门商品-->
+    <view>热门商品 on sales</view>
+
+    <!--广告-->
+    <view>广告3</view>
+
+    <!--分类2-->
+    <view>分类2</view>
+
+    <!--广告-->
+    <view>广告4</view>
+    <view>广告5</view>
+    <view>广告6</view>
+    <view>广告7</view>
+    <view>广告8</view>
+
+    <!--评论-->
+    <view>评论 Reviews</view>
+
+    <!--底部 = 注册 & logo & 版权-->
+    <view>底部 = 注册 & logo & 版权</view>
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { useCountStore } from '@/store/useCountStore';
-import { storeToRefs } from 'pinia';
-import bmNavbar from '@/components/bm/navbar/navbar.vue';
-import bmTabbar from '@/components/bm/tabbar/tabbar.vue';
-const title = ref('Hello World!');
-const countStore = useCountStore();
-function onClick() {
-  countStore.increment();
-}
-const { count } = storeToRefs(countStore);
+import uSearch from 'uview-plus/components/u-search/u-search.vue';
 
-function onClick2() {
-  uni.navigateTo({ url: '/subPackages/share/test' });
-}
+// 输入框内容
+const value = ref('');
+const placeholder = ref('MLB、NBA');
 </script>
 
-<style>
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+<style lang="scss">
+.share-layout {
+  // 顶部搜索
+  $searchheight: 80rpx;
+  .top-search-wrap {
+    width: 100%;
+    height: $searchheight;
+    padding: 10rpx;
+    display: flex;
+  }
 
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
-
-.text-area {
-  display: flex;
-  justify-content: center;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+  // 分类
+  .category {
+    font-size: 26rpx;
+    width: $searchheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1rpx solid #f2f2f2;
+    border-radius: 6rpx;
+    margin-right: 10rpx;
+  }
 }
 </style>
