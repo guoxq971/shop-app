@@ -1,9 +1,12 @@
 <script>
 // import pageAnimation from './components/page-animation';
+import { useSystemInfo } from '@/store/useSystemInfo'
 export default {
   // mixins: [pageAnimation],
   onLaunch: function () {
     console.log('App Launch');
+    const store = useSystemInfo()
+    store.getSystemInfo()
   },
   onShow: function () {
     console.log('App Show');

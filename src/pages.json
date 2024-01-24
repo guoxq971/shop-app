@@ -28,13 +28,14 @@
     {
       "path": "pages/cart/index",
       "style": {
+        "navigationStyle": "custom" ,
         "navigationBarTitleText": "cart"
       }
     },
     {
       "path": "pages/me/index",
       "style": {
-        "navigationBarTitleText": "me"
+        "navigationBarTitleText": "heool"
       }
     }
   ],
