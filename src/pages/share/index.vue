@@ -1,15 +1,21 @@
 <!--首页-->
 <template>
-  <view class="share-layout" :style="style">
+  <view class="head-container">
+    <view :style="style"></view>
     <!--顶部搜索-->
     <view class="top-search-wrap">
       <view class="category" @click="onCategory">分类</view>
       <u-search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" />
     </view>
+  </view>
 
+  <view class="share-layout">
     <view class="body-wrap">
       <!--广告-->
-      <view class="advertised" style="height: 100rpx">广告1</view>
+      <view class="advertised" style="height: 100rpx">
+        广告1
+        {{ style.paddingTop }}
+      </view>
 
       <!--分类-->
       <view class="category-wrap">
@@ -195,11 +201,16 @@ import uSearch from 'uview-plus/components/u-search/u-search.vue';
 import { randomWord, randomImage, uuid } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
 import categoryPop from '@/subPackages/share/categoryPop.vue';
-
+import { useSystemInfo } from '@/hooks/useSystemInfo';
+const { statusHeight } = useSystemInfo();
 // 设备信息
-const style = {
-  paddingTop: uni.config._systemInfo.statusHeight + 'px',
-};
+const style = ref({
+  width: '100%',
+  height: statusHeight + 'px',
+  background: '#fff',
+  // position: 'sticky',
+  // top: '0',
+});
 
 // 输入框内容
 const value = ref('');
@@ -298,52 +309,59 @@ const menuArr = ref([
 </script>
 
 <style lang="scss">
+.head-container {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+}
+// 顶部搜索
+$searchheight: 100rpx;
+$searchPaddingTopBottom: 16rpx;
+$searchPaddingLeftRight: 18rpx;
+.top-search-wrap {
+  //position: sticky;
+  //top: v-bind('style.height');
+  //z-index: 1;
+  background-color: #fff;
+  width: 100%;
+  height: $searchheight;
+  padding: $searchPaddingTopBottom $searchPaddingLeftRight;
+  display: flex;
+  align-items: center;
+
+  // 分类按钮
+  .category {
+    font-size: 26rpx;
+    width: $searchheight;
+    height: calc($searchheight - $searchPaddingTopBottom * 2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2rpx solid #f2f2f2;
+    background-color: #f2f2f2;
+    border-radius: 4rpx;
+    margin-right: 10rpx;
+  }
+
+  // 搜索
+  .search {
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    :deep(.u-search__content) {
+      border-radius: 2px !important;
+    }
+  }
+}
+
 .share-layout {
   display: flex;
   flex-direction: column;
-
-  // 顶部搜索
-  $searchheight: 100rpx;
-  $searchPaddingTopBottom: 16rpx;
-  $searchPaddingLeftRight: 18rpx;
-  .top-search-wrap {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background-color: #fff;
-    width: 100%;
-    height: $searchheight;
-    padding: $searchPaddingTopBottom $searchPaddingLeftRight;
-    display: flex;
-    align-items: center;
-
-    // 分类按钮
-    .category {
-      font-size: 26rpx;
-      width: $searchheight;
-      height: calc($searchheight - $searchPaddingTopBottom * 2);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 2rpx solid #f2f2f2;
-      background-color: #f2f2f2;
-      border-radius: 4rpx;
-      margin-right: 10rpx;
-    }
-
-    // 搜索
-    .search {
-      background: #f2f2f2;
-      display: flex;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-
-      :deep(.u-search__content) {
-        border-radius: 2px !important;
-      }
-    }
-  }
+  background-color: #fff;
 
   .body-wrap {
     flex: 1;

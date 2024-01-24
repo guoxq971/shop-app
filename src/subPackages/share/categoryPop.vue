@@ -38,7 +38,7 @@ defineExpose({
   open,
   close,
 });
-const show = ref(true);
+const show = ref(false);
 function open() {
   show.value = true;
 }
