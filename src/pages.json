@@ -72,32 +72,32 @@
       {
         "pagePath": "pages/share/index",
         "text": "Share",
-        "iconPath": "static/tabbar/share.png",
-        "selectedIconPath": "static/tabbar/share-active.png"
+        "iconPath": "static/tab_icons/home.png",
+        "selectedIconPath": "static/tab_icons/home-active.png"
       },
       {
         "pagePath": "pages/shop/index",
         "text": "Shop",
-        "iconPath": "static/tabbar/shop.png",
-        "selectedIconPath": "static/tabbar/shop-active.png"
+        "iconPath": "static/tab_icons/cate.png",
+        "selectedIconPath": "static/tab_icons/cate-active.png"
       },
       {
         "pagePath": "pages/new/index",
         "text": "New",
-        "iconPath": "static/tabbar/shop.png",
-        "selectedIconPath": "static/tabbar/shop-active.png"
+        "iconPath": "static/tab_icons/my.png",
+        "selectedIconPath": "static/tab_icons/my-active.png"
       },
       {
         "pagePath": "pages/cart/index",
         "text": "Cart",
-        "iconPath": "static/tabbar/shop.png",
-        "selectedIconPath": "static/tabbar/shop-active.png"
+        "iconPath": "static/tab_icons/cart.png",
+        "selectedIconPath": "static/tab_icons/cart-active.png"
       },
       {
         "pagePath": "pages/me/index",
         "text": "Me",
-        "iconPath": "static/tabbar/shop.png",
-        "selectedIconPath": "static/tabbar/shop-active.png"
+        "iconPath": "static/tab_icons/my.png",
+        "selectedIconPath": "static/tab_icons/my-active.png"
       }
     ]
   }
