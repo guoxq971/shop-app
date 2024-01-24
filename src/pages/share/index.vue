@@ -1,6 +1,6 @@
 <!--首页-->
 <template>
-  <view class="share-layout">
+  <view class="share-layout" :style="style">
     <!--顶部搜索-->
     <view class="top-search-wrap">
       <view class="category">分类</view>
@@ -8,7 +8,10 @@
     </view>
 
     <!--广告-->
-    <view class="advertised" style="height: 100rpx">广告1</view>
+    <view class="advertised" style="height: 100rpx">
+      广告1
+      <view>状态栏高度{{ statusHeight }}</view>
+    </view>
 
     <!--分类-->
     <view class="category-wrap">
@@ -72,6 +75,13 @@
 import { ref } from 'vue';
 import uSearch from 'uview-plus/components/u-search/u-search.vue';
 import { randomImage, uuid } from '@/utils/commom';
+import { useSystemInfo } from '@/hooks/useSystemInfo';
+
+// 设备信息
+const { statusHeight } = useSystemInfo();
+const style = {
+  paddingTop: statusHeight + 'px',
+};
 
 // 输入框内容
 const value = ref('');

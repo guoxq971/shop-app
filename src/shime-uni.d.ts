@@ -9,7 +9,7 @@ declare module 'vue' {
 declare const uni: Uni;
 declare class Uni {
   config: {
-    _systemInfo: () => Promise<unknown>;
+    _systemInfo: any;
     // _generateMockData: Function;
     // 获取小程序下该菜单按钮的布局位置信息
     // _menuButtonInfo: Function;

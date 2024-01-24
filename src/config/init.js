@@ -1,36 +1,17 @@
-/**
- * 获取设备信息
- * @returns {Promise<unknown>}
- */
-export function systemInfoPlugin() {
-  return new Promise((resolve) => {
-    uni.getSystemInfo({
-      success: (res) => {
-        resolve(res);
-      },
-    });
-  });
-}
+const config = {
+  _systemInfo: uni.getSystemInfoSync(),
+};
 
-export const init = {
-  install: async (app) => {
-    // app.config.globalProperties.$t = t;
-    // app.config.globalProperties.$baseUrl = baseUrl;
-    // app.config.globalProperties.$baseImgUrl = baseImgUrl;
-    // app.provide(ConstantsSymbol, readonly(constants));
-    uni.config = {
-      _systemInfo: await systemInfoPlugin(),
-      // _generateMockData: generateMockData,
-      // 获取小程序下该菜单按钮的布局位置信息
-      _menuButtonInfo: uni.getMenuButtonBoundingClientRect(),
-      // page: 1,
-      // size: 10,
-      // address_is_default: 1,
-    };
-    // uni.$toast = toast;
-    // uni.$modal = modal;
-    // uni.$twoDecimal = twoDecimal;
-    // uni.$arrayKeyValue = arrayKeyValue;
-    // uni.$uploadFile = uploadFile;
-  },
+uni.config = config;
+
+const install = (Vue) => {
+  // 同时挂载到uni和Vue.prototype中
+  // #ifndef APP-NVUE
+  // 只有vue，挂载到Vue.prototype才有意义，因为nvue中全局Vue.prototype和Vue.mixin是无效的
+  Vue.config.globalProperties.config = config;
+  // #endif
+};
+
+export default {
+  install,
 };

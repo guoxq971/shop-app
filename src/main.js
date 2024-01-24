@@ -3,7 +3,7 @@ import App from './App.vue';
 
 import uviewPlus from 'uview-plus';
 import { createPinia } from 'pinia';
-import { init } from '@/config/init';
+import init from '@/config/init';
 
 export function createApp() {
   const app = createSSRApp(App);
