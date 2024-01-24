@@ -19,3 +19,17 @@ export function uuid() {
 export function randomImage(width = 300, height = 300) {
   return `https://picsum.photos/${width}/${height}?random=${Math.random()}`;
 }
+
+/**
+ * 返回一个随机英语单词
+ * @params {number} length 单词长度
+ * @params {boolean} isUpperCase 首字符大写
+ * @returns {string}
+ */
+export function randomWord(length = 5, isUpperCase = true) {
+  let word = '';
+  for (let i = 0; i < length; i++) {
+    word += String.fromCharCode(97 + Math.ceil(Math.random() * 25));
+  }
+  return isUpperCase ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+}
