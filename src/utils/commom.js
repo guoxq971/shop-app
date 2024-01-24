@@ -16,7 +16,7 @@ export function uuid() {
  * @param {number} height
  * @returns {string}
  */
-export function randomImage(width = 300, height = 300) {
+export function randomImage(width = 100, height = 100) {
   return `https://picsum.photos/${width}/${height}?random=${Math.random()}`;
 }
 

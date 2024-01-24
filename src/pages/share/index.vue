@@ -3,7 +3,7 @@
   <view class="share-layout" :style="style">
     <!--顶部搜索-->
     <view class="top-search-wrap">
-      <view class="category">分类</view>
+      <view class="category" @click="onCategory">分类</view>
       <u-search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" />
     </view>
 
@@ -16,7 +16,7 @@
         <view class="title">Shop Your Favorite League</view>
         <view class="list">
           <view class="item-container" v-for="item in categoryList" :key="item.id">
-            <view class="item-head"></view>
+            <image class="item-head" :src="item.url"></image>
             <view class="item-name">{{ item.name }}</view>
           </view>
         </view>
@@ -183,6 +183,9 @@
         </view>
       </view>
     </view>
+
+    <!--分类弹窗-->
+    <categoryPop ref="categoryPopRef" />
   </view>
 </template>
 
@@ -190,13 +193,11 @@
 import { ref } from 'vue';
 import uSearch from 'uview-plus/components/u-search/u-search.vue';
 import { randomWord, randomImage, uuid } from '@/utils/commom';
-import { useSystemInfo } from '@/hooks/useSystemInfo';
 import bmBox from '@/components/bm/box/box.vue';
+import categoryPop from '@/subPackages/share/categoryPop.vue';
 
 // 设备信息
-const { statusHeight } = useSystemInfo();
 const style = {
-  // paddingTop: statusHeight + 'px',
   paddingTop: uni.config._systemInfo.statusHeight + 'px',
 };
 
@@ -206,19 +207,29 @@ const placeholder = ref('MLB、NBA');
 
 // 分类
 const categoryList = ref([
-  { id: uuid(), name: 'NFL' },
-  { id: uuid(), name: 'NCAA' },
-  { id: uuid(), name: 'MLB' },
-  { id: uuid(), name: 'NBA' },
-  { id: uuid(), name: 'NHL' },
-  { id: uuid(), name: 'MLS' },
-  { id: uuid(), name: 'Soccer' },
-  { id: uuid(), name: 'NASCAR' },
-  { id: uuid(), name: 'WWE' },
-  { id: uuid(), name: 'WNBA' },
-  { id: uuid(), name: 'Golf' },
-  { id: uuid(), name: 'F1' },
+  { id: uuid(), name: 'NFL', url: randomImage() },
+  { id: uuid(), name: 'NCAA', url: randomImage() },
+  { id: uuid(), name: 'MLB', url: randomImage() },
+  { id: uuid(), name: 'NBA', url: randomImage() },
+  { id: uuid(), name: 'NHL', url: randomImage() },
+  { id: uuid(), name: 'MLS', url: randomImage() },
+  { id: uuid(), name: 'Soccer', url: randomImage() },
+  { id: uuid(), name: 'NASCAR', url: randomImage() },
+  { id: uuid(), name: 'WWE', url: randomImage() },
+  { id: uuid(), name: 'WNBA', url: randomImage() },
+  { id: uuid(), name: 'Golf', url: randomImage() },
+  { id: uuid(), name: 'F1', url: randomImage() },
 ]);
+const categoryPopRef = ref(null);
+function onCategory() {
+  // uni.showToast({
+  //   title: '分类~',
+  //   icon: 'none',
+  //   duration: 2000,
+  // });
+
+  categoryPopRef.value.open();
+}
 
 // 热门商品
 const hotList = ref([
