@@ -38,9 +38,9 @@
 
 <script setup>
 import bmNavbar from '@/subPackages/share/navbar.vue';
-import { onShow, onLoad } from '@dcloudio/uni-app';
+import { onLoad } from '@dcloudio/uni-app';
 import bmBox from '@/components/bm/box/box.vue';
-import { TreeSelect, Image as VanImage, Tab, Tabs } from 'vant';
+import { TreeSelect, Tab, Tabs } from 'vant';
 import { ref } from 'vue';
 import { Icon } from 'vant';
 import { randomImage, randomWord, uuid } from '@/utils/commom';
@@ -116,7 +116,7 @@ const list = ref([
     overflow: auto;
 
     :deep(.van-sidebar) {
-      max-width: 90px;
+      max-width: 180rpx;
     }
 
     :deep(.van-tabs) {
@@ -132,25 +132,25 @@ const list = ref([
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      padding: 14px 8px;
+      padding: 28rpx 16px;
 
       .box-wrap {
         width: 31.5%;
-        margin-bottom: 7px;
+        margin-bottom: 14rpx;
 
         .name {
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 4px 0;
+          padding: 8rpx 0;
         }
 
         .image-wrap {
           width: 100%;
           height: 100%;
-          border-radius: 6px;
+          border-radius: 12rpx;
           overflow: hidden;
-          border: 1px solid #f2f2f2;
+          border: 2rpx solid #f2f2f2;
 
           .image {
             width: 100%;
