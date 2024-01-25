@@ -120,7 +120,7 @@
         <view class="sign-wrap">
           <view class="sign-wrap-bd">
             <view class="xxx">xxxxxxxxxxx</view>
-            <VanInput class="ipt" type="text" placeholder="Enter your email address..." />
+            <Field class="ipt" type="text" placeholder="Enter your email address..." />
             <VanButton class="btn">SIGN UP</VanButton>
           </view>
         </view>
@@ -197,7 +197,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Search, Button as VanButton, Input as VanInput, Collapse, CollapseItem } from 'vant';
+import { Search, Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
 import { randomWord, randomImage, uuid } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
 import categoryPop from '@/subPackages/share/categoryPop.vue';
@@ -340,10 +340,16 @@ $searchPaddingLeftRight: 18rpx;
 
     // 搜索
     .search {
-      background: #f2f2f2;
+      //background: #f2f2f2;
       display: flex;
       align-items: center;
       width: 100%;
+      height: 100%;
+    }
+    :deep(.van-search) {
+      padding: 0;
+    }
+    :deep(.van-search__content) {
       height: 100%;
     }
   }
