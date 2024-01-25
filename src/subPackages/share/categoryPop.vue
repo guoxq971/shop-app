@@ -1,28 +1,27 @@
 <!--首页 - 分类 - 左侧弹窗-->
 <template>
   <Popup v-model:show="show" position="left" @close="close" @open="open">
-    <view class="head-container-category-pop">
-      <!--顶部搜索-->
-      <view :style="style"></view>
-      <view class="top-search-wrap">
-        <view class="category" @click="close">
-          <Icon name="arrow-left"></Icon>
-          <text>Back</text>
-        </view>
-        <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :clearable="false" />
-      </view>
-    </view>
+    <view class="category-container">
+      <bmNavbar>
+        <template #left>
+          <view @click="close">
+            <Icon name="arrow-left"></Icon>
+            <text>Back</text>
+          </view>
+        </template>
+      </bmNavbar>
 
-    <!--列表-->
-    <view class="list-wrap">
-      <view class="item-wrap" v-for="item in list" :key="item.id">
-        <view class="item-title">{{ item.label }}</view>
-        <view class="item-list">
-          <view v-for="item2 in item.list" :key="item2.id" class="box">
-            <bmBox width="80%">
-              <image class="image-wrap" :src="item2.url"></image>
-            </bmBox>
-            <view class="name">{{ item2.name }}</view>
+      <!--列表-->
+      <view class="list-wrap">
+        <view class="item-wrap" v-for="item in list" :key="item.id">
+          <view class="item-title">{{ item.label }}</view>
+          <view class="item-list">
+            <view @click="onClick(item2)" v-for="item2 in item.list" :key="item2.id" class="box">
+              <bmBox width="80%">
+                <image class="image-wrap" :src="item2.url"></image>
+              </bmBox>
+              <view class="name">{{ item2.name }}</view>
+            </view>
           </view>
         </view>
       </view>
@@ -35,7 +34,7 @@ import { Popup, Icon, Search } from 'vant';
 import { ref, defineExpose } from 'vue';
 import { randomImage, uuid } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
-import { useSystemInfo } from '@/hooks/useSystemInfo';
+import bmNavbar from '@/subPackages/share/navbar.vue';
 defineExpose({
   open,
   close,
@@ -49,13 +48,12 @@ function close() {
   show.value = false;
 }
 
-// 设备信息
-const { statusHeight } = useSystemInfo();
-const style = ref({
-  width: '100%',
-  height: statusHeight + 'px',
-  background: '#fff',
-});
+// 选择
+function onClick(item) {
+  uni.navigateTo({
+    url: `/subPackages/share/themeSelected/index?name=${item.name}`,
+  });
+}
 
 // 输入框内容
 const value = ref('');
@@ -110,64 +108,16 @@ const list = ref([
 </script>
 
 <style scoped lang="scss">
-.head-container-category-pop {
-  //position: fixed;
-  //top: 0;
-  //z-index: 1;
-  //width: 100%;
-}
-
-// 顶部搜索
-$searchheight: 100rpx; // 搜索框高度
-$searchPaddingTopBottom: 16rpx;
-$searchPaddingLeftRight: 10rpx;
-.top-search-wrap {
-  background-color: #fff;
-  width: 100%;
-  height: $searchheight;
-  padding: $searchPaddingTopBottom $searchPaddingLeftRight;
+.category-container {
+  height: 100vh;
+  overflow: auto;
   display: flex;
-  align-items: center;
-
-  // 分类按钮
-  .category {
-    font-size: 26rpx;
-    width: $searchheight;
-    height: calc($searchheight - $searchPaddingTopBottom * 2);
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    //border: 2rpx solid #f2f2f2;
-    //background-color: #f2f2f2;
-    border-radius: 4rpx;
-    margin-right: 10rpx;
-    font-weight: bold;
-  }
-
-  // 搜索
-  .search {
-    background: #f2f2f2;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  :deep(.van-search) {
-    padding: 0;
-  }
-  :deep(.van-search__content) {
-    height: 100%;
-  }
+  flex-direction: column;
 }
-
 // 列表
 .list-wrap {
-  //  calc($searchheight + v-bind('style.height'))
-  padding: 10rpx $searchPaddingLeftRight + 10rpx 0 $searchPaddingLeftRight + 10rpx;
+  padding: 60rpx 24rpx 28rpx 24rpx;
   overflow: auto;
-  height: calc(100vh - calc($searchheight + v-bind('style.height')));
-  margin-bottom: 20rpx;
 
   .item-wrap {
     border-bottom: 2rpx solid #bbb;

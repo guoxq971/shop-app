@@ -1,15 +1,11 @@
 <!--首页-->
 <template>
-  <!--顶部导航栏-->
-  <bmNavbar />
-
   <view class="share-layout">
+    <!--顶部导航栏-->
+    <bmNavbar />
     <view class="body-wrap">
       <!--广告-->
-      <view class="advertised" style="height: 100rpx">
-        广告1
-        <view>距离顶部:{{ statusHeight }}</view>
-      </view>
+      <view class="advertised" style="height: 100rpx">广告1</view>
 
       <!--分类-->
       <view class="category-wrap">
@@ -115,7 +111,9 @@
           <view class="sign-wrap-bd">
             <view class="xxx">xxxxxxxxxxx</view>
             <Field class="ipt" type="text" placeholder="Enter your email address..." />
-            <VanButton class="btn">SIGN UP</VanButton>
+            <view class="btn-wrap">
+              <VanButton class="btn">SIGN UP</VanButton>
+            </view>
           </view>
         </view>
 
@@ -192,8 +190,6 @@ import { Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
 import { randomWord, randomImage, uuid } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
 import bmNavbar from '@/subPackages/share/navbar.vue';
-import { useShareConfig } from '@/hooks/useShareConfig';
-const { searchHeight, searchPaddingLeftRight, statusBarStyle, statusHeight } = useShareConfig();
 
 // 分类
 const categoryList = ref([
@@ -281,14 +277,12 @@ const activeCollapse = ref([]);
 </script>
 
 <style lang="scss">
-$searchHeight: v-bind(searchHeight);
-$searchPaddingLeftRight: v-bind(searchPaddingLeftRight);
+$searchPaddingLeftRight: 18rpx;
 
 .share-layout {
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  padding-top: calc($searchHeight + v-bind(searchHeight));
 
   .body-wrap {
     flex: 1;
@@ -571,7 +565,13 @@ $searchPaddingLeftRight: v-bind(searchPaddingLeftRight);
           .ipt {
             margin-bottom: 12rpx;
           }
-          .btn {
+          .btn-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            .btn {
+              width: 100%;
+            }
           }
         }
       }

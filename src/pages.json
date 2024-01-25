@@ -40,6 +40,12 @@
           "style": {
             "navigationBarTitleText": "test"
           }
+        },
+        {
+          "path": "themeSelected/index",
+          "style": {
+            "navigationBarTitleText": "themeSelected"
+          }
         }
       ]
     }

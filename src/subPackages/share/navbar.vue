@@ -1,25 +1,24 @@
 <template>
-  <view class="head-container">
-    <view :style="statusBarStyle"></view>
-    <!--顶部搜索-->
-    <view class="top-search-wrap">
-      <view class="category" @click="onCategory">分类</view>
-      <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :clearable="false" />
-    </view>
+  <NavBar fixed placeholder border>
+    <template #title>
+      <view class="bm-navbar">
+        <slot name="left" v-if="$slots['left']"></slot>
+        <view v-else class="left" @click="onCategory">分类</view>
+        <Search class="ipt" v-model="value" shape="square" :placeholder="placeholder" :clearable="false" />
+      </view>
+    </template>
+  </NavBar>
 
-    <teleport to="body">
-      <!--分类弹窗-->
-      <categoryPop ref="categoryPopRef" />
-    </teleport>
-  </view>
+  <!--分类弹窗-->
+  <categoryPop ref="categoryPopRef" />
 </template>
 
 <script setup>
-import { Search } from 'vant';
+import { NavBar, Search } from 'vant';
 import categoryPop from '@/subPackages/share/categoryPop.vue';
-import { ref } from 'vue';
-import { useShareConfig } from '@/hooks/useShareConfig';
-const { searchHeight, searchPaddingLeftRight, statusBarStyle } = useShareConfig();
+import { ref, defineProps } from 'vue';
+
+defineProps({});
 
 // 输入框内容
 const value = ref('');
@@ -33,51 +32,34 @@ function onCategory() {
 </script>
 
 <style scoped lang="scss">
-$searchPaddingTopBottom: 16rpx;
-$searchheight: v-bind(searchHeight);
-$searchPaddingLeftRight: v-bind(searchPaddingLeftRight);
-.head-container {
-  position: fixed;
-  top: 0;
-  z-index: 1;
+:deep(.van-nav-bar__title) {
+  max-width: 100%;
   width: 100%;
-  // 顶部搜索
-  .top-search-wrap {
-    background-color: #fff;
-    width: 100%;
-    height: $searchheight;
-    padding: $searchPaddingTopBottom $searchPaddingLeftRight;
+  margin: unset;
+}
+:deep(.van-search) {
+  padding: 0;
+}
+
+.bm-navbar {
+  display: flex;
+  align-items: center;
+  padding: 0 16rpx;
+
+  .left {
+    width: 110rpx;
     display: flex;
+    justify-content: center;
     align-items: center;
-
-    // 分类按钮
-    .category {
-      font-size: 26rpx;
-      width: $searchheight;
-      height: calc($searchheight - $searchPaddingTopBottom * 2);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 2rpx solid #f2f2f2;
-      background-color: #f2f2f2;
-      border-radius: 4rpx;
-      margin-right: 10rpx;
-    }
-
-    // 搜索
-    .search {
-      //background: #f2f2f2;
-      display: flex;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-    }
-    :deep(.van-search) {
-      padding: 0;
-    }
-    :deep(.van-search__content) {
-      height: 100%;
-    }
+    border: 2rpx solid #bbb;
+    height: var(--van-search-input-height);
+    font-weight: 500;
+    font-size: 28rpx;
+    border-radius: 6rpx;
+  }
+  .ipt {
+    margin-left: 18rpx;
+    flex: 1;
   }
 }
 </style>
