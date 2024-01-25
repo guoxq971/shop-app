@@ -5,7 +5,7 @@
     <!--顶部搜索-->
     <view class="top-search-wrap">
       <view class="category" @click="onCategory">分类</view>
-      <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" />
+      <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" :clearable="false" />
     </view>
   </view>
 
@@ -511,6 +511,33 @@ $searchPaddingLeftRight: 18rpx;
     .category-wrap2 {
       margin-top: 40rpx;
       padding: 0 30rpx;
+      .scroll-list {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        padding-bottom: 46rpx;
+        // 行
+        .scroll-list__line {
+          display: flex;
+          margin-top: 20rpx;
+          // 列 item
+          .scroll-list__line__item {
+            margin-right: 30rpx;
+            .scroll-list__line__item__image {
+              width: 200rpx;
+              height: 200rpx;
+              border-radius: 50%;
+              border: 2rpx solid #f2f2f2;
+            }
+            .scroll-list__line__item__text {
+              margin-top: 10rpx;
+              color: #606266ff;
+              font-size: 24rpx;
+              text-align: center;
+            }
+          }
+        }
+      }
     }
 
     // 评论
