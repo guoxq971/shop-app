@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <view class="container">
     <u-navbar bgColor="#F8F8F8" :height="navBarHeight">
       <template #left>
@@ -58,15 +57,11 @@
       </view>
 
     </view>
-=======
-  <view>
-    cart
->>>>>>> master
-  </view>
+
 </template>
 
 <script setup>
-<<<<<<< HEAD
+
 import { ref, reactive } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 // import { useSystemInfo } from '@/store/useSystemInfo'
@@ -134,9 +129,6 @@ const checkboxList1 = reactive([
 const checkboxChange = (n) => {
   console.log('change', n);
 };
-=======
-import { ref } from 'vue';
->>>>>>> master
 
 </script>
 
