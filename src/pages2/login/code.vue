@@ -1,6 +1,5 @@
 <template>
-  <!--顶部导航栏-->
-  <bmNavbar title="登陆" is-back />
+
 
   <view class="wrap">
     <view class="key-input">
@@ -17,10 +16,10 @@
 </template>
 
 <script>
-import bmNavbar from '@/components/bm/navbar/navbar.vue';
+
 
 export default {
-  components: { bmNavbar },
+
   data() {
     return {
       maxlength: 4,

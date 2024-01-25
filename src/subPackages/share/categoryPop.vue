@@ -1,15 +1,17 @@
 <!--首页 - 分类 - 左侧弹窗-->
 <template>
-  <!--:customStyle="{ width: '80%' }"-->
-  <u-popup :show="show" mode="left" @close="close" @open="open">
+  <Popup v-model:show="show" position="left" @close="close" @open="open">
     <view>
-      <!--顶部搜索-->
-      <view class="top-search-wrap">
-        <view class="category" @click="close">
-          <u-icon name="arrow-left"></u-icon>
-          <text>Back</text>
+      <view class="head-container-category-pop">
+        <!--顶部搜索-->
+        <view :style="style"></view>
+        <view class="top-search-wrap">
+          <view class="category" @click="close">
+            <Icon name="arrow-left"></Icon>
+            <text>Back</text>
+          </view>
+          <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" :clearable="false" />
         </view>
-        <u-search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" />
       </view>
 
       <!--列表-->
@@ -27,18 +29,21 @@
         </view>
       </view>
     </view>
-  </u-popup>
+  </Popup>
 </template>
 
 <script setup>
+import { Popup, Icon, Search } from 'vant';
 import { ref, defineExpose } from 'vue';
 import { randomImage, uuid } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
+import { useSystemInfo } from '@/hooks/useSystemInfo';
 defineExpose({
   open,
   close,
 });
-const show = ref(true);
+
+const show = ref(false);
 function open() {
   show.value = true;
 }
@@ -46,7 +51,13 @@ function close() {
   show.value = false;
 }
 
-const h = uni.config._systemInfo.statusHeight;
+// 设备信息
+const { statusHeight } = useSystemInfo();
+const style = ref({
+  width: '100%',
+  height: statusHeight + 'px',
+  background: '#fff',
+});
 
 // 输入框内容
 const value = ref('');
@@ -101,14 +112,18 @@ const list = ref([
 </script>
 
 <style scoped lang="scss">
+.head-container-category-pop {
+  //position: fixed;
+  //top: 0;
+  //z-index: 1;
+  //width: 100%;
+}
+
 // 顶部搜索
 $searchheight: 100rpx; // 搜索框高度
 $searchPaddingTopBottom: 16rpx;
 $searchPaddingLeftRight: 10rpx;
 .top-search-wrap {
-  position: sticky;
-  top: 0;
-  z-index: 1;
   background-color: #fff;
   width: 100%;
   height: $searchheight;
@@ -138,18 +153,22 @@ $searchPaddingLeftRight: 10rpx;
     align-items: center;
     width: 100%;
     height: 100%;
+  }
 
-    :deep(.u-search__content) {
-      border-radius: 2px !important;
-    }
+  :deep(.van-search) {
+    padding: 0;
+  }
+  :deep(.van-search__content) {
+    height: 100%;
   }
 }
 
 // 列表
 .list-wrap {
-  padding: 0 $searchPaddingLeftRight + 10rpx;
+  //  calc($searchheight + v-bind('style.height'))
+  padding: 10rpx $searchPaddingLeftRight + 10rpx 0 $searchPaddingLeftRight + 10rpx;
   overflow: auto;
-  height: calc(100vh - $searchheight);
+  height: calc(100vh - calc($searchheight + v-bind('style.height')));
   margin-bottom: 20rpx;
 
   .item-wrap {

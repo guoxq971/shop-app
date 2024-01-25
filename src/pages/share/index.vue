@@ -1,15 +1,21 @@
 <!--首页-->
 <template>
-  <view class="share-layout" :style="style">
+  <view class="head-container">
+    <view :style="style"></view>
     <!--顶部搜索-->
     <view class="top-search-wrap">
       <view class="category" @click="onCategory">分类</view>
-      <u-search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" />
+      <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" :clearable="false" />
     </view>
+  </view>
 
+  <view class="share-layout">
     <view class="body-wrap">
       <!--广告-->
-      <view class="advertised" style="height: 100rpx">广告1</view>
+      <view class="advertised" style="height: 100rpx">
+        广告1
+        <view>距离顶部:{{ style.paddingTop }}</view>
+      </view>
 
       <!--分类-->
       <view class="category-wrap">
@@ -63,16 +69,16 @@
 
       <!--分类2-->
       <view class="category-wrap2">
-        <u-scroll-list>
+        <view>
           <view class="scroll-list">
             <view class="scroll-list__line" v-for="(item, index) in menuArr" :key="index">
               <view class="scroll-list__line__item" v-for="(item1, index1) in item" :key="index1" :class="[index1 === item.length - 1 && 'scroll-list__line__item--no-margin-right']">
-                <image class="scroll-list__line__item__image" :src="item1.icon" mode=""></image>
+                <image class="scroll-list__line__item__image" :src="item1.icon"></image>
                 <view class="scroll-list__line__item__text">{{ item1.name }}</view>
               </view>
             </view>
           </view>
-        </u-scroll-list>
+        </view>
       </view>
 
       <!--广告-->
@@ -114,8 +120,8 @@
         <view class="sign-wrap">
           <view class="sign-wrap-bd">
             <view class="xxx">xxxxxxxxxxx</view>
-            <u-input class="ipt" type="text" placeholder="Enter your email address..." />
-            <u-button class="btn">SIGN UP</u-button>
+            <Field class="ipt" type="text" placeholder="Enter your email address..." />
+            <VanButton class="btn">SIGN UP</VanButton>
           </view>
         </view>
 
@@ -124,7 +130,7 @@
           <view class="advantage-bd">
             <bm-box v-for="item in 4" width="50%">
               <view class="item-box">
-                <view class="box">网站优势</view>
+                <view class="box">网站优势{{ item }}</view>
               </view>
             </bm-box>
           </view>
@@ -137,17 +143,17 @@
 
         <!--折叠面板-->
         <view class="collapse-wrap">
-          <u-collapse>
-            <u-collapse-item title="CONTACT & INFO">
-              <text class="u-collapse-content">CONTACT & INFO</text>
-            </u-collapse-item>
-            <u-collapse-item title="TERMS & POLICIES">
-              <text class="u-collapse-content">TERMS & POLICIES</text>
-            </u-collapse-item>
-            <u-collapse-item title="SAY CONNECTED WITH US">
-              <text class="u-collapse-content">SAY CONNECTED WITH US</text>
-            </u-collapse-item>
-          </u-collapse>
+          <Collapse>
+            <CollapseItem title="CONTACT & INFO">
+              <text>CONTACT & INFO</text>
+            </CollapseItem>
+            <CollapseItem title="TERMS & POLICIES">
+              <text>TERMS & POLICIES</text>
+            </CollapseItem>
+            <CollapseItem title="SAY CONNECTED WITH US">
+              <text>SAY CONNECTED WITH US</text>
+            </CollapseItem>
+          </Collapse>
         </view>
 
         <!--多个链接-->
@@ -191,15 +197,18 @@
 
 <script setup>
 import { ref } from 'vue';
-import uSearch from 'uview-plus/components/u-search/u-search.vue';
+import { Search, Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
 import { randomWord, randomImage, uuid } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
 import categoryPop from '@/subPackages/share/categoryPop.vue';
-
+import { useSystemInfo } from '@/hooks/useSystemInfo';
+const { statusHeight } = useSystemInfo();
 // 设备信息
-const style = {
-  paddingTop: uni.config._systemInfo.statusHeight + 'px',
-};
+const style = ref({
+  width: '100%',
+  height: statusHeight + 'px',
+  background: '#fff',
+});
 
 // 输入框内容
 const value = ref('');
@@ -298,18 +307,16 @@ const menuArr = ref([
 </script>
 
 <style lang="scss">
-.share-layout {
-  display: flex;
-  flex-direction: column;
-
+$searchheight: 100rpx;
+$searchPaddingTopBottom: 16rpx;
+$searchPaddingLeftRight: 18rpx;
+.head-container {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  width: 100%;
   // 顶部搜索
-  $searchheight: 100rpx;
-  $searchPaddingTopBottom: 16rpx;
-  $searchPaddingLeftRight: 18rpx;
   .top-search-wrap {
-    position: sticky;
-    top: 0;
-    z-index: 1;
     background-color: #fff;
     width: 100%;
     height: $searchheight;
@@ -333,17 +340,26 @@ const menuArr = ref([
 
     // 搜索
     .search {
-      background: #f2f2f2;
+      //background: #f2f2f2;
       display: flex;
       align-items: center;
       width: 100%;
       height: 100%;
-
-      :deep(.u-search__content) {
-        border-radius: 2px !important;
-      }
+    }
+    :deep(.van-search) {
+      padding: 0;
+    }
+    :deep(.van-search__content) {
+      height: 100%;
     }
   }
+}
+
+.share-layout {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding-top: calc($searchheight + v-bind('style.height'));
 
   .body-wrap {
     flex: 1;
@@ -495,6 +511,33 @@ const menuArr = ref([
     .category-wrap2 {
       margin-top: 40rpx;
       padding: 0 30rpx;
+      .scroll-list {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        padding-bottom: 46rpx;
+        // 行
+        .scroll-list__line {
+          display: flex;
+          margin-top: 20rpx;
+          // 列 item
+          .scroll-list__line__item {
+            margin-right: 30rpx;
+            .scroll-list__line__item__image {
+              width: 200rpx;
+              height: 200rpx;
+              border-radius: 50%;
+              border: 2rpx solid #f2f2f2;
+            }
+            .scroll-list__line__item__text {
+              margin-top: 10rpx;
+              color: #606266ff;
+              font-size: 24rpx;
+              text-align: center;
+            }
+          }
+        }
+      }
     }
 
     // 评论
@@ -649,9 +692,6 @@ const menuArr = ref([
       .collapse-wrap {
         padding: 0 20rpx;
         margin-top: 30rpx;
-        :deep(.u-cell__title-text) {
-          color: #000;
-        }
       }
 
       // 多个链接
@@ -710,42 +750,6 @@ const menuArr = ref([
           justify-content: center;
           align-items: center;
         }
-      }
-    }
-  }
-}
-
-// 横向列表
-.scroll-list {
-  display: flex;
-  flex-direction: column;
-
-  .scroll-list__line {
-    display: flex;
-    flex-direction: row;
-    margin-top: 20rpx;
-
-    &__item {
-      margin-right: 30rpx;
-
-      &__image {
-        width: 190rpx;
-        height: 190rpx;
-        border-radius: 50%;
-        border: 2rpx solid #f2f2f2;
-      }
-
-      &__text {
-        margin-top: 10rpx;
-        color: $u-content-color;
-        font-size: 24rpx;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-      }
-
-      &--no-margin-right {
-        margin-right: 0;
       }
     }
   }
