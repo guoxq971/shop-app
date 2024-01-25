@@ -1,28 +1,17 @@
 <template>
   <view>
-    <!--顶部导航栏-->
-    <bmNavbar title="分类" />
+
     分类页面
     <view class="content">
-      <u-button type="info" @click="onLogin">登陆</u-button>
     </view>
 
-    <!--底部导航栏-->
-    <bmTabbar />
   </view>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import bmNavbar from '@/components/bm/navbar/navbar.vue';
-import bmTabbar from '@/components/bm/tabbar/tabbar.vue';
 
-// 登陆
-function onLogin() {
-  uni.$u.route({
-    url: 'pages/login/index',
-  });
-}
+
+
 </script>
 
 <style>

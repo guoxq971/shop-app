@@ -1,7 +1,6 @@
 <template>
   <u-transition :show="true" :mode="mode">
     <!--顶部导航栏-->
-    <bmNavbar title="登陆" is-back @left-click="show = false" />
 
     <view class="wrap">
       <view class="top"></view>
@@ -37,9 +36,7 @@
 </template>
 
 <script>
-import bmNavbar from '@/components/bm/navbar/navbar.vue';
 export default {
-  components: { bmNavbar },
   data() {
     return {
       tel: '',

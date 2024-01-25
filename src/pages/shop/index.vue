@@ -1,7 +1,6 @@
 <template>
   <view>
     <!--顶部导航栏-->
-    <bmNavbar title="shop" />
     shop
     <view class="content"></view>
   </view>
@@ -9,8 +8,6 @@
 
 <script setup>
 import { ref } from 'vue';
-import bmNavbar from '@/components/bm/navbar/navbar.vue';
-import bmTabbar from '@/components/bm/tabbar/tabbar.vue';
 </script>
 
 <style>

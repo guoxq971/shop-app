@@ -1,20 +1,16 @@
 <!--首页-->
 <template>
   <view>
-    <!--顶部导航栏-->
-    <bmNavbar title="首页" />
 
     <view class="content">
       <image class="logo" src="/static/logo.png"></image>
       <view class="text-area">
         <text class="title">{{ title }}</text>
         {{ count }}
-        <u-button @click="onClick" type="primary">加</u-button>
       </view>
     </view>
 
-    <!--底部导航栏-->
-    <bmTabbar />
+
   </view>
 </template>
 
@@ -22,8 +18,6 @@
 import { ref } from 'vue';
 import { useCountStore } from '@/store/useCountStore';
 import { storeToRefs } from 'pinia';
-import bmNavbar from '@/components/bm/navbar/navbar.vue';
-import bmTabbar from '@/components/bm/tabbar/tabbar.vue';
 const title = ref('Hello World!');
 const countStore = useCountStore();
 function onClick() {
