@@ -10,7 +10,7 @@
             <Icon name="arrow-left"></Icon>
             <text>Back</text>
           </view>
-          <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" />
+          <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" :clearable="false" />
         </view>
       </view>
 
@@ -152,6 +152,13 @@ $searchPaddingLeftRight: 10rpx;
     display: flex;
     align-items: center;
     width: 100%;
+    height: 100%;
+  }
+
+  :deep(.van-search) {
+    padding: 0;
+  }
+  :deep(.van-search__content) {
     height: 100%;
   }
 }
