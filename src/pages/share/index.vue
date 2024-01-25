@@ -1,20 +1,14 @@
 <!--首页-->
 <template>
-  <view class="head-container">
-    <view :style="style"></view>
-    <!--顶部搜索-->
-    <view class="top-search-wrap">
-      <view class="category" @click="onCategory">分类</view>
-      <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" :clearable="false" />
-    </view>
-  </view>
+  <!--顶部导航栏-->
+  <bmNavbar />
 
   <view class="share-layout">
     <view class="body-wrap">
       <!--广告-->
       <view class="advertised" style="height: 100rpx">
         广告1
-        <view>距离顶部:{{ style.paddingTop }}</view>
+        <view>距离顶部:{{ statusHeight }}</view>
       </view>
 
       <!--分类-->
@@ -143,14 +137,14 @@
 
         <!--折叠面板-->
         <view class="collapse-wrap">
-          <Collapse>
-            <CollapseItem title="CONTACT & INFO">
+          <Collapse v-model="activeCollapse">
+            <CollapseItem title="CONTACT & INFO" name="1">
               <text>CONTACT & INFO</text>
             </CollapseItem>
-            <CollapseItem title="TERMS & POLICIES">
+            <CollapseItem title="TERMS & POLICIES" name="2">
               <text>TERMS & POLICIES</text>
             </CollapseItem>
-            <CollapseItem title="SAY CONNECTED WITH US">
+            <CollapseItem title="SAY CONNECTED WITH US" name="3">
               <text>SAY CONNECTED WITH US</text>
             </CollapseItem>
           </Collapse>
@@ -189,30 +183,17 @@
         </view>
       </view>
     </view>
-
-    <!--分类弹窗-->
-    <categoryPop ref="categoryPopRef" />
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Search, Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
+import { Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
 import { randomWord, randomImage, uuid } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
-import categoryPop from '@/subPackages/share/categoryPop.vue';
-import { useSystemInfo } from '@/hooks/useSystemInfo';
-const { statusHeight } = useSystemInfo();
-// 设备信息
-const style = ref({
-  width: '100%',
-  height: statusHeight + 'px',
-  background: '#fff',
-});
-
-// 输入框内容
-const value = ref('');
-const placeholder = ref('MLB、NBA');
+import bmNavbar from '@/subPackages/share/navbar.vue';
+import { useShareConfig } from '@/hooks/useShareConfig';
+const { searchHeight, searchPaddingLeftRight, statusBarStyle, statusHeight } = useShareConfig();
 
 // 分类
 const categoryList = ref([
@@ -229,16 +210,6 @@ const categoryList = ref([
   { id: uuid(), name: 'Golf', url: randomImage() },
   { id: uuid(), name: 'F1', url: randomImage() },
 ]);
-const categoryPopRef = ref(null);
-function onCategory() {
-  // uni.showToast({
-  //   title: '分类~',
-  //   icon: 'none',
-  //   duration: 2000,
-  // });
-
-  categoryPopRef.value.open();
-}
 
 // 热门商品
 const hotList = ref([
@@ -304,62 +275,20 @@ const menuArr = ref([
     },
   ],
 ]);
+
+// 版权
+const activeCollapse = ref([]);
 </script>
 
 <style lang="scss">
-$searchheight: 100rpx;
-$searchPaddingTopBottom: 16rpx;
-$searchPaddingLeftRight: 18rpx;
-.head-container {
-  position: fixed;
-  top: 0;
-  z-index: 1;
-  width: 100%;
-  // 顶部搜索
-  .top-search-wrap {
-    background-color: #fff;
-    width: 100%;
-    height: $searchheight;
-    padding: $searchPaddingTopBottom $searchPaddingLeftRight;
-    display: flex;
-    align-items: center;
-
-    // 分类按钮
-    .category {
-      font-size: 26rpx;
-      width: $searchheight;
-      height: calc($searchheight - $searchPaddingTopBottom * 2);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 2rpx solid #f2f2f2;
-      background-color: #f2f2f2;
-      border-radius: 4rpx;
-      margin-right: 10rpx;
-    }
-
-    // 搜索
-    .search {
-      //background: #f2f2f2;
-      display: flex;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-    }
-    :deep(.van-search) {
-      padding: 0;
-    }
-    :deep(.van-search__content) {
-      height: 100%;
-    }
-  }
-}
+$searchHeight: v-bind(searchHeight);
+$searchPaddingLeftRight: v-bind(searchPaddingLeftRight);
 
 .share-layout {
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  padding-top: calc($searchheight + v-bind('style.height'));
+  padding-top: calc($searchHeight + v-bind(searchHeight));
 
   .body-wrap {
     flex: 1;

@@ -1,30 +1,28 @@
 <!--首页 - 分类 - 左侧弹窗-->
 <template>
   <Popup v-model:show="show" position="left" @close="close" @open="open">
-    <view>
-      <view class="head-container-category-pop">
-        <!--顶部搜索-->
-        <view :style="style"></view>
-        <view class="top-search-wrap">
-          <view class="category" @click="close">
-            <Icon name="arrow-left"></Icon>
-            <text>Back</text>
-          </view>
-          <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :showAction="false" searchIconColor="#222" :searchIconSize="26" :clearable="false" />
+    <view class="head-container-category-pop">
+      <!--顶部搜索-->
+      <view :style="style"></view>
+      <view class="top-search-wrap">
+        <view class="category" @click="close">
+          <Icon name="arrow-left"></Icon>
+          <text>Back</text>
         </view>
+        <Search class="search" v-model="value" shape="square" :placeholder="placeholder" :clearable="false" />
       </view>
+    </view>
 
-      <!--列表-->
-      <view class="list-wrap">
-        <view class="item-wrap" v-for="item in list" :key="item.id">
-          <view class="item-title">{{ item.label }}</view>
-          <view class="item-list">
-            <view v-for="item2 in item.list" :key="item2.id" class="box">
-              <bmBox width="80%">
-                <image class="image-wrap" :src="item2.url"></image>
-              </bmBox>
-              <view class="name">{{ item2.name }}</view>
-            </view>
+    <!--列表-->
+    <view class="list-wrap">
+      <view class="item-wrap" v-for="item in list" :key="item.id">
+        <view class="item-title">{{ item.label }}</view>
+        <view class="item-list">
+          <view v-for="item2 in item.list" :key="item2.id" class="box">
+            <bmBox width="80%">
+              <image class="image-wrap" :src="item2.url"></image>
+            </bmBox>
+            <view class="name">{{ item2.name }}</view>
           </view>
         </view>
       </view>
