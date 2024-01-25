@@ -1,6 +1,6 @@
 <template>
-  <view class="container" :style="{height: (sInfo.windowHeight - 50) + 'px'}">
-    <u-navbar bgColor="#F8F8F8">
+  <view class="container">
+    <u-navbar bgColor="#F8F8F8" :height="navBarHeight">
       <template #left>
         <view class="navbar-left">Cart<sup>({{total}})</sup></view>
       </template>
@@ -14,7 +14,7 @@
         <u-button type="primary" :customStyle="customStyle" @click="name = '123'">Manage</u-button>
       </template>
     </u-navbar>
-    <view :style="{marginTop: sInfo.navBarHeight + 'px',height: (sInfo.windowHeight - sInfo.navBarHeight - sInfo.tabBarHeight) + 'px'}" class="container-body">
+    <view  class="container-body">
       <view class="body-group">
         <u-checkbox-group
           v-model="checkboxValue1"
@@ -63,8 +63,10 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
-import { useSystemInfo } from '@/store/useSystemInfo'
-import {storeToRefs} from 'pinia'
+// import { useSystemInfo } from '@/store/useSystemInfo'
+// import {storeToRefs} from 'pinia'
+import {useSystemInfo} from '@/hooks/useSystemInfo'
+import { randomImage, uuid } from '@/utils/commom';
 import yf from '@/static/yf.jpg'
 const name = ref('')
 const total = ref(10)
@@ -74,10 +76,22 @@ const customStyle = reactive({
 const src = ref(yf)
 const pTop = ref(44)
 const checkboxValue1 = reactive([]);
-const store = useSystemInfo()
 
-const { sInfo } = storeToRefs(store)
-console.log('sInfo', sInfo);
+// const store = useSystemInfo()
+// const { sInfo } = storeToRefs(store)
+// console.log('sInfo', sInfo);
+const { statusHeight,navBarHeight, tabBarHeight } = useSystemInfo()
+console.log('statusHeight', statusHeight, navBarHeight);
+
+// 高度
+const TBHeight = ref(tabBarHeight + 'px')
+// 状态栏 + 导航栏的高度
+const SWNHeight = ref(statusHeight + navBarHeight + 'px')
+
+
+
+
+
 
 // 基本案列数据
 const checkboxList1 = reactive([
@@ -89,6 +103,7 @@ const checkboxList1 = reactive([
     size: 'XL',
     color: 'Black',
     disabled: false,
+    url:randomImage()
   },
   {
     id: '2',
@@ -114,28 +129,24 @@ const checkboxChange = (n) => {
   console.log('change', n);
 };
 
-const getHeight =()=> {
-  uni.getSystemInfo({
-    success: function (res) {
-      console.log('成功',res)
-      pTop.value = res.statusBarHeight || 44
-    }
-  });
-}
-
-onLoad(() => {getHeight()})
 </script>
 
 <style lang="scss">
 .container{
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  border: 1px solid red;
+  height: calc(100vh - v-bind(TBHeight));
+  padding-top: v-bind(SWNHeight + px);
   .navbar-left{
     font-weight: 700;
   }
 
   .container-body{
+    flex: 1;
     display: flex;
-    overflow: hidden;
+    overflow: auto;
     border: 1px solid red;
     flex-direction: column;
     align-content: space-between;
