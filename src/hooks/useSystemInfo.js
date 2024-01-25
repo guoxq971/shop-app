@@ -4,20 +4,11 @@
  */
 export function useSystemInfo() {
   //信息
-  // const menuButtonInfo = uni.getMenuButtonBoundingClientRect();
   let { _systemInfo: systemInfo } = uni.config;
   console.log('设备信息', systemInfo, uni.config);
-  // console.log('设备信息', menuButtonInfo, systemInfo, uni.config);
 
   // 状态栏高度
   const statusHeight = systemInfo.statusBarHeight;
-  // const capAndStatusHeight = menuButtonInfo.top + menuButtonInfo.height;
-  // 胶囊高度
-  // const capHeight = menuButtonInfo.height;
-  // 胶囊距离头部高度
-  // const capTop = menuButtonInfo.top;
-  // 底部高度
-  // const bottomHeight = systemInfo.windowHeight - menuButtonInfo.bottom;
   // 手机宽度
   let phoneWidth = systemInfo.windowWidth;
   // 手机高度
@@ -38,10 +29,6 @@ export function useSystemInfo() {
   phoneWidth = menuButtonInfo.left
   // #endif
   return {
-    // capAndStatusHeight,
-    // capHeight,
-    // capTop,
-    // bottomHeight,
     statusHeight,
     phoneWidth,
     phoneHeight,
