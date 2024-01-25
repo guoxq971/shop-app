@@ -73,7 +73,7 @@
           <view class="scroll-list">
             <view class="scroll-list__line" v-for="(item, index) in menuArr" :key="index">
               <view class="scroll-list__line__item" v-for="(item1, index1) in item" :key="index1" :class="[index1 === item.length - 1 && 'scroll-list__line__item--no-margin-right']">
-                <image class="scroll-list__line__item__image" :src="item1.icon" mode=""></image>
+                <image class="scroll-list__line__item__image" :src="item1.icon"></image>
                 <view class="scroll-list__line__item__text">{{ item1.name }}</view>
               </view>
             </view>
@@ -130,7 +130,7 @@
           <view class="advantage-bd">
             <bm-box v-for="item in 4" width="50%">
               <view class="item-box">
-                <view class="box">网站优势</view>
+                <view class="box">网站优势{{ item }}</view>
               </view>
             </bm-box>
           </view>
