@@ -10,7 +10,7 @@
           </view>
         </template>
         <template #title>
-          <view style="width: 95%">
+          <view>
             <Search shape="round" :clearable="false" :style="{height: navBarHeight + 'px'}"  v-model="name" left-icon="" placeholder="请输入搜索内容" right-icon="search">
               <template #left-icon />
             </Search>
@@ -93,6 +93,8 @@ const checkboxValue = ref([]);
 const { statusHeight,navBarHeight, tabBarHeight } = useSystemInfo()
 
 const checkAll = ref(false)
+const app = getApp()
+console.log('app', app);
 
 // 高度
 const TBHeight = ref(tabBarHeight + 'px')
@@ -277,7 +279,14 @@ const checkAddress = () => {
 }
 
 .nav-bar .van-nav-bar__left, .van-nav-bar__right{
-  padding: 0 16rpx
+  padding: 0 16rpx;
+  position: relative;
+}
+
+:deep(.van-nav-bar__title){
+  flex: 1;
+  max-width: 100%;
+  margin: 0;
 }
 
 .flex{
