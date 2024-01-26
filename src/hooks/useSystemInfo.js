@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 /**
  * 获取系统信息
  * @returns {{phoneWidth: number, phoneHeight: number, phoneModel: string, isIOS: boolean, statusHeight: number}}
@@ -18,15 +19,21 @@ export function useSystemInfo() {
   // 是否是ios状态
   const isIOS = systemInfo.platform.toLowerCase() === 'ios';
   // 导航栏的高度
-  let navBarHeight = 44
+  let navBarHeight = 44;
+
   // 标签栏的高度(底部导航栏的高度)
-  let tabBarHeight = 50
+  let tabBarHeight = 50;
+  /* #ifdef APP */
+  tabBarHeight = 0;
+  /* #endif */
+  const tabBarHeightUnit = ref(tabBarHeight + 'px');
+
   //h5 app mp-ali
   // #ifndef APP || H5 || MP-ALIPAY
   // 获取胶要的位置
-  const menuButtonInfo = uni.getMenuButtonBoundingClientRect()
-  navBarHeight =(menuButtonInfo.bottom - systemInfo.statusBarHeight)+(menuButtonInfo.top - systemInfo.statusBarHeight)
-  phoneWidth = menuButtonInfo.left
+  const menuButtonInfo = uni.getMenuButtonBoundingClientRect();
+  navBarHeight = menuButtonInfo.bottom - systemInfo.statusBarHeight + (menuButtonInfo.top - systemInfo.statusBarHeight);
+  phoneWidth = menuButtonInfo.left;
   // #endif
   return {
     statusHeight,
@@ -35,6 +42,7 @@ export function useSystemInfo() {
     phoneModel,
     isIOS,
     navBarHeight,
-    tabBarHeight
+    tabBarHeightUnit,
+    tabBarHeight,
   };
 }

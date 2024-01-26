@@ -18,7 +18,7 @@
           <Tabs v-model:active="activeName" sticky animated swipeable>
             <Tab v-for="item in tabsList" :key="item.value" :title="item.label" :name="item.value">
               <view class="box-group">
-                <view class="box-wrap" v-for="item in list" :key="item.id">
+                <view @click="onClick(item)" class="box-wrap" v-for="item in list" :key="item.id">
                   <view class="name">{{ item.name }}</view>
                   <bmBox width="100%">
                     <view class="image-wrap">
@@ -45,9 +45,9 @@ import { ref } from 'vue';
 import { Icon } from 'vant';
 import { randomImage, randomWord, uuid } from '@/utils/commom';
 
+// 选择跳转到这个页面的分类名称
 const name = ref('');
 onLoad((e) => {
-  console.log('onload e', e);
   name.value = e.name;
 });
 
@@ -103,6 +103,12 @@ const list = ref([
   { id: uuid(), url: randomImage(), name: randomWord() },
   { id: uuid(), url: randomImage(), name: randomWord() },
 ]);
+// 选择某个主题
+function onClick(item) {
+  uni.navigateTo({
+    url: `/subPackages/share/productList/index?categoryName=${name.value}&tagName=${item.name}`,
+  });
+}
 </script>
 
 <style scoped lang="scss">

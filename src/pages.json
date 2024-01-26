@@ -21,7 +21,7 @@
     {
       "path": "pages/cart/index",
       "style": {
-        "navigationStyle": "custom" ,
+        "navigationStyle": "custom",
         "navigationBarTitleText": "cart"
       }
     },
@@ -47,6 +47,12 @@
           "style": {
             "navigationBarTitleText": "themeSelected"
           }
+        },
+        {
+          "path": "productList/index",
+          "style": {
+            "navigationBarTitleText": "productList"
+          }
         }
       ]
     },
@@ -69,8 +75,8 @@
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8",
     "app-plus": {
-      "animationType": "fade-in",
-      "animationDuration": "300"
+      "animationType": "slide-in-bottom",
+      "animationDuration": 800
     }
   },
   "tabBar": {
