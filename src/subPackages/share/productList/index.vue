@@ -21,11 +21,14 @@
 
         <view class="list">
           <view class="item" v-for="item in featuredProductList" :key="item.id">
+            <!--图-->
             <view class="image-wrap">
               <view class="hot">SHIPS FREE</view>
               <image :src="item.url"></image>
             </view>
-            <view class="line now-price">标题</view>
+            <!--标题-->
+            <TextEllipsis class="title" rows="2" :content="item.title" />
+            <!--评星 + 评论数-->
             <view class="line org-price">评星 + 评论数</view>
             <view class="line diff-num">价格</view>
           </view>
@@ -67,11 +70,11 @@
 </template>
 
 <script setup>
-import { Icon } from 'vant';
+import { Icon, TextEllipsis } from 'vant';
 import bmNavbar from '@/subPackages/share/navbar.vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
-import { randomImage, randomWord, uuid } from '@/utils/commom';
+import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
 
 function onBack() {
   uni.navigateBack();
@@ -88,27 +91,30 @@ onLoad((e) => {
 });
 
 // 特色商品
-const featuredProductList = ref([
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-]);
+const featuredProductList = ref(
+  Array.from({ length: 10 }, () => {
+    return {
+      id: randomTool.uuid(),
+      name: randomTool.word(),
+      url: randomTool.image(),
+      title: randomTool.title(5),
+      price: randomTool.price(),
+      commentCount: randomTool.num(),
+      commentLevel: randomTool.num(0, 5),
+    };
+  }),
+);
 
 // 商品列表
-const productList = ref([
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-  { id: uuid(), name: randomWord(), url: randomImage() },
-]);
+const productList = ref(
+  Array.from({ length: 21 }, () => {
+    return {
+      id: randomTool.uuid(),
+      name: randomTool.word(),
+      url: randomTool.image(),
+    };
+  }),
+);
 </script>
 
 <style scoped lang="scss">
@@ -166,12 +172,16 @@ $searchPaddingLeftRight: 18rpx;
         }
         .title-right {
           text-decoration: underline;
+          font-weight: 300;
+          font-size: 26rpx;
         }
       }
+      // 特色商品-列表
       .list {
         display: flex;
         overflow: auto;
         $itemWidth: 420rpx;
+
         .item {
           min-width: $itemWidth;
           margin-right: 20rpx;
@@ -204,6 +214,7 @@ $searchPaddingLeftRight: 18rpx;
               height: 100%;
             }
           }
+
           .line {
             height: 44rpx;
             font-size: 20rpx;
@@ -221,8 +232,11 @@ $searchPaddingLeftRight: 18rpx;
           .diff-num {
           }
           .title {
-            margin-top: 20rpx;
-            height: 90rpx;
+            font-size: 28rpx;
+            color: #646464;
+            letter-spacing: 2rpx;
+            text-align: center;
+            line-height: 1.2;
           }
         }
       }
@@ -312,9 +326,8 @@ $searchPaddingLeftRight: 18rpx;
           display: flex;
           justify-content: center;
           .more-btn {
-            border: 2rpx solid #bbbbbb;
-            padding: 8rpx 30rpx;
-            border-radius: 6rpx;
+            border: 2rpx solid #4d4d4d;
+            padding: 14rpx 32rpx;
           }
         }
       }

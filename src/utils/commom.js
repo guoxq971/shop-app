@@ -58,10 +58,21 @@ export function randomPrice(min = 0, max = 100) {
   return Number((Math.random() * (max - min) + min).toFixed(2));
 }
 
+/**
+ * 随机数(不带小数)
+ * @params {number} min 最小值
+ * @params {number} max 最大值
+ * @returns {number}
+ */
+export function randomNumber(min = 0, max = 100) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 export const randomTool = {
   uuid,
   image: randomImage,
   word: randomWord,
   price: randomPrice,
   title: randomTitle,
+  num: randomNumber,
 };

@@ -616,9 +616,8 @@ $searchPaddingLeftRight: 18rpx;
         display: flex;
         justify-content: center;
         .more-btn {
-          border: 2rpx solid #bbbbbb;
-          padding: 8rpx 30rpx;
-          border-radius: 6rpx;
+          border: 2rpx solid #4d4d4d;
+          padding: 14rpx 32rpx;
         }
       }
     }
