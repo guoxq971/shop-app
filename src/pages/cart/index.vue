@@ -251,7 +251,7 @@ const checkAddress = () => {
 
     .body-footer{
       margin-top: 2rpx;
-      padding:16rpx 10rpx;
+      padding:10rpx;
       background-color: #ffffff;
       display: flex;
       justify-content: space-between;

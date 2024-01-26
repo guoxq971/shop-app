@@ -1,5 +1,8 @@
 <template>
-  <NavBar fixed placeholder border>
+  <!--    状态栏-->
+  <view :style="{height:statusHeight + 'px'}" />
+  <!--    导航栏-->
+  <NavBar placeholder border>
     <template #title>
       <view class="bm-navbar">
         <slot name="left" v-if="$slots['left']"></slot>
@@ -17,6 +20,9 @@
 import { NavBar, Search } from 'vant';
 import categoryPop from '@/subPackages/share/categoryPop.vue';
 import { ref, defineProps } from 'vue';
+import {useSystemInfo} from '@/hooks/useSystemInfo'
+
+const { statusHeight } = useSystemInfo()
 
 defineProps({});
 
