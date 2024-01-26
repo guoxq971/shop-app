@@ -9,7 +9,9 @@ export const useSystemInfo = defineStore('systemInfo',()  =>{
     windowTop: 0,// 可使用窗口的顶部位置
     windowBottom: 0,// 可使用窗口的底部位置
     navBarHeight: 44,// 导航栏高度
-    tabBarHeight: 50 // 标签栏的高度
+    tabBarHeight: 50, // 标签栏的高度
+    navBarWidth: 0, // 导航栏的宽度,在小程序状态下,要减去胶囊的宽度
+
   })
   const getSystemInfo = () =>{
     uni.getSystemInfo({
@@ -19,6 +21,13 @@ export const useSystemInfo = defineStore('systemInfo',()  =>{
         sInfo.windowWidth = res.windowWidth
         sInfo.windowTop = res.windowTop
         sInfo.windowBottom = res.windowBottom
+        //h5 app mp-ali
+        // #ifndef APP || H5 || MP-ALIPAY
+        // 获取胶要的位置
+        const menuButtonInfo = uni.getMenuButtonBoundingClientRect()
+        sInfo.navBarHeight =(menuButtonInfo.bottom - res.statusBarHeight)+(menuButtonInfo.top - res.statusBarHeight)
+        sInfo.navBarWidth = menuButtonInfo.left
+        // #endif
       }
     })
   }
