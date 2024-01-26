@@ -33,3 +33,35 @@ export function randomWord(length = 5, isUpperCase = true) {
   }
   return isUpperCase ? word.charAt(0).toUpperCase() + word.slice(1) : word;
 }
+
+/**
+ * 返回一个随机标题(英文)
+ * @params {number} length 单词个数
+ * @params {number} wordLength 单词长度
+ * @returns {string}
+ */
+export function randomTitle(length = 20, wordLength = 5) {
+  let title = '';
+  for (let i = 0; i < length; i++) {
+    title += randomWord(wordLength) + ' ';
+  }
+  return title;
+}
+
+/**
+ * 返回一个随机价格,(带两位小数)
+ * @params {number} min 最小值
+ * @params {number} max 最大值
+ * @returns {number}
+ */
+export function randomPrice(min = 0, max = 100) {
+  return Number((Math.random() * (max - min) + min).toFixed(2));
+}
+
+export const randomTool = {
+  uuid,
+  image: randomImage,
+  word: randomWord,
+  price: randomPrice,
+  title: randomTitle,
+};

@@ -3,9 +3,12 @@
   <view class="share-layout">
     <!--顶部导航栏-->
     <bmNavbar />
+
     <view class="body-wrap">
       <!--广告-->
-      <view class="advertised" style="height: 100rpx">广告1</view>
+      <view class="advertised" style="height: 100rpx">
+        <image class="image" :src="advertisedList[0].url" />
+      </view>
 
       <!--分类-->
       <view class="category-wrap">
@@ -19,7 +22,9 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 700rpx">广告2</view>
+      <view class="advertised" style="height: 700rpx">
+        <image class="image" :src="advertisedList[1].url" />
+      </view>
 
       <!--热门商品-->
       <view class="hot-commodity-wrap">
@@ -32,21 +37,45 @@
             <view class="image-wrap">
               <image :src="item.url"></image>
             </view>
-            <view class="line now-price">现价格</view>
-            <view class="line org-price">原价格</view>
-            <view class="line diff-num">差值</view>
-            <view class="line title">标题</view>
-            <view class="label-wrap">
-              <view class="label-item">
-                <view class="label-icon"></view>
-                <view class="label-name">
-                  <view class="name-content">Most Popular</view>
-                </view>
+            <view class="item-body-wrap">
+              <!--当前价格-->
+              <view class="line now-price price-wrap">
+                <priceWrap :value="item.nowPrice">
+                  <template #right>with code</template>
+                </priceWrap>
               </view>
-              <view class="label-item">
-                <view class="label-icon"></view>
-                <view class="label-name">
-                  <view class="name-content">Jersey Assurance</view>
+              <!--原价格-->
+              <view class="line org-price">
+                <priceWrap isDel :value="item.orgPrice" color="#6b6b6b">
+                  <template #left>Regular:</template>
+                </priceWrap>
+              </view>
+              <!--差价-->
+              <view class="line diff-num">
+                <priceWrap :value="item.diffPrice" color="#80b871">
+                  <template #left>You Save:</template>
+                </priceWrap>
+              </view>
+
+              <!--标题-->
+              <TextEllipsis class="title" rows="2" :content="item.title" />
+
+              <view class="label-wrap">
+                <view class="label-item">
+                  <view class="label-icon" style="color: #77bfc8">
+                    <Icon name="smile-o"></Icon>
+                  </view>
+                  <view class="label-name">
+                    <view class="name-content">Most Popular</view>
+                  </view>
+                </view>
+                <view class="label-item">
+                  <view class="label-icon" style="color: #e85749">
+                    <Icon name="sign"></Icon>
+                  </view>
+                  <view class="label-name">
+                    <view class="name-content">Jersey Assurance</view>
+                  </view>
                 </view>
               </view>
             </view>
@@ -55,7 +84,9 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 250rpx">广告3</view>
+      <view class="advertised" style="height: 250rpx">
+        <image class="image" :src="advertisedList[2].url" />
+      </view>
 
       <!--分类2-->
       <view class="category-wrap2">
@@ -72,11 +103,21 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 550rpx">广告4</view>
-      <view class="advertised" style="height: 220rpx">广告5</view>
-      <view class="advertised" style="height: 220rpx">广告6</view>
-      <view class="advertised" style="height: 220rpx">广告7</view>
-      <view class="advertised" style="height: 700rpx">广告8</view>
+      <view class="advertised" style="height: 550rpx">
+        <image class="image" :src="advertisedList[3].url" />
+      </view>
+      <view class="advertised" style="height: 220rpx">
+        <image class="image" :src="advertisedList[4].url" />
+      </view>
+      <view class="advertised" style="height: 220rpx">
+        <image class="image" :src="advertisedList[5].url" />
+      </view>
+      <view class="advertised" style="height: 220rpx">
+        <image class="image" :src="advertisedList[6].url" />
+      </view>
+      <view class="advertised" style="height: 700rpx">
+        <image class="image" :src="advertisedList[7].url" />
+      </view>
 
       <!--评论-->
       <view class="comment-wrap">
@@ -89,10 +130,12 @@
             <view class="image-wrap">
               <image :src="item.url"></image>
             </view>
-            <view class="line now-price">卖家名</view>
-            <view class="line org-price">时间</view>
-            <view class="line diff-num">评星</view>
-            <view class="line title">描述</view>
+            <view class="item-body-wrap">
+              <view class="line now-price">卖家名</view>
+              <view class="line org-price">时间</view>
+              <view class="line diff-num">评星</view>
+              <view class="line title">描述</view>
+            </view>
           </view>
         </view>
 
@@ -186,10 +229,19 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
-import { randomWord, randomImage, uuid } from '@/utils/commom';
+import { Icon, TextEllipsis, Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
+import { randomWord, randomImage, uuid, randomTool } from '@/utils/commom';
 import bmBox from '@/components/bm/box/box.vue';
 import bmNavbar from '@/subPackages/share/navbar.vue';
+import priceWrap from '@/subPackages/share/priceWrap.vue';
+import { useSystemInfo } from '@/hooks/useSystemInfo';
+const { tabBarHeightUnit } = useSystemInfo();
+
+const advertisedList = ref(
+  Array.from({ length: 10 }, () => {
+    return { id: uuid(), name: randomWord(), url: randomImage() };
+  }),
+);
 
 // 分类
 const categoryList = ref([
@@ -208,13 +260,21 @@ const categoryList = ref([
 ]);
 
 // 热门商品
-const hotList = ref([
-  { id: uuid(), name: 'NFL', url: randomImage() },
-  { id: uuid(), name: 'NCAA', url: randomImage() },
-  { id: uuid(), name: 'MLB', url: randomImage() },
-  { id: uuid(), name: 'NBA', url: randomImage() },
-  { id: uuid(), name: 'NHL', url: randomImage() },
-]);
+const hotList = ref(
+  Array.from({ length: 10 }, () => {
+    const nowPrice = randomTool.price();
+    const orgPrice = randomTool.price();
+    return {
+      id: uuid(),
+      name: randomWord(),
+      url: randomImage(),
+      nowPrice: nowPrice,
+      orgPrice: orgPrice,
+      diffPrice: (nowPrice - orgPrice).toFixed(2),
+      title: randomTool.title(),
+    };
+  }),
+);
 
 // 分类2
 const menuArr = ref([
@@ -283,9 +343,11 @@ $searchPaddingLeftRight: 18rpx;
   display: flex;
   flex-direction: column;
   background-color: #fff;
+  height: calc(100vh - v-bind(tabBarHeightUnit));
 
   .body-wrap {
     flex: 1;
+    overflow: auto;
 
     // 广告
     .advertised {
@@ -296,11 +358,15 @@ $searchPaddingLeftRight: 18rpx;
       justify-content: center;
       align-items: center;
       font-size: 28rpx;
+      .image {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     // 分类
     .category-wrap {
-      padding: 0 60rpx;
+      padding: 0 54rpx;
 
       .title {
         margin: 18rpx 0;
@@ -315,6 +381,7 @@ $searchPaddingLeftRight: 18rpx;
       .list {
         display: flex;
         flex-wrap: wrap;
+        padding-left: 2rpx;
 
         .item-container {
           margin-bottom: 50rpx;
@@ -324,13 +391,13 @@ $searchPaddingLeftRight: 18rpx;
           justify-content: center;
           align-items: center;
           .item-head {
-            border: 2rpx solid #bbb;
+            box-shadow: rgba(0, 0, 0, 0.1) 0rpx 8rpx 24rpx;
             border-radius: 50%;
             width: 130rpx;
             height: 130rpx;
           }
           .item-name {
-            margin-top: 4rpx;
+            margin-top: 8rpx;
             font-size: 24rpx;
             text-align: center;
           }
@@ -345,25 +412,30 @@ $searchPaddingLeftRight: 18rpx;
       .hot-title {
         display: flex;
         justify-content: space-between;
-        padding: 24rpx 0;
-        font-weight: bold;
+        padding: 24rpx 0 2rpx 0;
         margin-bottom: 10rpx;
         .title-left {
+          font-weight: bold;
+          font-family: 'monica-ext-font_YIBBBFG', serif;
         }
         .title-right {
           text-decoration: underline;
+          font-size: 12px;
         }
       }
       .list {
         display: flex;
         overflow: auto;
         $itemWidth: 420rpx;
+        padding-bottom: 24rpx;
+
         .item {
+          border: 2rpx solid #e8e8e8;
           min-width: $itemWidth;
-          margin-right: 20rpx;
-          //background: pink;
-          border-radius: 4px;
+          margin-right: 36rpx;
           overflow: hidden;
+          border-radius: 12rpx;
+
           &:last-child {
             margin-right: 0;
           }
@@ -372,56 +444,62 @@ $searchPaddingLeftRight: 18rpx;
             margin-bottom: 24rpx;
             width: $itemWidth;
             height: calc($itemWidth + 50rpx);
-            border: 2rpx solid #f2f2f2;
-            border-radius: 8rpx;
-            overflow: hidden;
             image {
               width: 100%;
               height: 100%;
             }
           }
-          .line {
-            height: 44rpx;
-            font-size: 20rpx;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f2f2f2;
-          }
-          .now-price {
-            margin-bottom: 6rpx;
-          }
-          .org-price {
-            margin-bottom: 6rpx;
-          }
-          .diff-num {
-          }
-          .title {
-            margin-top: 20rpx;
-            height: 90rpx;
-          }
 
-          .label-wrap {
-            margin-top: 20rpx;
-            .label-item {
+          .item-body-wrap {
+            padding: 3px 8px 9px 8px;
+
+            .line {
+              min-height: 44rpx;
+              font-size: 20rpx;
               display: flex;
+              align-items: center;
+              //background-color: #f2f2f2;
+            }
+            .now-price {
               margin-bottom: 8rpx;
-              .label-icon {
-                min-width: 50rpx;
-                min-height: 50rpx;
-                background: #f2f2f2;
-                margin-right: 16rpx;
-              }
-              .label-name {
-                flex: 1;
+            }
+            .org-price {
+              margin-bottom: 8rpx;
+            }
+            .diff-num {
+            }
+            .title {
+              font-size: 22rpx;
+              letter-spacing: 0.2rpx;
+              margin-top: 8rpx;
+            }
+
+            .label-wrap {
+              margin-top: 20rpx;
+              .label-item {
                 display: flex;
-                align-items: center;
-                .name-content {
-                  font-size: 26rpx;
-                  width: 240rpx;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
+                margin-bottom: 8rpx;
+                .label-icon {
+                  min-width: 50rpx;
+                  min-height: 50rpx;
+                  //background: #f2f2f2;
+                  margin-right: 16rpx;
+                  font-size: 24px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+                .label-name {
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  .name-content {
+                    font-size: 26rpx;
+                    width: 240rpx;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                  }
                 }
               }
             }
@@ -485,17 +563,19 @@ $searchPaddingLeftRight: 18rpx;
         flex-wrap: wrap;
         justify-content: space-between;
         overflow: auto;
+
         .item {
           width: 49%;
           border-radius: 4px;
           overflow: hidden;
           margin-bottom: 20rpx;
+          border: 2rpx solid #e8e8e8;
 
           .image-wrap {
             margin-bottom: 18rpx;
             width: 100%;
             height: 450rpx;
-            border: 2rpx solid #f2f2f2;
+            //border: 2rpx solid #f2f2f2;
             border-radius: 8rpx;
             overflow: hidden;
             image {
@@ -503,25 +583,29 @@ $searchPaddingLeftRight: 18rpx;
               height: 100%;
             }
           }
-          .line {
-            height: 44rpx;
-            font-size: 20rpx;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f2f2f2;
-          }
-          .now-price {
-            margin-bottom: 6rpx;
-          }
-          .org-price {
-            margin-bottom: 6rpx;
-          }
-          .diff-num {
-          }
-          .title {
-            margin-top: 18rpx;
-            height: 90rpx;
+
+          .item-body-wrap {
+            padding: 3px 8px 9px 8px;
+            .line {
+              height: 44rpx;
+              font-size: 20rpx;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background-color: #f2f2f2;
+            }
+            .now-price {
+              margin-bottom: 6rpx;
+            }
+            .org-price {
+              margin-bottom: 6rpx;
+            }
+            .diff-num {
+            }
+            .title {
+              margin-top: 18rpx;
+              height: 90rpx;
+            }
           }
         }
       }

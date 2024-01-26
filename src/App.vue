@@ -1,7 +1,7 @@
 <script>
-// import pageAnimation from './components/page-animation';
+import pageAnimation from './components/page-animation';
 export default {
-  // mixins: [pageAnimation],
+  mixins: [pageAnimation],
   onLaunch: function () {
     console.log('App Launch');
   },
