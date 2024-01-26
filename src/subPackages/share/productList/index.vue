@@ -1,7 +1,7 @@
 <!--产品列表-->
 <template>
   <view class="productList-layout">
-    <!--顶部导航栏1234-->
+    <!--顶部导航栏12345-->
     <bmNavbar />
     <view class="part-wrap">
       <Icon @click="onBack" class="bm-icon" name="arrow-left" />
