@@ -45,11 +45,11 @@
             </Cell>
           </view>
           <view class="service-note">Order note</view>
-          <Field class="f-border"></Field>
+          <Field class="f-border" v-model="formData.note" type="textarea" autosize rows="2"></Field>
         </CellGroup>
       </Form>
     </view>
-    <view class="container-footer">底部</view>
+    <TotalPayment @checkOut="checkOut"></TotalPayment>
   </view>
   <Popup v-model:show="showPicker" round position="bottom">
     <Picker v-model="region" :title="pTitle" @confirm="onConfirm" @click-option="onConfirm" :columns="columns" @cancel="showPicker = false">
@@ -64,11 +64,13 @@ import { NavBar, Form, Field, CellGroup, Picker, Popup, Cell } from 'vant';
 import { ref, reactive } from 'vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
 const { statusHeight } = useSystemInfo();
+import TotalPayment from './TotalPayment.vue';
 
 const formData = reactive({
   firstName: '',
   lastName: '',
   region: '',
+  note: '',
 });
 
 let service = reactive({
@@ -92,12 +94,6 @@ const deliveryList = [
 ];
 
 const columns = ref([]);
-
-const onClickLeft = () => {
-  uni.navigateBack({
-    delta: 1,
-  });
-};
 
 // 弹出层的标题
 const pTitle = ref('');
@@ -130,6 +126,18 @@ const onConfirm = (data) => {
   }
   showPicker.value = false;
 };
+
+const onClickLeft = () => {
+  uni.switchTab({
+    url: '/pages/cart/index',
+  });
+};
+
+const checkOut = () => {
+  uni.navigateTo({
+    url: '/subPackages/cart/CheckOut',
+  });
+};
 </script>
 
 <style scoped lang="scss">
@@ -140,7 +148,6 @@ const onConfirm = (data) => {
 
   .container-body {
     padding: 16rpx 0;
-    border: 1px solid red;
     flex: 1;
     overflow: auto;
     background-color: #edeff6;
@@ -168,14 +175,11 @@ const onConfirm = (data) => {
         .service-title {
           width: 75%;
         }
-
-        .service-note {
-        }
+      }
+      .service-note {
+        margin: 16rpx 0;
       }
     }
-  }
-
-  .container-footer {
   }
 }
 

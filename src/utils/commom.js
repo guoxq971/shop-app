@@ -58,6 +58,17 @@ export function randomPrice(min = 0, max = 100) {
   return Number((Math.random() * (max - min) + min).toFixed(2));
 }
 
+/**
+ * 生成一个范围在[min, max)之间的随机整数
+ * @params {number} min 最小值
+ * @params {number} max 最大值
+ * @returns {number}
+ */
+export function randomInt(min, max) {
+  // 使用 Math.floor() 将浮点数向下取整为整数
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
 export const randomTool = {
   uuid,
   image: randomImage,
