@@ -458,7 +458,6 @@ $searchPaddingLeftRight: 18rpx;
               font-size: 20rpx;
               display: flex;
               align-items: center;
-              //background-color: #f2f2f2;
             }
             .now-price {
               margin-bottom: 8rpx;
@@ -482,7 +481,6 @@ $searchPaddingLeftRight: 18rpx;
                 .label-icon {
                   min-width: 50rpx;
                   min-height: 50rpx;
-                  //background: #f2f2f2;
                   margin-right: 16rpx;
                   font-size: 24px;
                   display: flex;

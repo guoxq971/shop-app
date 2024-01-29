@@ -1,13 +1,16 @@
 <!--产品列表-->
 <template>
   <view class="productList-layout">
-    <!--顶部导航栏12345-->
+    <!--顶部导航栏-->
     <bmNavbar />
+
+    <!--主题名称 & back-->
     <view class="part-wrap">
       <Icon @click="onBack" class="bm-icon" name="arrow-left" />
       <view>{{ categoryName }} - {{ tagName }}</view>
     </view>
 
+    <!--主体-内容-->
     <view class="body-wrap">
       <view class="advertised" style="height: 100rpx; margin-bottom: 10rpx">广告1</view>
       <view class="advertised" style="height: 360rpx">广告2</view>
@@ -19,20 +22,7 @@
           <view class="title-right">VIEW ALL</view>
         </view>
 
-        <view class="list">
-          <view class="item" v-for="item in featuredProductList" :key="item.id">
-            <!--图-->
-            <view class="image-wrap">
-              <view class="hot">SHIPS FREE</view>
-              <image :src="item.url"></image>
-            </view>
-            <!--标题-->
-            <TextEllipsis class="title" rows="2" :content="item.title" />
-            <!--评星 + 评论数-->
-            <view class="line org-price">评星 + 评论数</view>
-            <view class="line diff-num">价格</view>
-          </view>
-        </view>
+        <GoodsList :list="featuredProductList" />
       </view>
 
       <!--商品列表-->
@@ -40,24 +30,26 @@
         <!--条件栏-->
         <view class="condition-wrap">
           <!--畅销-->
-          <view class="item active-item">Best Selling</view>
+          <view class="item active-item">
+            <text>Best Selling</text>
+            <Icon name="bar-chart-o" />
+          </view>
           <!--价格-->
-          <view class="item">Price</view>
+          <view class="item">
+            <text>Price</text>
+            <Icon name="filter-o" />
+          </view>
           <!--过滤条件-->
-          <view class="item">Filter & Sort</view>
+          <view class="item">
+            <text>Filter & Sort</text>
+            <Icon name="setting-o" />
+          </view>
         </view>
 
         <!--列表-->
         <view class="list-wrap">
-          <view class="item" v-for="item in productList" :key="item.id">
-            <view class="image-wrap">
-              <view class="hot">SHIPS FREE</view>
-              <image :src="item.url"></image>
-            </view>
-            <view class="line title">标题</view>
-            <view class="line comment">评星 + 评论数</view>
-            <view class="line now-price">标题</view>
-          </view>
+          <GoodsList :list="productList" type="col" />
+          <!--<GoodsItem width="45%" :item="item" v-for="item in productList" :key="item.id"></GoodsItem>-->
 
           <!--更多-->
           <view class="more">
@@ -70,8 +62,10 @@
 </template>
 
 <script setup>
-import { Icon, TextEllipsis } from 'vant';
+import { Rate, Icon, TextEllipsis } from 'vant';
 import bmNavbar from '@/subPackages/share/navbar.vue';
+import GoodsItem from './item/item.vue';
+import GoodsList from './goodsList/goodsList.vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
@@ -112,6 +106,10 @@ const productList = ref(
       id: randomTool.uuid(),
       name: randomTool.word(),
       url: randomTool.image(),
+      title: randomTool.title(5),
+      price: randomTool.price(),
+      commentCount: randomTool.num(),
+      commentLevel: randomTool.num(0, 5),
     };
   }),
 );
@@ -176,69 +174,11 @@ $searchPaddingLeftRight: 18rpx;
           font-size: 26rpx;
         }
       }
-      // 特色商品-列表
+      // 商品列表-列表
       .list {
         display: flex;
         overflow: auto;
-        $itemWidth: 420rpx;
-
-        .item {
-          min-width: $itemWidth;
-          margin-right: 20rpx;
-          border-radius: 4px;
-          overflow: hidden;
-          &:last-child {
-            margin-right: 0;
-          }
-
-          .image-wrap {
-            margin-bottom: 24rpx;
-            width: $itemWidth;
-            height: calc($itemWidth + 50rpx);
-            border: 2rpx solid #f2f2f2;
-            border-radius: 8rpx;
-            overflow: hidden;
-            position: relative;
-            .hot {
-              position: absolute;
-              top: 5rpx;
-              right: 5rpx;
-              background-color: #f2f2f2;
-              border: 2rpx solid #bbb;
-              padding: 10rpx 6rpx;
-              font-size: 20rpx;
-              z-index: 1;
-            }
-            image {
-              width: 100%;
-              height: 100%;
-            }
-          }
-
-          .line {
-            height: 44rpx;
-            font-size: 20rpx;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f2f2f2;
-          }
-          .now-price {
-            margin-bottom: 6rpx;
-          }
-          .org-price {
-            margin-bottom: 6rpx;
-          }
-          .diff-num {
-          }
-          .title {
-            font-size: 28rpx;
-            color: #646464;
-            letter-spacing: 2rpx;
-            text-align: center;
-            line-height: 1.2;
-          }
-        }
+        padding-bottom: 20rpx;
       }
     }
 
@@ -251,16 +191,16 @@ $searchPaddingLeftRight: 18rpx;
       .condition-wrap {
         display: flex;
         justify-content: center;
-        gap: 20px;
-        margin-bottom: 10px;
+        gap: 40rpx;
+        margin-bottom: 20rpx;
         .item {
-          border-bottom: 2px solid #bbb;
-          padding: 3px 6px;
-          font-size: 13px;
-          letter-spacing: 0.4px;
+          border-bottom: 4rpx solid #bbb;
+          padding: 6rpx 12rpx;
+          font-size: 26rpx;
+          letter-spacing: 0.8rpx;
         }
         .active-item {
-          border-bottom: 2px solid var(--van-nav-bar-icon-color);
+          border-bottom: 4rpx solid var(--van-nav-bar-icon-color);
         }
       }
 
@@ -272,7 +212,7 @@ $searchPaddingLeftRight: 18rpx;
         overflow: auto;
         .item {
           width: 49%;
-          border-radius: 4px;
+          border-radius: 8rpx;
           overflow: hidden;
           margin-bottom: 20rpx;
 
