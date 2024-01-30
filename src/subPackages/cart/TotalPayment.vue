@@ -1,5 +1,5 @@
 <template>
-  <view class="footer">
+  <view class="footer van-safe-area-bottom">
     <view>
       <Checkbox v-if="isCheckBox" shape="round" v-model="checkAll" @change="changeAll">Choose All</Checkbox>
     </view>
