@@ -53,6 +53,12 @@
           "style": {
             "navigationBarTitleText": "productList"
           }
+        },
+        {
+          "path": "productDetail/productDetail",
+          "style": {
+            "navigationBarTitleText": "Product Detail"
+          }
         }
       ]
     },

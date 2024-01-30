@@ -69,15 +69,48 @@ export function randomNumber(min = 0, max = 100) {
 }
 
 /**
+ * 创建一个商品列表
+ * @params {number} length 商品个数
+ * @returns {Array}
+ */
+export function createGoodsList(length) {
+  return Array.from({ length }, () => {
+    return {
+      id: randomTool.uuid(),
+      name: randomTool.word(),
+      url: randomTool.image(),
+      title: randomTool.title(5),
+      price: randomTool.price(),
+      commentCount: randomTool.num(),
+      commentLevel: randomTool.num(0, 5),
+    };
+  });
+}
+
+/**
+ * 返回随机颜色
+ * @returns {string}
+ */
+export function randomColor() {
+  return (
+    '#' +
+    Math.floor(Math.random() * 0xffffff)
+      .toString(16)
+      .padEnd(6, '0')
+  );
+}
+
+/**
  * 生成一个范围在[min, max)之间的随机整数
  * @params {number} min 最小值
  * @params {number} max 最大值
  * @returns {number}
  */
 export function randomInt(min, max) {
-  // 使用 Math.floor() 将浮点数向下取整为整数
-  return Math.floor(Math.random() * (max - min) + min);
+    // 使用 Math.floor() 将浮点数向下取整为整数
+    return Math.floor(Math.random() * (max - min) + min);
 }
+
 
 export const randomTool = {
   uuid,
@@ -86,4 +119,6 @@ export const randomTool = {
   price: randomPrice,
   title: randomTitle,
   num: randomNumber,
+  goodsList: createGoodsList,
+  color: randomColor,
 };
