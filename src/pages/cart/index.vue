@@ -2,7 +2,7 @@
   <view class="container">
     <statusBar></statusBar>
     <!--    导航栏-->
-    <NavBar shape>
+    <NavBar shape fixed>
       <template #left>
         <view>
           <text>Cart</text>
@@ -76,7 +76,7 @@ const name = ref('hello');
 const { globalData } = getApp();
 
 const checkboxValue = ref([]);
-const { statusHeight, navBarHeight, tabBarHeight } = useSystemInfo();
+const { statusHeight, navBarHeight, tabBarHeight, statusHeightUnit } = useSystemInfo();
 // 高度
 const TBHeight = ref(tabBarHeight + 'px');
 // 状态栏高度 + px
@@ -146,6 +146,10 @@ const changeCount = (item) => {
 </script>
 
 <style lang="scss">
+:deep(.van-nav-bar--fixed) {
+  top: v-bind(statusHeightUnit) !important;
+}
+
 .container {
   display: flex;
   flex-direction: column;

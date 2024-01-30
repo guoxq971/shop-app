@@ -4,7 +4,7 @@
     <!--    状态栏-->
     <view :style="{ height: statusHeight + 'px' }" />
     <!--    导航栏-->
-    <NavBar title="Confirm the Order" left-text="Back" left-arrow @click-left="onClickLeft" />
+    <NavBar title="Confirm the Order" fixed left-text="Back" left-arrow @click-left="onClickLeft" />
     <view class="container-body">
       <Form>
         <CellGroup inset class="f-group">
@@ -63,7 +63,7 @@ import { NavBar, Form, Field, CellGroup, Picker, Popup, Cell } from 'vant';
 
 import { ref, reactive } from 'vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
-const { statusHeight } = useSystemInfo();
+const { statusHeight, statusHeightUnit } = useSystemInfo();
 import TotalPayment from './TotalPayment.vue';
 
 const formData = reactive({
@@ -141,6 +141,10 @@ const checkOut = () => {
 </script>
 
 <style scoped lang="scss">
+:deep(.van-nav-bar--fixed) {
+  top: v-bind(statusHeightUnit) !important;
+}
+
 .container {
   height: 100vh;
   display: flex;
