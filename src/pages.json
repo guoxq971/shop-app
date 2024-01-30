@@ -64,6 +64,18 @@
           "style": {
             "navigationBarTitleText": "Confirm the order"
           }
+        },
+        {
+          "path": "CheckOut",
+          "style": {
+            "navigationBarTitleText": "Check Out"
+          }
+        },
+        {
+          "path": "PaySuccessOrFailure",
+          "style": {
+            "navigationBarTitleText": "Success"
+          }
         }
       ]
     }

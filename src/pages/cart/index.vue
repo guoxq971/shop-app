@@ -1,17 +1,17 @@
 <template>
   <view class="container">
-<!--    导航栏-->
+    <!--    导航栏-->
     <view class="header-bar">
       <NavBar fixed shape class="nav-bar">
         <template #left>
           <view>
             <text>Cart</text>
-            <sup v-if="checkboxList.length">({{checkboxList.length}})</sup>
+            <sup v-if="checkboxList.length">({{ checkboxList.length }})</sup>
           </view>
         </template>
         <template #title>
           <view>
-            <Search shape="round" :clearable="false" :style="{height: navBarHeight + 'px'}"  v-model="name" left-icon="" placeholder="请输入搜索内容" right-icon="search">
+            <Search shape="round" :clearable="false" :style="{ height: navBarHeight + 'px' }" v-model="name" left-icon="" placeholder="请输入搜索内容" right-icon="search">
               <template #left-icon />
             </Search>
           </view>
@@ -22,162 +22,131 @@
       </NavBar>
     </view>
 
-<!--    内容-->
-    <view  class="container-body">
+    <!--    内容-->
+    <view class="container-body">
       <view class="body-group">
-        <CheckboxGroup
-          v-model="checkboxValue"
-        >
+        <CheckboxGroup v-model="checkboxValue">
           <view v-for="(item, index) in checkboxList" class="body-group-item">
-            <view style="width: 30px;flex-shrink: 0">
-              <Checkbox
-                :key="index"
-                :name="item.id"
-               />
+            <view style="width: 30px; flex-shrink: 0">
+              <Checkbox :key="index" :name="item.id" />
             </view>
 
-            <view class="flex group-right">
-              <VanImage :src="item.url" width="100px" radius="4" height="100px" />
+            <view class="group-right">
+              <VanImage :src="globalData.prefixImg + item.pic" width="100px" radius="4" height="100px" />
               <view class="group-right-box">
                 <view class="m-10 right-box-title">
-                  <text class="title-text">{{item.title}}</text>
+                  <text class="title-text">{{ item.prodName }}</text>
                   <view @click="tapDel(item)">
-                    <Icon name="cross" ></Icon>
+                    <Icon name="cross"></Icon>
                   </view>
-
                 </view>
-                <view class="m-10">
-                  <text>{{item.color}},{{item.size}}</text>
-                  <Icon name="arrow-down" style="margin-left: 20rpx;font-weight: bold"></Icon>
+                <view class="m-10 right-box-size">
+                  <text>{{ item.productSpec }}</text>
+                  <Icon name="arrow-down" style="margin-left: 20rpx; font-weight: bold"></Icon>
                 </view>
                 <!--                <view class="m-10">-->
                 <!--                  <Tag  plain type="primary">标签</Tag>-->
                 <!--                </view>-->
-                <view class=" box-price">
-                  <view style="display: flex;align-items: center">
+                <view class="box-price">
+                  <view style="display: flex; align-items: center">
                     <sub>$</sub>
-                    <text style="margin-left: 6rpx">{{item.price}}</text>
+                    <text>{{ item.price }}</text>
                   </view>
-                  <Tag plain size="medium" style="padding: 10rpx">x {{item.saleNum}}</Tag>
+                  <Stepper v-model="item.basketCount" button-size="22" @change="changeCount(item)"></Stepper>
                 </view>
               </view>
             </view>
           </view>
-
         </CheckboxGroup>
       </view>
-      <view class="body-footer">
-        <Checkbox shape="round" v-model="checkAll">Choose All</Checkbox>
-        <view class="flex">
-          <view class="footer-total">
-            <view>Total: $34.9</view>
-            <view>xxxxxxxxxxxxxxxx</view>
-          </view>
-          <Button @click="checkAddress">Checkout</Button>
-        </view>
-      </view>
-
+      <TotalPayment isCheckBox @changeAll="changeAll" @checkOut="checkAddress"></TotalPayment>
     </view>
   </view>
-
 </template>
 
 <script setup>
-import {NavBar, Search, Button, Checkbox, CheckboxGroup,Image as VanImage, Tag, Icon   } from 'vant'
-import { ref, reactive } from 'vue';
-import {useSystemInfo} from '@/hooks/useSystemInfo'
-import { randomImage,  } from '@/utils/commom';
-const name = ref('hello')
+import { NavBar, Search, Button, Checkbox, CheckboxGroup, Image as VanImage, Tag, Icon, Stepper } from 'vant';
+import { ref, reactive, onMounted } from 'vue';
+import { useSystemInfo } from '@/hooks/useSystemInfo';
+import TotalPayment from '@/subPackages/cart/TotalPayment.vue';
+import { cartList, updateItem, deleteItem, prodCount } from '@/api/cart/cart';
+import { onTabItemTap } from '@dcloudio/uni-app';
+const name = ref('hello');
+
+const { globalData } = getApp();
 
 const checkboxValue = ref([]);
-const { statusHeight,navBarHeight, tabBarHeight } = useSystemInfo()
-
-const checkAll = ref(false)
-const app = getApp()
-console.log('app', app);
-
+const { statusHeight, navBarHeight, tabBarHeight } = useSystemInfo();
 // 高度
-const TBHeight = ref(tabBarHeight + 'px')
+const TBHeight = ref(tabBarHeight + 'px');
 // 状态栏高度 + px
-const SHHeight = ref(statusHeight + 'px')
+const SHHeight = ref(statusHeight + 'px');
 // 状态栏 + 导航栏的高度
-const SWNHeight = ref(statusHeight + navBarHeight + 'px')
+const SWNHeight = ref(statusHeight + navBarHeight + 'px');
 
-// 基本案列数据
-let checkboxList = reactive([
-  {
-    id: '1',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    disabled: false,
-    url:randomImage()
-  },
-  {
-    id: '2',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url:randomImage()
-  },
-  {
-    id: '3',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url:randomImage()
-  },
-  {
-    id: '4',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url:randomImage()
-  },
-  {
-    id: '5',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url:randomImage()
-  },
-  {
-    id: '6',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url:randomImage()
-  },
+const cartCount = ref(0);
+const getCartCount = async () => {
+  const { data } = await prodCount();
+};
 
-]);
+const getCartList = async () => {
+  const { data } = await cartList();
+  checkboxList.value = data;
+};
 
-const tapDel = (item) => {
-  const len = checkboxList.findIndex(box => item.id === box.id)
-  checkboxList.splice(len, 1)
-}
+// 底部导航栏切换重新请求
+onTabItemTap(() => {
+  getCartCount();
+  getCartList();
+});
+
+// 数据列表
+let checkboxList = ref([]);
+
+// 删除
+const tapDel = async (item) => {
+  const res = await deleteItem([item.basketId]);
+  if (res) {
+    await getCartList();
+    await getCartCount();
+  }
+};
+
+const changeAll = (val) => {
+  if (val) {
+    checkboxValue.value = checkboxList.map((item) => item.id);
+  } else {
+    checkboxValue.value = [];
+  }
+};
 
 const checkAddress = () => {
   uni.navigateTo({
     url: '/subPackages/cart/confirmAddress',
-  })
-}
+  });
+};
 
+// 修改数量
+let timer = null;
+const changeCount = (item) => {
+  if (timer) {
+    clearTimeout(timer);
+  }
+  timer = setTimeout(() => {
+    const obj = {
+      basketId: item.basketId, // 购物车id
+      count: item.basketCount,
+      prodId: item.prodId, // 产品Id
+      skuId: item.skuId,
+    };
+    updateItem(obj);
+    getCartCount();
+  }, 300);
+};
 </script>
 
 <style lang="scss">
-.container{
+.container {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -186,12 +155,11 @@ const checkAddress = () => {
   height: calc(100vh);
   /* #endif */
 
-  .header-bar{
+  .header-bar {
     height: v-bind(SWNHeight);
   }
 
-
-  .container-body{
+  .container-body {
     flex: 1;
     display: flex;
     overflow: auto;
@@ -200,12 +168,12 @@ const checkAddress = () => {
 
     background-color: #edeff6;
 
-    .body-group{
+    .body-group {
       padding: 10rpx 10rpx 0;
       flex: 1;
       overflow: auto;
 
-      .body-group-item{
+      .body-group-item {
         background-color: #ffffff;
         display: flex;
         flex-direction: row;
@@ -214,35 +182,39 @@ const checkAddress = () => {
         border-radius: 8rpx;
         padding: 6rpx;
 
-        .group-right{
+        .group-right {
+          display: flex;
           padding-left: 6rpx;
           flex: 1;
           padding-right: 6rpx;
 
-          .right-box-title{
+          .right-box-title {
             display: flex;
 
-            .title-text{
+            .title-text {
               font-size: 28rpx;
               flex: 1;
               -webkit-line-clamp: 3;
               overflow: hidden;
               -webkit-box-orient: vertical;
               display: -webkit-box;
+              font-weight: bold;
             }
           }
 
-
+          .right-box-size {
+            font-size: 28rpx;
+          }
         }
 
-        .group-right-box{
+        .group-right-box {
           padding-left: 16rpx;
           flex: 1;
           display: flex;
           flex-direction: column;
-          align-content: space-between !important;
+          justify-content: space-between;
 
-          .box-price{
+          .box-price {
             display: flex;
             align-content: center;
             justify-content: space-between;
@@ -251,9 +223,9 @@ const checkAddress = () => {
       }
     }
 
-    .body-footer{
+    .body-footer {
       margin-top: 2rpx;
-      padding:10rpx;
+      padding: 10rpx;
       background-color: #ffffff;
       display: flex;
       justify-content: space-between;
@@ -261,7 +233,7 @@ const checkAddress = () => {
       box-sizing: border-box;
       border-top: 2rpx solid #a1a2a4;
 
-      .footer-total{
+      .footer-total {
         display: flex;
         flex-direction: column;
         text-align: right;
@@ -271,35 +243,43 @@ const checkAddress = () => {
       }
     }
   }
-
 }
 
-.nav-bar{
+.nav-bar {
   padding-top: v-bind(SHHeight);
 }
 
-.nav-bar .van-nav-bar__left, .van-nav-bar__right{
+:deep(.van-nav-bar__left) {
   padding: 0 16rpx;
   position: relative;
 }
 
-:deep(.van-nav-bar__title){
+:deep(.van-nav-bar__right) {
+  padding: 0 16rpx;
+  position: relative;
+}
+
+:deep(.van-search) {
+  padding: 6rpx 0;
+}
+
+:deep(.van-nav-bar__title) {
   flex: 1;
   max-width: 100%;
   margin: 0;
 }
 
-.flex{
+.flex {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
 
-.w-30{
+.w-30 {
   width: 30px;
 }
 
-.m-10{
+.m-10 {
   margin-bottom: 10rpx;
 }
 </style>
