@@ -68,6 +68,38 @@ export function randomNumber(min = 0, max = 100) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+/**
+ * 创建一个商品列表
+ * @params {number} length 商品个数
+ * @returns {Array}
+ */
+export function createGoodsList(length) {
+  return Array.from({ length }, () => {
+    return {
+      id: randomTool.uuid(),
+      name: randomTool.word(),
+      url: randomTool.image(),
+      title: randomTool.title(5),
+      price: randomTool.price(),
+      commentCount: randomTool.num(),
+      commentLevel: randomTool.num(0, 5),
+    };
+  });
+}
+
+/**
+ * 返回随机颜色
+ * @returns {string}
+ */
+export function randomColor() {
+  return (
+    '#' +
+    Math.floor(Math.random() * 0xffffff)
+      .toString(16)
+      .padEnd(6, '0')
+  );
+}
+
 export const randomTool = {
   uuid,
   image: randomImage,
@@ -75,4 +107,6 @@ export const randomTool = {
   price: randomPrice,
   title: randomTitle,
   num: randomNumber,
+  goodsList: createGoodsList,
+  color: randomColor,
 };

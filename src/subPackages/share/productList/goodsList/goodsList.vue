@@ -1,7 +1,7 @@
 <!--商品列表-->
 <template>
   <view class="bm-goods-list" :class="{ 'bm-goods-list-wrap': isCol }">
-    <view class="goods-item" v-for="item in list" :key="item.id">
+    <view class="goods-item" v-for="item in list" :key="item.id" @click="onDetail(item)">
       <!--图-->
       <bmBox :width="imageWidth">
         <view class="image-wrap">
@@ -28,22 +28,30 @@
 <script setup>
 import { Rate, TextEllipsis } from 'vant';
 import bmBox from '@/components/bm/box/box.vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+
 const props = defineProps({
   // type: row | col
   type: { type: String, default: 'row' },
   list: { type: Array, default: () => [] },
-  // width: { type: String, default: '100%' },
 });
 const isCol = computed(() => props.type === 'col');
-const width = computed(() => (isCol.value ? '48.8%' : '420rpx'));
+const width = computed(() => (isCol.value ? '48.8%' : '320rpx'));
 const imageWidth = computed(() => (isCol.value ? '100%' : width));
+
+// 详情
+function onDetail(item) {
+  uni.navigateTo({
+    url: `/subPackages/share/productDetail/productDetail?id=${item.id}`,
+  });
+}
 </script>
 
 <style scoped lang="scss">
 .bm-goods-list-wrap {
   flex-wrap: wrap;
   justify-content: space-between;
+  padding-bottom: 0 !important;
 
   .goods-item {
     margin-right: 0 !important;

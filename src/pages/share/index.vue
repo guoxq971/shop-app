@@ -40,7 +40,7 @@
             <view class="item-body-wrap">
               <!--当前价格-->
               <view class="line now-price price-wrap">
-                <priceWrap :value="item.nowPrice">
+                <priceWrap :value="item.nowPrice" color="#d52c1c">
                   <template #right>with code</template>
                 </priceWrap>
               </view>

@@ -49,11 +49,10 @@
         <!--列表-->
         <view class="list-wrap">
           <GoodsList :list="productList" type="col" />
-          <!--<GoodsItem width="45%" :item="item" v-for="item in productList" :key="item.id"></GoodsItem>-->
 
           <!--更多-->
-          <view class="more">
-            <view class="more-btn">LOAD MORE PRODUCTS</view>
+          <view class="more" v-if="isMore">
+            <view @click="onMore" class="more-btn">LOAD MORE PRODUCTS</view>
           </view>
         </view>
       </view>
@@ -62,16 +61,30 @@
 </template>
 
 <script setup>
-import { Rate, Icon, TextEllipsis } from 'vant';
+import { Icon } from 'vant';
 import bmNavbar from '@/subPackages/share/navbar.vue';
-import GoodsItem from './item/item.vue';
 import GoodsList from './goodsList/goodsList.vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
 
+// 返回上一页
 function onBack() {
   uni.navigateBack();
+}
+
+// 加载更多
+const isMore = ref(true);
+function onMore() {
+  if (productList.value.length >= 30) {
+    uni.showToast({
+      title: '没有更多了',
+      icon: 'none',
+    });
+    isMore.value = false;
+    return;
+  }
+  productList.value = [...productList.value, ...randomTool.goodsList(10)];
 }
 
 // 分类
@@ -85,34 +98,10 @@ onLoad((e) => {
 });
 
 // 特色商品
-const featuredProductList = ref(
-  Array.from({ length: 10 }, () => {
-    return {
-      id: randomTool.uuid(),
-      name: randomTool.word(),
-      url: randomTool.image(),
-      title: randomTool.title(5),
-      price: randomTool.price(),
-      commentCount: randomTool.num(),
-      commentLevel: randomTool.num(0, 5),
-    };
-  }),
-);
+const featuredProductList = ref(randomTool.goodsList(21));
 
 // 商品列表
-const productList = ref(
-  Array.from({ length: 21 }, () => {
-    return {
-      id: randomTool.uuid(),
-      name: randomTool.word(),
-      url: randomTool.image(),
-      title: randomTool.title(5),
-      price: randomTool.price(),
-      commentCount: randomTool.num(),
-      commentLevel: randomTool.num(0, 5),
-    };
-  }),
-);
+const productList = ref(randomTool.goodsList(21));
 </script>
 
 <style scoped lang="scss">
@@ -208,56 +197,6 @@ $searchPaddingLeftRight: 18rpx;
       .list-wrap {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
-        overflow: auto;
-        .item {
-          width: 49%;
-          border-radius: 8rpx;
-          overflow: hidden;
-          margin-bottom: 20rpx;
-
-          .image-wrap {
-            margin-bottom: 18rpx;
-            width: 100%;
-            height: 450rpx;
-            border: 2rpx solid #f2f2f2;
-            border-radius: 8rpx;
-            overflow: hidden;
-            position: relative;
-            .hot {
-              position: absolute;
-              top: 5rpx;
-              right: 5rpx;
-              background-color: #f2f2f2;
-              border: 2rpx solid #bbb;
-              padding: 10rpx 6rpx;
-              font-size: 20rpx;
-              z-index: 1;
-            }
-            image {
-              width: 100%;
-              height: 100%;
-            }
-          }
-          .line {
-            height: 44rpx;
-            font-size: 20rpx;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f2f2f2;
-          }
-          .now-price {
-            margin-bottom: 6rpx;
-          }
-          .comment {
-            margin-bottom: 6rpx;
-          }
-          .title {
-            height: 90rpx;
-            margin-bottom: 6rpx;
-          }
-        }
 
         .more {
           margin-top: 26rpx;
