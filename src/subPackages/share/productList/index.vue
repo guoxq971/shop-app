@@ -47,14 +47,7 @@
         </view>
 
         <!--列表-->
-        <view class="list-wrap">
-          <GoodsList :list="productList" type="col" />
-
-          <!--更多-->
-          <view class="more" v-if="isMore">
-            <view @click="onMore" class="more-btn">LOAD MORE PRODUCTS</view>
-          </view>
-        </view>
+        <goodsListMore v-model:list="productList" />
       </view>
     </view>
   </view>
@@ -64,6 +57,7 @@
 import { Icon } from 'vant';
 import bmNavbar from '@/subPackages/share/navbar.vue';
 import GoodsList from '../goodsList/goodsList.vue';
+import goodsListMore from '../goodsList/goodsListMore.vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
@@ -71,20 +65,6 @@ import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
 // 返回上一页
 function onBack() {
   uni.navigateBack();
-}
-
-// 加载更多
-const isMore = ref(true);
-function onMore() {
-  if (productList.value.length >= 30) {
-    uni.showToast({
-      title: '没有更多了',
-      icon: 'none',
-    });
-    isMore.value = false;
-    return;
-  }
-  productList.value = [...productList.value, ...randomTool.goodsList(10)];
 }
 
 // 分类
@@ -190,24 +170,6 @@ $searchPaddingLeftRight: 18rpx;
         }
         .active-item {
           border-bottom: 4rpx solid var(--van-nav-bar-icon-color);
-        }
-      }
-
-      // 列表
-      .list-wrap {
-        display: flex;
-        flex-wrap: wrap;
-
-        .more {
-          margin-top: 26rpx;
-          margin-bottom: 10rpx;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          .more-btn {
-            border: 2rpx solid #4d4d4d;
-            padding: 14rpx 32rpx;
-          }
         }
       }
     }

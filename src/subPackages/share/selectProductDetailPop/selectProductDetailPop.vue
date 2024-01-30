@@ -90,8 +90,8 @@ $tabbarHeight: v-bind(tabBarHeightUnit);
   flex-direction: column;
 }
 .select-product-container {
-  padding: 10px 10px;
-  height: calc(100% - 50px);
+  padding: 20rpx 20rpx;
+  height: calc(100% - $tabbarHeight);
   overflow: auto;
 }
 .tabbar-wrap {
@@ -104,7 +104,7 @@ $tabbarHeight: v-bind(tabBarHeightUnit);
   position: fixed;
   bottom: 0;
   background: #fff;
-  border-top: 1px solid #bbb;
+  border-top: 2rpx solid #bbb;
   .add-to-card {
     width: 80%;
     height: 80rpx;

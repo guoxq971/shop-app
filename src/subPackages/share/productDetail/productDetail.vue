@@ -136,7 +136,7 @@
       <view class="goods-list-container" v-if="detail.goodsList.length">
         <view class="title">Matching</view>
 
-        <GoodsList :list="detail.goodsList" type="col" />
+        <GoodsListMore v-model:list="detail.goodsList" />
       </view>
     </view>
 
@@ -160,7 +160,7 @@
 <script setup>
 import { Icon, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview } from 'vant';
 import GapWrap from '../gapWrap/gapWrap.vue';
-import GoodsList from '../goodsList/goodsList.vue';
+import GoodsListMore from '../goodsList/goodsListMore.vue';
 import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
 import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
 import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
