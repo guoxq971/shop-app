@@ -6,7 +6,7 @@ import { ref } from 'vue';
 export function useSystemInfo() {
   //信息
   let { _systemInfo: systemInfo } = uni.config;
-  console.log('设备信息', systemInfo, uni.config);
+  // console.log('设备信息', systemInfo, uni.config);
 
   // 状态栏高度
   const statusHeight = systemInfo.statusBarHeight;

@@ -12,6 +12,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useVModel } from '@vueuse/core';
 const emit = defineEmits(['select', 'update:active']);
 const props = defineProps({
   list: { type: Array, default: () => [] },
@@ -21,14 +22,8 @@ const props = defineProps({
 });
 const isCol = computed(() => props.type === 'col');
 
-const activeSize = computed({
-  get() {
-    return props.active;
-  },
-  set(val) {
-    emit('update:active', val);
-  },
-});
+const activeSize = useVModel(props, 'active', emit);
+
 function onActiveSize(item) {
   activeSize.value = item.id;
   emit('select', item);
@@ -42,25 +37,25 @@ function onActiveSize(item) {
 
   .title {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 28rpx;
   }
   .size-list {
     display: flex;
-    padding: 5px 0 0 0;
+    padding: 10rpx 0 0 0;
     flex-wrap: wrap;
     //overflow: auto;
 
     .size-wrap {
-      padding: 2px 10px;
-      height: 36px;
-      border: 1px solid #bbb;
-      border-radius: 1px;
+      padding: 4rpx 20rpx;
+      height: 72rpx;
+      border: 2rpx solid #bbb;
+      border-radius: 2rpx;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 13px;
-      margin-right: 6px;
-      margin-bottom: 6px;
+      font-size: 26rpx;
+      margin-right: 12rpx;
+      margin-bottom: 12rpx;
       .size {
       }
     }

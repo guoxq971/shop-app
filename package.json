@@ -54,6 +54,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-3090920231225001",
     "@dcloudio/uni-mp-xhs": "3.0.0-3090920231225001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-3090920231225001",
+    "@vueuse/core": "^10.7.2",
     "pinia": "2.0.33",
     "prettier": "^3.2.4",
     "vant": "^4.8.3",

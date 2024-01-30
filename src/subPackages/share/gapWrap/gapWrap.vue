@@ -4,7 +4,7 @@
 
 <script setup>
 defineProps({
-  size: { type: String, default: '0px' },
+  size: { type: String, default: '36rpx' },
 });
 </script>
 

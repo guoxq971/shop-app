@@ -20,7 +20,7 @@
         </template>
       </Swipe>
 
-      <GapWrap :size="gapSize" />
+      <GapWrap />
 
       <!--价格 & 预览 & 标题-->
       <view class="info-container">
@@ -40,50 +40,27 @@
         <TextEllipsis class="title" rows="2" :content="detail.title" />
       </view>
 
-      <GapWrap :size="gapSize" />
+      <GapWrap />
 
       <!--颜色/风格-->
       <ColorStyleWrap type="row" :list="detail.styleList" v-model:active="activeStyle" />
 
-      <GapWrap :size="gapSize" />
+      <GapWrap />
 
       <!--尺码-->
       <sizeListWrap :list="detail.sizeList" v-model:active="activeSize" />
 
-      <GapWrap :size="gapSize" />
+      <GapWrap />
 
       <!--定制-->
-      <view class="customization-container">
-        <!--标题-->
-        <view class="title">Customization</view>
+      <CustomizationWrap
+        v-model:front-name="detail.customization.frontName"
+        v-model:front-number="detail.customization.frontNumber"
+        v-model:back-name="detail.customization.backName"
+        v-model:back-number="detail.customization.backNumber"
+      ></CustomizationWrap>
 
-        <!--定制内容-->
-        <view class="front-content">
-          <view class="front-wrap">
-            <view class="label">Front- Team Name</view>
-            <Field class="ipt" v-model="detail.customization.frontName"></Field>
-          </view>
-          <view class="front-wrap front-wrap-number">
-            <view class="label">Front- Team Number</view>
-            <Field class="ipt" v-model="detail.customization.frontNumber"></Field>
-          </view>
-        </view>
-        <view class="front-content">
-          <view class="front-wrap">
-            <view class="label">Back- Team Name</view>
-            <Field class="ipt" v-model="detail.customization.backName"></Field>
-          </view>
-          <view class="front-wrap front-wrap-number">
-            <view class="label">Back- Team Number</view>
-            <Field class="ipt" v-model="detail.customization.backNumber"></Field>
-          </view>
-        </view>
-
-        <!--查看效果-->
-        <view class="look-effect" @click="onLookEffect">View the effect</view>
-      </view>
-
-      <GapWrap :size="gapSize" />
+      <GapWrap />
 
       <!--商品详情信息-->
       <view class="goods-info-container">
@@ -101,7 +78,7 @@
         </view>
       </view>
 
-      <GapWrap :size="gapSize" />
+      <GapWrap />
 
       <!--评论-->
       <view class="comment-container">
@@ -153,7 +130,7 @@
         <view class="see-more" @click="onMoreComment">See more reviews ></view>
       </view>
 
-      <GapWrap :size="gapSize" />
+      <GapWrap />
 
       <!--商品列表-->
       <view class="goods-list-container" v-if="detail.goodsList.length">
@@ -164,7 +141,7 @@
     </view>
 
     <!--固定底部-->
-    <view class="tabbar-wrap" style="height: 50px">
+    <view class="tabbar-wrap">
       <!--定制-->
       <view class="customer" @click="onCustomer">Customer service</view>
       <!--购物车-->
@@ -181,17 +158,17 @@
 </template>
 
 <script setup>
-import { Icon, Field, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview, Space } from 'vant';
+import { Icon, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview } from 'vant';
 import GapWrap from '../gapWrap/gapWrap.vue';
 import GoodsList from '../goodsList/goodsList.vue';
 import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
 import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
 import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
+import CustomizationWrap from '../customizationWrap/customizationWrap.vue';
 import { ref } from 'vue';
 import { randomTool } from '@/utils/commom';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
-useSystemInfo();
-const gapSize = '18px';
+const { tabBarHeightUnit } = useSystemInfo();
 
 // 返回上一页
 function onGoBack() {
@@ -230,6 +207,7 @@ function onAddToCart() {
     activeSize: activeSize.value,
     colorStyleList: detail.value.styleList,
     activeStyleColor: activeStyle.value,
+    customization: detail.value.customization,
   });
 }
 
@@ -352,20 +330,20 @@ function onWriteComment() {
   height: 100%;
 }
 
-$tabbarHeight: 50px;
+$tabbarHeight: v-bind(tabBarHeightUnit);
 .product-detail-container-bd {
   height: 100vh;
 
   // 返回上一页
   .go-back {
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 10rpx;
+    left: 10rpx;
     z-index: 1;
     background: #000;
     color: #fff;
-    padding: 7px;
-    font-size: 12px;
+    padding: 14rpx;
+    font-size: 24rpx;
   }
 
   // 底部
@@ -373,47 +351,47 @@ $tabbarHeight: 50px;
     display: flex;
     align-items: center;
     height: $tabbarHeight;
-    padding: 10px;
+    padding: 20rpx;
     justify-content: space-between;
     width: 100%;
     position: fixed;
     bottom: 0;
 
     .customer {
-      width: 48px;
-      height: 40px;
-      border: 1px solid;
-      font-size: 9px;
+      width: 96rpx;
+      height: 80rpx;
+      border: 2rpx solid;
+      font-size: 18rpx;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .cart {
-      width: 48px;
-      height: 40px;
-      border: 1px solid;
-      font-size: 11px;
+      width: 96rpx;
+      height: 80rpx;
+      border: 2rpx solid;
+      font-size: 22rpx;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .add-to-card {
-      width: 125px;
-      height: 40px;
-      border: 1px solid;
-      font-size: 14px;
+      width: 250rpx;
+      height: 80rpx;
+      border: 2rpx solid;
+      font-size: 28rpx;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .buy-now {
-      width: 106px;
-      height: 40px;
-      border: 1px solid;
-      font-size: 14px;
+      width: 212rpx;
+      height: 80rpx;
+      border: 2rpx solid;
+      font-size: 28rpx;
       text-align: center;
       display: flex;
       align-items: center;
@@ -425,21 +403,21 @@ $tabbarHeight: 50px;
 .product-detail-container {
   height: calc(100vh - $tabbarHeight);
   overflow: auto;
-  padding: 0 10px;
+  padding: 0 20rpx;
 
   // 列表图
   .preview-list {
     display: flex;
-    padding: 3px 0 10px 0;
+    padding: 6rpx 0 20rpx 0;
     overflow: auto;
 
     .image-wrap {
-      min-width: 65px;
-      height: 65px;
-      margin-right: 7px;
-      border-radius: 4px;
+      min-width: 130rpx;
+      height: 130rpx;
+      margin-right: 14rpx;
+      border-radius: 8rpx;
       overflow: hidden;
-      border: 2px solid transparent;
+      border: 4rpx solid transparent;
       &:first-child {
         margin-left: auto;
       }
@@ -452,7 +430,7 @@ $tabbarHeight: 50px;
       }
     }
     .active-image {
-      border: 2px solid var(--primary-color);
+      border: 4rpx solid var(--primary-color);
     }
   }
 
@@ -461,7 +439,7 @@ $tabbarHeight: 50px;
     .price-preview-wrap {
       display: flex;
       justify-content: space-between;
-      font-size: 13px;
+      font-size: 26rpx;
 
       .price-wrap {
         display: flex;
@@ -471,13 +449,13 @@ $tabbarHeight: 50px;
           text-decoration: line-through;
           color: #6b6b6b;
           font-weight: bold;
-          font-size: 14px;
+          font-size: 28rpx;
         }
         .price {
           color: #d52c1c;
           font-weight: bold;
-          font-size: 16px;
-          margin-left: 10px;
+          font-size: 32rpx;
+          margin-left: 20rpx;
         }
       }
 
@@ -486,59 +464,15 @@ $tabbarHeight: 50px;
         align-items: center;
         color: #575757;
         .preview {
-          margin-right: 10px;
+          margin-right: 20rpx;
         }
       }
     }
 
     .title {
-      margin-top: 7px;
-      font-size: 14px;
+      margin-top: 14rpx;
+      font-size: 28rpx;
       line-height: 1.4;
-    }
-  }
-
-  // 定制
-  .customization-container {
-    display: flex;
-    flex-direction: column;
-
-    .title {
-      font-weight: bold;
-      font-size: 14px;
-    }
-    .front-content {
-      margin-top: 8px;
-      display: flex;
-      .front-wrap {
-        flex: 7;
-        position: relative;
-        .label {
-          font-size: 12px;
-          margin-bottom: 2px;
-          white-space: nowrap;
-        }
-        .ipt {
-          border: 1px solid #a9a9a9;
-          padding: 6px 10px 3px 10px;
-          :deep(.van-field__control) {
-            font-size: 18px;
-          }
-        }
-      }
-      .front-wrap-number {
-        flex: 3;
-        margin-left: 10px;
-      }
-    }
-    .look-effect {
-      width: 60%;
-      border: 1px solid #323233;
-      height: 37px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 11px auto 0 auto;
     }
   }
 
@@ -553,8 +487,8 @@ $tabbarHeight: 50px;
       .title {
         display: flex;
         justify-content: center;
-        margin-bottom: 3px;
-        font-size: 15px;
+        margin-bottom: 6rpx;
+        font-size: 30rpx;
         font-weight: bold;
       }
     }
@@ -564,7 +498,7 @@ $tabbarHeight: 50px;
   .comment-container {
     display: flex;
     flex-direction: column;
-    margin-bottom: 17px;
+    margin-bottom: 34rpx;
 
     //  头部
     .header-wrap {
@@ -575,17 +509,17 @@ $tabbarHeight: 50px;
         display: flex;
         align-items: center;
         .count {
-          margin-right: 7px;
-          font-size: 16px;
+          margin-right: 14rpx;
+          font-size: 32rpx;
           font-weight: 600;
         }
         .rate {
         }
       }
       .right {
-        font-size: 14px;
-        border: 1px solid;
-        padding: 4px 12px;
+        font-size: 28rpx;
+        border: 2rpx solid;
+        padding: 8rpx 24rpx;
       }
     }
 
@@ -593,7 +527,7 @@ $tabbarHeight: 50px;
     .condition-wrap {
       display: flex;
       margin-bottom: 20rpx;
-      margin-top: 7px;
+      margin-top: 14rpx;
       .item {
         border-bottom: 4rpx solid transparent;
         padding: 6rpx 12rpx;
@@ -611,43 +545,43 @@ $tabbarHeight: 50px;
       .item {
         display: flex;
         flex-direction: column;
-        padding-bottom: 4px;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #bbb;
+        padding-bottom: 8rpx;
+        margin-bottom: 30rpx;
+        border-bottom: 2rpx solid #bbb;
         .head-wrap {
           display: flex;
           align-items: center;
-          margin-bottom: 6px;
+          margin-bottom: 12rpx;
 
           .head-image-wrap {
             width: 50rpx;
             height: 50rpx;
-            margin-right: 7px;
+            margin-right: 14rpx;
           }
           .name {
-            font-size: 13px;
+            font-size: 26rpx;
           }
         }
 
         .rate {
-          margin-bottom: 4px;
+          margin-bottom: 8rpx;
         }
 
         .content {
-          font-size: 13px;
-          margin-bottom: 6px;
+          font-size: 26rpx;
+          margin-bottom: 12rpx;
         }
 
         .image-wrap {
           display: flex;
           overflow: auto;
-          padding: 0 0 10px 0;
+          padding: 0 0 20rpx 0;
 
           .image {
-            min-width: 50px;
-            width: 50px;
-            height: 50px;
-            margin-right: 8px;
+            min-width: 100rpx;
+            width: 100rpx;
+            height: 100rpx;
+            margin-right: 16rpx;
           }
         }
       }
@@ -658,8 +592,8 @@ $tabbarHeight: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 14px;
-      margin-top: 5px;
+      font-size: 28rpx;
+      margin-top: 10rpx;
       font-weight: 600;
     }
   }
@@ -670,8 +604,8 @@ $tabbarHeight: 50px;
     flex-direction: column;
     .title {
       font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 9px;
+      font-size: 32rpx;
+      margin-bottom: 18rpx;
     }
   }
 }
