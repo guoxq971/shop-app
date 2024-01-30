@@ -31,17 +31,17 @@
               <Checkbox :key="index" :name="item.id" />
             </view>
 
-            <view class="flex group-right">
-              <VanImage :src="item.url" width="100px" radius="4" height="100px" />
+            <view class="group-right">
+              <VanImage :src="globalData.prefixImg + item.pic" width="100px" radius="4" height="100px" />
               <view class="group-right-box">
                 <view class="m-10 right-box-title">
-                  <text class="title-text">{{ item.title }}</text>
+                  <text class="title-text">{{ item.prodName }}</text>
                   <view @click="tapDel(item)">
                     <Icon name="cross"></Icon>
                   </view>
                 </view>
                 <view class="m-10 right-box-size">
-                  <text>{{ item.color }},{{ item.size }}</text>
+                  <text>{{ item.productSpec }}</text>
                   <Icon name="arrow-down" style="margin-left: 20rpx; font-weight: bold"></Icon>
                 </view>
                 <!--                <view class="m-10">-->
@@ -50,9 +50,9 @@
                 <view class="box-price">
                   <view style="display: flex; align-items: center">
                     <sub>$</sub>
-                    <text style="margin-left: 6rpx">{{ item.price }}</text>
+                    <text>{{ item.price }}</text>
                   </view>
-                  <Tag plain size="medium" style="padding: 10rpx">x {{ item.saleNum }}</Tag>
+                  <Stepper v-model="item.basketCount" button-size="22" @change="changeCount(item)"></Stepper>
                 </view>
               </view>
             </view>
@@ -65,18 +65,18 @@
 </template>
 
 <script setup>
-import { NavBar, Search, Button, Checkbox, CheckboxGroup, Image as VanImage, Tag, Icon } from 'vant';
-import { ref, reactive } from 'vue';
+import { NavBar, Search, Button, Checkbox, CheckboxGroup, Image as VanImage, Tag, Icon, Stepper } from 'vant';
+import { ref, reactive, onMounted } from 'vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
-import { randomImage } from '@/utils/commom';
 import TotalPayment from '@/subPackages/cart/TotalPayment.vue';
+import { cartList, updateItem, deleteItem, prodCount } from '@/api/cart/cart';
+import { onTabItemTap } from '@dcloudio/uni-app';
 const name = ref('hello');
+
+const { globalData } = getApp();
 
 const checkboxValue = ref([]);
 const { statusHeight, navBarHeight, tabBarHeight } = useSystemInfo();
-
-const checkAll = ref(false);
-
 // 高度
 const TBHeight = ref(tabBarHeight + 'px');
 // 状态栏高度 + px
@@ -84,68 +84,32 @@ const SHHeight = ref(statusHeight + 'px');
 // 状态栏 + 导航栏的高度
 const SWNHeight = ref(statusHeight + navBarHeight + 'px');
 
-// 基本案列数据
-let checkboxList = reactive([
-  {
-    id: '1',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    disabled: false,
-    url: randomImage(),
-  },
-  {
-    id: '2',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url: randomImage(),
-  },
-  {
-    id: '3',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url: randomImage(),
-  },
-  {
-    id: '4',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url: randomImage(),
-  },
-  {
-    id: '5',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url: randomImage(),
-  },
-  {
-    id: '6',
-    title: 'Michigan Wolverines Jordan Brand College Football Playoff 2023 NationalChampions Locker Room T-Shirt - Navy',
-    price: '34.99',
-    saleNum: '1',
-    size: 'XL',
-    color: 'Black',
-    url: randomImage(),
-  },
-]);
+const cartCount = ref(0);
+const getCartCount = async () => {
+  const { data } = await prodCount();
+};
 
-const tapDel = (item) => {
-  const len = checkboxList.findIndex((box) => item.id === box.id);
-  checkboxList.splice(len, 1);
+const getCartList = async () => {
+  const { data } = await cartList();
+  checkboxList.value = data;
+};
+
+// 底部导航栏切换重新请求
+onTabItemTap(() => {
+  getCartCount();
+  getCartList();
+});
+
+// 数据列表
+let checkboxList = ref([]);
+
+// 删除
+const tapDel = async (item) => {
+  const res = await deleteItem([item.basketId]);
+  if (res) {
+    await getCartList();
+    await getCartCount();
+  }
 };
 
 const changeAll = (val) => {
@@ -160,6 +124,24 @@ const checkAddress = () => {
   uni.navigateTo({
     url: '/subPackages/cart/confirmAddress',
   });
+};
+
+// 修改数量
+let timer = null;
+const changeCount = (item) => {
+  if (timer) {
+    clearTimeout(timer);
+  }
+  timer = setTimeout(() => {
+    const obj = {
+      basketId: item.basketId, // 购物车id
+      count: item.basketCount,
+      prodId: item.prodId, // 产品Id
+      skuId: item.skuId,
+    };
+    updateItem(obj);
+    getCartCount();
+  }, 300);
 };
 </script>
 
@@ -201,6 +183,7 @@ const checkAddress = () => {
         padding: 6rpx;
 
         .group-right {
+          display: flex;
           padding-left: 6rpx;
           flex: 1;
           padding-right: 6rpx;
@@ -229,7 +212,7 @@ const checkAddress = () => {
           flex: 1;
           display: flex;
           flex-direction: column;
-          align-content: space-between !important;
+          justify-content: space-between;
 
           .box-price {
             display: flex;

@@ -70,6 +70,12 @@
           "style": {
             "navigationBarTitleText": "Check Out"
           }
+        },
+        {
+          "path": "PaySuccessOrFailure",
+          "style": {
+            "navigationBarTitleText": "Success"
+          }
         }
       ]
     }

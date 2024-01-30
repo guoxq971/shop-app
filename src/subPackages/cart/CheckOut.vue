@@ -39,7 +39,11 @@ import { randomTool, randomInt } from '@/utils/commom';
 
 const { statusHeight } = useSystemInfo();
 
-const checkOut = () => {};
+const checkOut = () => {
+  uni.navigateTo({
+    url: '/subPackages/cart/checkout',
+  });
+};
 
 const payWay = ref('PayPal');
 

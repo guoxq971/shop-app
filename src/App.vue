@@ -2,6 +2,9 @@
 import pageAnimation from './components/page-animation';
 export default {
   mixins: [pageAnimation],
+  globalData: {
+    prefixImg: 'http://192.168.2.251:8080/share/shop_sys/',
+  },
   onLaunch: function () {
     console.log('App Launch');
   },
