@@ -10,6 +10,7 @@ export function useSystemInfo() {
 
   // 状态栏高度
   const statusHeight = systemInfo.statusBarHeight;
+  const statusHeightUnit = ref(statusHeight + 'px');
   // 手机宽度
   let phoneWidth = systemInfo.windowWidth;
   // 手机高度
@@ -37,6 +38,7 @@ export function useSystemInfo() {
   // #endif
   return {
     statusHeight,
+    statusHeightUnit,
     phoneWidth,
     phoneHeight,
     phoneModel,

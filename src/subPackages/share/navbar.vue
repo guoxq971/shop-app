@@ -1,8 +1,8 @@
 <template>
   <!--    状态栏-->
-  <view :style="{height:statusHeight + 'px'}" />
+  <view :style="{ height: statusHeightUnit }" />
   <!--    导航栏-->
-  <NavBar placeholder border>
+  <NavBar placeholder border fixed>
     <template #title>
       <view class="bm-navbar">
         <slot name="left" v-if="$slots['left']"></slot>
@@ -20,9 +20,9 @@
 import { NavBar, Search } from 'vant';
 import categoryPop from '@/subPackages/share/categoryPop.vue';
 import { ref, defineProps } from 'vue';
-import {useSystemInfo} from '@/hooks/useSystemInfo'
+import { useSystemInfo } from '@/hooks/useSystemInfo';
 
-const { statusHeight } = useSystemInfo()
+const { statusHeightUnit } = useSystemInfo();
 
 defineProps({});
 
@@ -38,6 +38,9 @@ function onCategory() {
 </script>
 
 <style scoped lang="scss">
+:deep(.van-nav-bar--fixed) {
+  top: v-bind(statusHeightUnit) !important;
+}
 :deep(.van-nav-bar__title) {
   max-width: 100%;
   width: 100%;

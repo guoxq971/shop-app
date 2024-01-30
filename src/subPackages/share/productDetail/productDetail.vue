@@ -176,11 +176,15 @@
       <view class="buy-now" @click="onBuyNow">BUY NOW</view>
     </view>
   </view>
+
+  <!--选择产品参数-弹窗-->
+  <SelectProductDetailPop ref="selectProductDetailPop" />
 </template>
 
 <script setup>
 import { Icon, Field, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview } from 'vant';
-import GoodsList from '../productList/goodsList/goodsList.vue';
+import GoodsList from '../goodsList/goodsList.vue';
+import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
 import { ref } from 'vue';
 import { randomTool } from '@/utils/commom';
 
@@ -214,10 +218,11 @@ function onCart() {
 }
 
 // 加入购物车
+const selectProductDetailPop = ref(null);
 function onAddToCart() {
-  uni.showToast({
-    title: '加入购物车',
-    icon: 'none',
+  selectProductDetailPop.value.open({
+    colorStyleList: detail.value.styleList,
+    activeStyleColor: activeStyle.value,
   });
 }
 
@@ -338,6 +343,11 @@ function onWriteComment() {
 </script>
 
 <style scoped lang="scss">
+.van-image {
+  width: 100%;
+  height: 100%;
+}
+
 $tabbarHeight: 50px;
 .product-detail-container-bd {
   height: 100vh;
@@ -404,10 +414,7 @@ $tabbarHeight: 50px;
     }
   }
 }
-.van-image {
-  width: 100%;
-  height: 100%;
-}
+
 .product-detail-container {
   height: calc(100vh - $tabbarHeight);
   overflow: auto;

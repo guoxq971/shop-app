@@ -63,7 +63,7 @@
 <script setup>
 import { Icon } from 'vant';
 import bmNavbar from '@/subPackages/share/navbar.vue';
-import GoodsList from './goodsList/goodsList.vue';
+import GoodsList from '../goodsList/goodsList.vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
