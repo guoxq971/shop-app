@@ -1,7 +1,7 @@
 <template>
-  <!--    状态栏-->
+  <!--状态栏-->
   <view :style="{ height: statusHeightUnit }" />
-  <!--    导航栏-->
+  <!--导航栏-->
   <NavBar placeholder border fixed>
     <template #title>
       <view class="bm-navbar">
