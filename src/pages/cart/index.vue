@@ -1,29 +1,29 @@
 <template>
   <view class="container">
+    <statusBar></statusBar>
     <!--    导航栏-->
-    <view class="header-bar">
-      <NavBar fixed shape class="nav-bar">
-        <template #left>
-          <view>
-            <text>Cart</text>
-            <sup v-if="checkboxList.length">({{ checkboxList.length }})</sup>
-          </view>
-        </template>
-        <template #title>
-          <view>
-            <Search shape="round" :clearable="false" :style="{ height: navBarHeight + 'px' }" v-model="name" left-icon="" placeholder="请输入搜索内容" right-icon="search">
-              <template #left-icon />
-            </Search>
-          </view>
-        </template>
-        <template #right>
-          <Button size="small">Manage</Button>
-        </template>
-      </NavBar>
-    </view>
+    <NavBar shape class="nav-bar">
+      <template #left>
+        <view>
+          <text>Cart</text>
+          <sup v-if="checkboxList.length">({{ checkboxList.length }})</sup>
+        </view>
+      </template>
+      <template #title>
+        <view>
+          <Search shape="round" :clearable="false" :style="{ height: navBarHeight + 'px' }" v-model="name" left-icon="" placeholder="请输入搜索内容" right-icon="search">
+            <template #left-icon />
+          </Search>
+        </view>
+      </template>
+      <template #right>
+        <Button size="small">Manage</Button>
+      </template>
+    </NavBar>
 
     <!--    内容-->
     <view class="container-body">
+      <view>状态栏:{{ SHHeight }}</view>
       <view class="body-group">
         <CheckboxGroup v-model="checkboxValue">
           <view v-for="(item, index) in checkboxList" class="body-group-item">
@@ -59,8 +59,8 @@
           </view>
         </CheckboxGroup>
       </view>
-      <TotalPayment isCheckBox @changeAll="changeAll" @checkOut="checkAddress"></TotalPayment>
     </view>
+    <TotalPayment isCheckBox @changeAll="changeAll" @checkOut="checkAddress"></TotalPayment>
   </view>
 </template>
 
@@ -71,6 +71,7 @@ import { useSystemInfo } from '@/hooks/useSystemInfo';
 import TotalPayment from '@/subPackages/cart/TotalPayment.vue';
 import { cartList, updateItem, deleteItem, prodCount } from '@/api/cart/cart';
 import { onTabItemTap } from '@dcloudio/uni-app';
+import statusBar from '@/components/statusBar/statusBar.vue';
 const name = ref('hello');
 
 const { globalData } = getApp();
@@ -162,7 +163,7 @@ const changeCount = (item) => {
   .container-body {
     flex: 1;
     display: flex;
-    overflow: auto;
+    overflow: hidden;
     flex-direction: column;
     align-content: space-between;
 
@@ -220,26 +221,6 @@ const changeCount = (item) => {
             justify-content: space-between;
           }
         }
-      }
-    }
-
-    .body-footer {
-      margin-top: 2rpx;
-      padding: 10rpx;
-      background-color: #ffffff;
-      display: flex;
-      justify-content: space-between;
-      align-content: center;
-      box-sizing: border-box;
-      border-top: 2rpx solid #a1a2a4;
-
-      .footer-total {
-        display: flex;
-        flex-direction: column;
-        text-align: right;
-        height: 100%;
-        justify-content: space-between;
-        margin-right: 10rpx;
       }
     }
   }
