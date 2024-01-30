@@ -6,11 +6,23 @@
       </view>
 
       <view class="footer-right">
-        <view class="footer-total" v-if="price">
-          <view>Total: ${{ price }}</view>
-          <view>{{ label }}</view>
+        <view class="footer-total" v-if="store.cartTotal.finalMoney">
+          <view class="total-money">
+            <text class="m-r4">Total:</text>
+            <view class="money-info t-red">
+              <sub class="m-r4">$</sub>
+              <text>{{ store.cartTotal.finalMoney }}</text>
+            </view>
+          </view>
+          <view class="total-money">
+            <text class="m-r4">discounts:</text>
+            <view class="money-info t-red">
+              <sub class="m-r4">$</sub>
+              <text>{{ store.cartTotal.subtractMoney }}</text>
+            </view>
+          </view>
         </view>
-        <Button @click="checkAddress">Checkout</Button>
+        <Button @click="checkAddress" type="danger">Checkout</Button>
       </view>
     </view>
   </view>
@@ -18,7 +30,11 @@
 
 <script setup>
 import { Button, Checkbox } from 'vant';
+import { useCountStore } from '@/store/useCartTotalStore';
 import { ref } from 'vue';
+
+const store = useCountStore();
+
 const checkAll = ref(false);
 defineProps({
   // 是否需要Choose All复选框
@@ -40,6 +56,7 @@ const checkAddress = () => {
 };
 
 const changeAll = (value) => {
+  store.checkAllList(value);
   emit('changeAll', value);
 };
 </script>
@@ -73,7 +90,27 @@ const changeAll = (value) => {
       text-align: right;
       justify-content: space-between;
       margin-right: 10rpx;
+
+      .total-money {
+        display: flex;
+
+        .money-info {
+          display: flex;
+          align-items: baseline;
+        }
+      }
     }
   }
+}
+
+.t-red {
+  color: #ff4400;
+}
+
+.gary {
+  color: #969799;
+}
+.m-r4 {
+  margin-right: 4rpx;
 }
 </style>
