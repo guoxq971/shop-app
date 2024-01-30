@@ -2,7 +2,7 @@
   <view class="container">
     <statusBar></statusBar>
     <!--    导航栏-->
-    <NavBar shape class="nav-bar">
+    <NavBar shape>
       <template #left>
         <view>
           <text>Cart</text>
@@ -23,7 +23,6 @@
 
     <!--    内容-->
     <view class="container-body">
-      <view>状态栏:{{ SHHeight }}</view>
       <view class="body-group">
         <CheckboxGroup v-model="checkboxValue">
           <view v-for="(item, index) in checkboxList" class="body-group-item">
@@ -156,10 +155,6 @@ const changeCount = (item) => {
   height: calc(100vh);
   /* #endif */
 
-  .header-bar {
-    height: v-bind(SWNHeight);
-  }
-
   .container-body {
     flex: 1;
     display: flex;
@@ -224,10 +219,6 @@ const changeCount = (item) => {
       }
     }
   }
-}
-
-.nav-bar {
-  padding-top: v-bind(SHHeight);
 }
 
 :deep(.van-nav-bar__left) {
