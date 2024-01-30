@@ -12,9 +12,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { Image as VanImage } from 'vant';
-const emit = defineEmits(['select']);
+const emit = defineEmits(['select', 'update:active']);
 const props = defineProps({
   list: { type: Array, default: () => [] },
   active: { type: String, default: '' },
@@ -23,7 +23,14 @@ const props = defineProps({
 });
 const isCol = computed(() => props.type === 'col');
 
-const activeStyle = ref('');
+const activeStyle = computed({
+  get() {
+    return props.active;
+  },
+  set(val) {
+    emit('update:active', val);
+  },
+});
 function onActiveStyle(item) {
   activeStyle.value = item.id;
   emit('select', item);
@@ -44,10 +51,8 @@ function onActiveStyle(item) {
   }
 }
 .color-style-container {
-  margin-top: 17px;
   display: flex;
   flex-direction: column;
-  padding: 0 10px;
 
   .title {
     font-weight: bold;
@@ -60,7 +65,7 @@ function onActiveStyle(item) {
   .style-list-wrap {
     display: flex;
     overflow: auto;
-    padding: 5px 0 9px 0;
+    padding: 5px 0 0 0;
     .style-wrap {
       min-width: 60px;
       height: 60px;

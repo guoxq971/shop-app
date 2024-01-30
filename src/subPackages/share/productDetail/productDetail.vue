@@ -20,6 +20,8 @@
         </template>
       </Swipe>
 
+      <GapWrap :size="gapSize" />
+
       <!--价格 & 预览 & 标题-->
       <view class="info-container">
         <view class="price-preview-wrap">
@@ -38,26 +40,17 @@
         <TextEllipsis class="title" rows="2" :content="detail.title" />
       </view>
 
+      <GapWrap :size="gapSize" />
+
       <!--颜色/风格-->
-      <view class="color-style-container">
-        <view class="title">Color/Style</view>
-        <!--风格-->
-        <view class="style-list-wrap">
-          <view class="style-wrap" :class="{ 'active-border': item.id === activeStyle }" v-for="item in detail.styleList" :key="item.id" @click="onActiveStyle(item)">
-            <vanImage :src="item.url"></vanImage>
-          </view>
-        </view>
-      </view>
+      <ColorStyleWrap type="row" :list="detail.styleList" v-model:active="activeStyle" />
+
+      <GapWrap :size="gapSize" />
 
       <!--尺码-->
-      <view class="size-container">
-        <view class="title">Size</view>
-        <view class="size-list">
-          <view class="size-wrap" :class="{ 'active-size': activeSize === item.id }" @click="onActiveSize(item)" v-for="item in detail.sizeList" :key="item.id">
-            <view class="size">{{ item.name }}</view>
-          </view>
-        </view>
-      </view>
+      <sizeListWrap :list="detail.sizeList" v-model:active="activeSize" />
+
+      <GapWrap :size="gapSize" />
 
       <!--定制-->
       <view class="customization-container">
@@ -90,6 +83,8 @@
         <view class="look-effect" @click="onLookEffect">View the effect</view>
       </view>
 
+      <GapWrap :size="gapSize" />
+
       <!--商品详情信息-->
       <view class="goods-info-container">
         <view class="chunk-wrap">
@@ -105,6 +100,8 @@
           <VanImage :src="detail.logistics" height="200px"></VanImage>
         </view>
       </view>
+
+      <GapWrap :size="gapSize" />
 
       <!--评论-->
       <view class="comment-container">
@@ -156,6 +153,8 @@
         <view class="see-more" @click="onMoreComment">See more reviews ></view>
       </view>
 
+      <GapWrap :size="gapSize" />
+
       <!--商品列表-->
       <view class="goods-list-container" v-if="detail.goodsList.length">
         <view class="title">Matching</view>
@@ -182,11 +181,17 @@
 </template>
 
 <script setup>
-import { Icon, Field, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview } from 'vant';
+import { Icon, Field, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview, Space } from 'vant';
+import GapWrap from '../gapWrap/gapWrap.vue';
 import GoodsList from '../goodsList/goodsList.vue';
 import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
+import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
+import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
 import { ref } from 'vue';
 import { randomTool } from '@/utils/commom';
+import { useSystemInfo } from '@/hooks/useSystemInfo';
+useSystemInfo();
+const gapSize = '18px';
 
 // 返回上一页
 function onGoBack() {
@@ -221,6 +226,8 @@ function onCart() {
 const selectProductDetailPop = ref(null);
 function onAddToCart() {
   selectProductDetailPop.value.open({
+    sizeList: detail.value.sizeList,
+    activeSize: activeSize.value,
     colorStyleList: detail.value.styleList,
     activeStyleColor: activeStyle.value,
   });
@@ -303,9 +310,6 @@ const onSwipe = (index) => {
 
 // 切换颜色/样式
 const activeStyle = ref(detail.value.styleList[0].id);
-function onActiveStyle(item) {
-  activeStyle.value = item.id;
-}
 
 // 激活的尺码
 const activeSize = ref(detail.value.sizeList[0].id);
@@ -371,6 +375,9 @@ $tabbarHeight: 50px;
     height: $tabbarHeight;
     padding: 10px;
     justify-content: space-between;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
 
     .customer {
       width: 48px;
@@ -418,13 +425,14 @@ $tabbarHeight: 50px;
 .product-detail-container {
   height: calc(100vh - $tabbarHeight);
   overflow: auto;
+  padding: 0 10px;
 
   // 列表图
   .preview-list {
     display: flex;
-    padding: 7px 10px;
+    padding: 3px 0 10px 0;
     overflow: auto;
-    //justify-content: center;
+
     .image-wrap {
       min-width: 65px;
       height: 65px;
@@ -450,14 +458,10 @@ $tabbarHeight: 50px;
 
   // 价格 & 预览 & 标题
   .info-container {
-    margin-top: 18px;
-
     .price-preview-wrap {
       display: flex;
       justify-content: space-between;
       font-size: 13px;
-      padding: 0 10px;
-      margin: 5px 0;
 
       .price-wrap {
         display: flex;
@@ -488,92 +492,16 @@ $tabbarHeight: 50px;
     }
 
     .title {
-      padding: 0 10px;
+      margin-top: 7px;
       font-size: 14px;
       line-height: 1.4;
     }
   }
 
-  // 样式/颜色
-  .color-style-container {
-    margin-top: 17px;
-    display: flex;
-    flex-direction: column;
-    padding: 0 10px;
-
-    .title {
-      font-weight: bold;
-      font-size: 14px;
-    }
-    .active-title {
-      color: var(--primary-color);
-    }
-
-    .style-list-wrap {
-      display: flex;
-      overflow: auto;
-      padding: 5px 0 9px 0;
-      .style-wrap {
-        min-width: 60px;
-        height: 60px;
-        border: 2px solid #bbb;
-        margin-right: 6px;
-        padding: 2px;
-        border-radius: 1px;
-        .style {
-          width: 100%;
-          height: 100%;
-        }
-      }
-    }
-
-    .active-border {
-      border-color: var(--primary-color) !important;
-    }
-  }
-
-  // 尺码
-  .size-container {
-    margin-top: 17px;
-    display: flex;
-    flex-direction: column;
-    padding: 0 10px;
-    .title {
-      font-weight: bold;
-      font-size: 14px;
-    }
-    .size-list {
-      display: flex;
-      padding: 5px 0 9px 0;
-      flex-wrap: wrap;
-      //overflow: auto;
-
-      .size-wrap {
-        padding: 2px 10px;
-        height: 36px;
-        border: 1px solid #bbb;
-        border-radius: 1px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 13px;
-        margin-right: 6px;
-        margin-bottom: 6px;
-        .size {
-        }
-      }
-      .active-size {
-        border-color: var(--primary-color);
-      }
-    }
-  }
-
   // 定制
   .customization-container {
-    margin-top: 17px;
     display: flex;
     flex-direction: column;
-    padding: 0 10px;
 
     .title {
       font-weight: bold;
@@ -610,16 +538,14 @@ $tabbarHeight: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 11px auto;
+      margin: 11px auto 0 auto;
     }
   }
 
   // 商品信息
   .goods-info-container {
-    margin-top: 17px;
     display: flex;
     flex-direction: column;
-    padding: 0 10px;
 
     .chunk-wrap {
       margin-bottom: 6px;
@@ -636,10 +562,8 @@ $tabbarHeight: 50px;
 
   // 评论
   .comment-container {
-    margin-top: 17px;
     display: flex;
     flex-direction: column;
-    padding: 0 10px;
     margin-bottom: 17px;
 
     //  头部
@@ -735,7 +659,7 @@ $tabbarHeight: 50px;
       justify-content: center;
       align-items: center;
       font-size: 14px;
-      margin-top: 10px;
+      margin-top: 5px;
       font-weight: 600;
     }
   }
@@ -744,7 +668,6 @@ $tabbarHeight: 50px;
   .goods-list-container {
     display: flex;
     flex-direction: column;
-    padding: 0 10px;
     .title {
       font-weight: bold;
       font-size: 16px;
