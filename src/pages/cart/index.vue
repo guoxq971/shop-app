@@ -1,5 +1,5 @@
 <template>
-  <view class="container van-safe-area-bottom">
+  <view class="container">
     <statusBar></statusBar>
     <!--    导航栏-->
     <NavBar shape fixed>

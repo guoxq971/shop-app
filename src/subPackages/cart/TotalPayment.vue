@@ -1,15 +1,17 @@
 <template>
   <view class="footer">
-    <view>
-      <Checkbox v-if="isCheckBox" shape="round" v-model="checkAll" @change="changeAll">Choose All</Checkbox>
-    </view>
-
-    <view class="footer-right">
-      <view class="footer-total" v-if="price">
-        <view>Total: ${{ price }}</view>
-        <view>{{ label }}</view>
+    <view class="footer-box">
+      <view>
+        <Checkbox v-if="isCheckBox" shape="round" v-model="checkAll" @change="changeAll">Choose All</Checkbox>
       </view>
-      <Button @click="checkAddress">Checkout</Button>
+
+      <view class="footer-right">
+        <view class="footer-total" v-if="price">
+          <view>Total: ${{ price }}</view>
+          <view>{{ label }}</view>
+        </view>
+        <Button @click="checkAddress">Checkout</Button>
+      </view>
     </view>
   </view>
 </template>
@@ -52,17 +54,26 @@ const changeAll = (value) => {
   align-items: center;
   box-sizing: border-box;
   border-top: 2rpx solid #a1a2a4;
+  height: calc(110rpx + env(safe-area-inset-bottom));
 
-  .footer-right {
+  .footer-box {
+    width: 100%;
+    position: fixed;
     display: flex;
-  }
-
-  .footer-total {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
     justify-content: space-between;
-    margin-right: 10rpx;
+    align-items: center;
+
+    .footer-right {
+      display: flex;
+    }
+
+    .footer-total {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      justify-content: space-between;
+      margin-right: 10rpx;
+    }
   }
 }
 </style>
