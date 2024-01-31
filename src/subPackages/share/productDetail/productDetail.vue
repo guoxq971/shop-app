@@ -9,12 +9,12 @@
       <!--轮播-->
       <Swipe ref="swipeRef">
         <SwipeItem v-for="item in detail.imageList" :key="item.id">
-          <VanImage @click="onPreview(item.url)" style="width: 100%; height: 600rpx" :src="item.url"></VanImage>
+          <VanImage @click="onPreview(item.url)" style="width: 100%; height: 600rpx" :src="$basePathImg + item.url"></VanImage>
         </SwipeItem>
         <template #indicator="{ active, total }">
           <view class="preview-list">
             <view @click="onSwipe(index)" class="image-wrap" :class="{ 'active-image': index === active }" v-for="(item, index) in detail.imageList" :key="item.id">
-              <VanImage :src="item.url"></VanImage>
+              <VanImage :src="$basePathImg + item.url"></VanImage>
             </view>
           </view>
         </template>
@@ -63,22 +63,22 @@
       <GapWrap />
 
       <!--商品详情信息-->
-      <view class="goods-info-container">
+      <view class="goods-info-container" v-if="detail.intro">
         <view class="chunk-wrap">
           <text class="title">商品简介</text>
-          <VanImage :src="detail.intro" height="200px"></VanImage>
+          <view>{{ detail.intro }}</view>
+          <!--          <VanImage :src="detail.intro" height="200px"></VanImage>-->
         </view>
-        <view class="chunk-wrap">
-          <text class="title">库存描述</text>
-          <VanImage :src="detail.stock" height="200px"></VanImage>
-        </view>
-        <view class="chunk-wrap">
-          <text class="title">物流描述</text>
-          <VanImage :src="detail.logistics" height="200px"></VanImage>
-        </view>
+        <!--        <view class="chunk-wrap">-->
+        <!--          <text class="title">库存描述</text>-->
+        <!--          <VanImage :src="detail.stock" height="200px"></VanImage>-->
+        <!--        </view>-->
+        <!--        <view class="chunk-wrap">-->
+        <!--          <text class="title">物流描述</text>-->
+        <!--          <VanImage :src="detail.logistics" height="200px"></VanImage>-->
+        <!--        </view>-->
+        <GapWrap />
       </view>
-
-      <GapWrap />
 
       <!--评论-->
       <view class="comment-container">
@@ -109,7 +109,7 @@
           <view class="item" v-for="item in detail.comment.list" :key="item.id">
             <!--头像 & 名称-->
             <view class="head-wrap">
-              <VanImage class="head-image-wrap" round :src="item.headUrl"></VanImage>
+              <VanImage class="head-image-wrap" round :src="$basePathImg + item.headUrl"></VanImage>
               <view class="name">{{ item.name }}</view>
             </view>
 
@@ -121,13 +121,18 @@
 
             <!--图-->
             <view class="image-wrap">
-              <VanImage @click="onPreview(img.url)" class="image" :src="img.url" v-for="img in item.imageList" :key="img.id"></VanImage>
+              <VanImage @click="onPreview(img.url)" class="image" :src="$basePathImg + img.url" v-for="img in item.imageList" :key="img.id"></VanImage>
             </view>
           </view>
         </view>
 
-        <!--查看更多评论-->
-        <view class="see-more" @click="onMoreComment">See more reviews ></view>
+        <template v-if="detail.comment.list.length">
+          <!--查看更多评论-->
+          <view class="see-more" @click="onMoreComment">See more reviews ></view>
+        </template>
+        <template v-if="detail.comment.list.length === 0">
+          <view class="not-data">not data</view>
+        </template>
       </view>
 
       <GapWrap />
@@ -154,7 +159,9 @@
   </view>
 
   <!--选择产品参数-弹窗-->
-  <SelectProductDetailPop ref="selectProductDetailPop" />
+  <SelectProductDetailPop ref="selectProductDetailPopRef" />
+  <!--购物车-弹窗-->
+  <ShoppingCartPop ref="shoppingCartPopRef" />
 </template>
 
 <script setup>
@@ -162,17 +169,85 @@ import { Icon, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImag
 import GapWrap from '../gapWrap/gapWrap.vue';
 import GoodsListMore from '../goodsList/goodsListMore.vue';
 import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
+import ShoppingCartPop from '../shoppingCartPop/shoppingCartPop.vue';
 import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
 import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
 import CustomizationWrap from '../customizationWrap/customizationWrap.vue';
 import { ref } from 'vue';
 import { randomTool } from '@/utils/commom';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
+import { onLoad } from '@dcloudio/uni-app';
+import { getDetailApi, getListCommentApi, getRelationApi } from '@/api/share/share';
 const { tabBarHeightUnit } = useSystemInfo();
 
 // 返回上一页
 function onGoBack() {
   uni.navigateBack();
+}
+
+const prodId = ref('');
+onLoad((e) => {
+  console.log('onload e 产品详情', e);
+  prodId.value = e.id;
+  getGoodsDetail();
+});
+
+// 获取商品详情
+function getGoodsDetail() {
+  detail.value.comment.list = [];
+  detail.value.goodsList = [];
+  getDetailApi({ prodId: prodId.value }).then((res) => {
+    console.log('商品详情', res);
+    const d = res.data;
+    detail.value.url = d.pic;
+    detail.value.imageList = d.imgList.map((e) => ({ id: randomTool.uuid(), url: e }));
+    detail.value.price = d.price;
+    detail.value.oldPrice = d.oriPrice;
+    detail.value.review = '';
+    detail.value.paid = d.payQuantity;
+    detail.value.title = d.prodName;
+    detail.value.colorList = d.propertiesList.filter((e) => e.propName === 'color').map((e) => ({ id: randomTool.uuid(), name: e.propValue, url: '' }));
+    detail.value.styleList = detail.value.colorList;
+    detail.value.sizeList = d.propertiesList.filter((e) => e.propName === 'size').map((e) => ({ id: randomTool.uuid(), name: e.propValue }));
+    // 简介, 库存, 物流描述
+    detail.value.intro = d.centent;
+    // detail.value.stock = '';
+    // detail.value.logistics = '';
+    detail.value.level = d.starRating;
+    detail.value.comment.count = d.commentQuantity;
+  });
+  getListComment();
+  // getRelation();
+}
+// 获取商品相关评论
+function getListComment(type = 0) {
+  getListCommentApi({ prodId: prodId.value, type: type }).then((res) => {
+    console.log('评论列表', res);
+    detail.value.comment.list = res.data.map((e) => ({
+      detail: e,
+      id: randomTool.uuid(),
+      headUrl: e.userName,
+      name: e.userName,
+      level: e.score,
+      content: e.content,
+      imageList: [],
+    }));
+  });
+}
+// 获取商品相关产品
+function getRelation() {
+  getRelationApi({ prodId: prodId.value }).then((res) => {
+    console.log('相关产品', res);
+    detail.value.goodsList = res.data.map((e) => ({
+      detail: e,
+      id: e.prodId,
+      name: e.prodName,
+      url: e.pic,
+      title: e.prodName,
+      price: e.price,
+      oldPrice: e.oriPrice,
+    }));
+  });
 }
 
 // 预览图
@@ -186,23 +261,25 @@ function onPreview(url) {
 // 定制
 function onCustomer() {
   uni.showToast({
-    title: '定制',
+    title: 'custom',
     icon: 'none',
   });
 }
 
 // 购物车
+const shoppingCartPopRef = ref(null);
 function onCart() {
-  uni.showToast({
-    title: '购物车',
-    icon: 'none',
-  });
+  // uni.showToast({
+  //   title: 'shopping cart',
+  //   icon: 'none',
+  // });
+  shoppingCartPopRef.value.open();
 }
 
 // 加入购物车
-const selectProductDetailPop = ref(null);
+const selectProductDetailPopRef = ref(null);
 function onAddToCart() {
-  selectProductDetailPop.value.open({
+  selectProductDetailPopRef.value.open({
     type: 'cart',
     sizeList: detail.value.sizeList,
     activeSize: activeSize.value,
@@ -214,7 +291,7 @@ function onAddToCart() {
 
 // 立即购买
 function onBuyNow() {
-  selectProductDetailPop.value.open({
+  selectProductDetailPopRef.value.open({
     type: 'buy',
     sizeList: detail.value.sizeList,
     activeSize: activeSize.value,
@@ -225,30 +302,30 @@ function onBuyNow() {
 }
 
 const detail = ref({
-  url: randomTool.image(),
-  imageList: Array.from({ length: 7 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
+  url: '', //randomTool.image(),
+  imageList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
   // 价格
-  price: randomTool.price(),
-  oldPrice: randomTool.price(),
-  // 预览
+  price: '', //randomTool.price(),
+  oldPrice: '', //randomTool.price(),
+  // 预览数量
   review: '2k',
-  // 排行
+  // 付费数量
   paid: '20w',
   // 标题
-  title: randomTool.title(),
+  title: '', //randomTool.title(),
   // 颜色列表
-  colorList: Array.from({ length: 8 }, () => ({ id: randomTool.uuid(), name: randomTool.color() })),
+  colorList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), name: randomTool.color() })),
   // 样式列表
-  styleList: Array.from({ length: 8 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
+  styleList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
   // 尺码列表
   sizeList: [
-    { id: randomTool.uuid(), name: 'XS' },
-    { id: randomTool.uuid(), name: 'S' },
-    { id: randomTool.uuid(), name: 'M' },
-    { id: randomTool.uuid(), name: 'L' },
-    { id: randomTool.uuid(), name: 'XL' },
-    { id: randomTool.uuid(), name: '2XL' },
-    { id: randomTool.uuid(), name: '2XLLLLLLLLLLLLLL' },
+    // { id: randomTool.uuid(), name: 'XS' },
+    // { id: randomTool.uuid(), name: 'S' },
+    // { id: randomTool.uuid(), name: 'M' },
+    // { id: randomTool.uuid(), name: 'L' },
+    // { id: randomTool.uuid(), name: 'XL' },
+    // { id: randomTool.uuid(), name: '2XL' },
+    // { id: randomTool.uuid(), name: '2XLLLLLLLLLLLLLL' },
   ],
   // 定制
   customization: {
@@ -258,19 +335,18 @@ const detail = ref({
     backNumber: '',
   },
   // 简介
-  intro: randomTool.image(),
+  intro: '', //randomTool.image(),
   // 库存
   stock: randomTool.image(),
   // 物流描述
   logistics: randomTool.image(),
   // 等级
-  level: randomTool.num(0, 5),
+  level: 0, //randomTool.num(0, 5),
   // 评论
   comment: {
-    count: 10,
-    list: Array.from({ length: 10 }, () => ({
+    count: 0,
+    list: Array.from({ length: 0 }, () => ({
       id: randomTool.uuid(),
-      type: 'new',
       headUrl: randomTool.image(),
       name: randomTool.word(2),
       level: randomTool.num(0, 5),
@@ -282,7 +358,7 @@ const detail = ref({
     })),
   },
   // 商品列表
-  goodsList: randomTool.goodsList(randomTool.num(0, 10)),
+  goodsList: randomTool.goodsList(0),
 });
 
 // 轮播切换到指定位置
@@ -292,10 +368,10 @@ const onSwipe = (index) => {
 };
 
 // 切换颜色/样式
-const activeStyle = ref(detail.value.styleList[0].id);
+const activeStyle = ref();
 
 // 激活的尺码
-const activeSize = ref(detail.value.sizeList[0].id);
+const activeSize = ref('');
 function onActiveSize(item) {
   activeSize.value = item.id;
 }
@@ -303,7 +379,7 @@ function onActiveSize(item) {
 // 查看定制效果
 function onLookEffect() {
   uni.showToast({
-    title: '查看定制效果',
+    title: 'see custom effect',
     icon: 'none',
   });
 }
@@ -312,18 +388,23 @@ function onLookEffect() {
 const activeComment = ref('all');
 function onCommentCut(type) {
   activeComment.value = type;
+  if (type === 'all') {
+    getListComment(0);
+  } else if (type === 'new') {
+    getListComment(1);
+  }
 }
 // 查看更多评论
 function onMoreComment() {
   uni.showToast({
-    title: '查看更多评论',
+    title: 'see more comment',
     icon: 'none',
   });
 }
 // 添加评论
 function onWriteComment() {
   uni.showToast({
-    title: '添加评论',
+    title: 'add comment',
     icon: 'none',
   });
 }
@@ -354,6 +435,7 @@ $tabbarHeight: v-bind(tabBarHeightUnit);
   // 底部
   .tabbar-wrap {
     display: flex;
+    background-color: #fff;
     align-items: center;
     height: $tabbarHeight;
     padding: 20rpx;
@@ -600,6 +682,13 @@ $tabbarHeight: v-bind(tabBarHeightUnit);
       font-size: 28rpx;
       margin-top: 10rpx;
       font-weight: 600;
+    }
+    .not-data {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 20rpx;
+      color: #808080;
     }
   }
 
