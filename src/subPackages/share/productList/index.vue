@@ -30,12 +30,12 @@
         <!--条件栏-->
         <view class="condition-wrap">
           <!--畅销-->
-          <view class="item active-item">
+          <view class="item">
             <text>Best Selling</text>
             <Icon name="bar-chart-o" />
           </view>
           <!--价格-->
-          <view class="item">
+          <view class="item active-item" @click="onSortGetGoodsList">
             <text>Price</text>
             <Icon name="filter-o" />
           </view>
@@ -47,7 +47,7 @@
         </view>
 
         <!--列表-->
-        <goodsListMore v-model:list="productList" />
+        <goodsListMore v-model:list="productList" :getList="getGoodsList" v-model:param="param" />
       </view>
     </view>
   </view>
@@ -58,13 +58,68 @@ import { Icon } from 'vant';
 import bmNavbar from '@/subPackages/share/navbar.vue';
 import GoodsList from '../goodsList/goodsList.vue';
 import goodsListMore from '../goodsList/goodsListMore.vue';
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
+import { getGoodsRecommendApi, getGoodsListApi } from '@/api/share/share';
 
 // 返回上一页
 function onBack() {
   uni.navigateBack();
+}
+
+onShow(() => {
+  getRecommendGoodsList();
+  param.value.pageNum = 1;
+  getGoodsList();
+});
+
+// 获取推荐商品列表
+function getRecommendGoodsList() {
+  getGoodsRecommendApi().then((res) => {
+    // console.log('获取推荐商品列表', res);
+    featuredProductList.value = res.data.map((e) => {
+      return {
+        detail: e,
+        id: e.prodId,
+        url: e.imgList.length ? e.imgList[0] : '',
+        title: e.prodName,
+        price: e.price,
+        commentCount: e.commentQuantity,
+        commentLevel: e.starRating,
+      };
+    });
+  });
+}
+
+// 获取商品列表
+function getGoodsList(more = false) {
+  return getGoodsListApi(param.value).then((res) => {
+    // console.log('获取商品列表', res);
+    const l = res.data.records.map((e) => {
+      return {
+        detail: e,
+        id: e.prodId,
+        url: e.pic,
+        title: e.prodName,
+        price: e.price,
+        commentCount: e.commentQuantity,
+        commentLevel: e.starRating,
+      };
+    });
+
+    if (!more) {
+      productList.value = l;
+    }
+
+    return l;
+  });
+}
+//排序获取商品列表
+function onSortGetGoodsList() {
+  param.value.pageNum = 1;
+  param.value.priceSort = param.value.priceSort === '0' ? '1' : '0';
+  getGoodsList();
 }
 
 // 分类
@@ -72,16 +127,26 @@ const categoryName = ref('');
 // 标签
 const tagName = ref('');
 onLoad((e) => {
-  console.log('onload 产品列表 e', e);
+  // console.log('onload 产品列表 e', e);
   categoryName.value = e.categoryName;
   tagName.value = e.tagName;
+  param.value.categoryId = e.categoryId;
 });
 
 // 特色商品
-const featuredProductList = ref(randomTool.goodsList(21));
+const featuredProductList = ref([]);
+// featuredProductList.value = randomTool.goodsList(21);
 
 // 商品列表
-const productList = ref(randomTool.goodsList(21));
+const param = ref({
+  categoryId: '', //分类id
+  priceSort: '0', //价格排序(0-升序 1-降序)
+  notProdId: '', //不包含的商品id
+  pageNum: 1, //页码
+  pageSize: 20, //每页数量
+});
+const productList = ref([]);
+// productList.value = randomTool.goodsList(21);
 </script>
 
 <style scoped lang="scss">

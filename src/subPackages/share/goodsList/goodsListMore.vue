@@ -4,11 +4,13 @@
     <GoodsList :list="list" type="col" />
 
     <!--更多-->
-    <view class="more" v-if="isMore">
+    <view class="more" v-if="isMore && list.length > 0">
       <view @click="onMore" class="more-btn">
         <text class="text">LOAD MORE PRODUCTS</text>
       </view>
     </view>
+    <!--暂无数据-->
+    <view class="not-data" v-if="list.length === 0">athere is no data</view>
   </view>
 </template>
 
@@ -16,26 +18,34 @@
 import GoodsList from '@/subPackages/share/goodsList/goodsList.vue';
 import { ref } from 'vue';
 import { randomTool } from '@/utils/commom';
-import { useVModel } from '@vueuse/core';
+import { useVModels } from '@vueuse/core';
 
-const emit = defineEmits(['update:list']);
+const emit = defineEmits(['update:list', 'update:param']);
 const props = defineProps({
   list: { type: Array, default: () => [] },
+  param: { type: Object, default: () => ({ pageNum: 1, pageSize: 10 }) },
+  getList: { type: Function, default: () => {} },
 });
-const list = useVModel(props, 'list', emit);
+const { list, param } = useVModels(props, emit);
 
 // 加载更多
 const isMore = ref(true);
-function onMore() {
-  if (list.value.length >= 30) {
-    uni.showToast({
-      title: '没有更多了',
-      icon: 'none',
-    });
-    isMore.value = false;
-    return;
+async function onMore() {
+  if (isMore.value) {
+    param.value.pageNum += 1;
+    const l = await props.getList(true);
+
+    if (l.length === 0) {
+      isMore.value = false;
+      uni.showToast({
+        title: 'No more data',
+        icon: 'none',
+      });
+      return;
+    }
+
+    list.value = [...list.value, ...l];
   }
-  list.value = [...list.value, ...randomTool.goodsList(10)];
 }
 </script>
 
@@ -52,16 +62,24 @@ function onMore() {
     justify-content: center;
     .more-btn {
       border: 2rpx solid #4d4d4d;
-      padding: 26rpx 64rpx;
+      padding: 20rpx 60rpx;
       font-size: 26rpx;
       .text {
-        transform: scale(1, 1.7);
+        transform: scale(1, 1.6);
         transform-origin: 0 12rpx;
         display: inline-block;
         width: fit-content;
         height: fit-content;
       }
     }
+  }
+
+  .not-data {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    color: #808080;
   }
 }
 </style>

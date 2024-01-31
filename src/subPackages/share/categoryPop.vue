@@ -45,16 +45,15 @@ async function getCategoryList() {
     loading.value = true;
     // 获取一级分类
     const oneRes = await getCategoryListApi({ categoryType: 0 });
-    list.value = [];
     // console.log('获取一级分类', oneRes.data);
-    for (let item of oneRes.data) {
-      list.value.push({
-        ...item,
-        label: item.categoryName,
-        id: item.categoryId,
+    list.value = oneRes.data.map((e) => {
+      return {
+        detail: e,
+        id: e.categoryId,
+        label: e.categoryName,
         list: [],
-      });
-    }
+      };
+    });
 
     // 获取二级分类
     const twoRes = await getCategoryListSecondApi({ categoryType: 0 });
@@ -63,7 +62,7 @@ async function getCategoryList() {
       const d = list.value.find((e) => e.id === item.parentId);
       if (!d) continue;
       d.list.push({
-        ...item,
+        detail: item,
         id: item.categoryId,
         name: item.categoryName,
         url: item.pic,
@@ -164,7 +163,10 @@ const list = ref([
   overflow: auto;
 
   .item-wrap {
-    border-bottom: 2rpx solid #cfcfcf;
+    /* 将边框变成 透明 */
+    border-bottom: 2rpx solid transparent;
+    /* 从上到下 蓝色到绿色  然后将蓝色变成透明色*/
+    border-image: linear-gradient(to bottom, transparent 50%, #cfcfcf 50%) 0 0 100% 0;
     padding-bottom: 12rpx;
     margin-top: 24rpx;
 
@@ -190,7 +192,7 @@ const list = ref([
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-bottom: 28rpx;
+        margin-bottom: 20rpx;
 
         .image-wrap {
           width: 100%;
