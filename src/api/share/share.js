@@ -42,3 +42,32 @@ export const getListCommentApi = (data = {}) => {
 export const getRelationApi = (data = {}) => {
   return server(`/getRelation/${data.prodId}`, Method.GET, data);
 };
+
+//获取广告位
+export const getAdvertisingApi = (data = {}) => {
+  const obj = Object.assign(
+    {
+      shopId: '',
+      sort: '',
+    },
+    data,
+  );
+  return server(`/p/indexImg/getAdvertising`, Method.GET, obj);
+};
+
+//获取分组信息(热卖)
+export const getProdListByTagIdApi = (data = {}) => {
+  const obj = Object.assign(
+    {
+      tagId: 2, //2-热卖
+      size: 6,
+    },
+    data,
+  );
+  return server(`/prod/prodListByTagId`, Method.GET, obj);
+};
+
+//获取网站管理内容
+export const getConfigurationApi = (data = {}) => {
+  return server(`/p/indexImg/getConfiguration`, Method.GET, data);
+};

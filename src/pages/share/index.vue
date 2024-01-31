@@ -33,9 +33,10 @@
           <view class="title-right">VIEW ALL</view>
         </view>
         <view class="list">
+          <view class="not-data" v-if="hotList.length === 0">not data</view>
           <view class="item" v-for="item in hotList" :key="item.id">
             <view class="image-wrap">
-              <VanImage :src="item.url"></VanImage>
+              <VanImage :src="$basePathImg + item.url"></VanImage>
             </view>
             <view class="item-body-wrap">
               <!--当前价格-->
@@ -45,7 +46,7 @@
                 </priceWrap>
               </view>
               <!--原价格-->
-              <view class="line org-price">
+              <view class="line org-price" v-if="item.orgPrice">
                 <priceWrap isDel :value="item.orgPrice" color="#6b6b6b">
                   <template #left>Regular:</template>
                 </priceWrap>
@@ -166,13 +167,33 @@ import bmNavbar from '@/subPackages/share/navbar.vue';
 import priceWrap from '@/subPackages/share/priceWrap.vue';
 import copyrightWrap from '@/subPackages/share/copyrightWrap/copyrightWrap.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
+import { getAdvertisingApi, getProdListByTagIdApi } from '@/api/share/share';
+import { onShow } from '@dcloudio/uni-app';
 const { tabBarHeightUnit } = useSystemInfo();
 
+onShow(() => {
+  getHotList();
+  getAdvertising();
+});
+
+// 广告位 TODO: 404接口
 const advertisedList = ref(
   Array.from({ length: 10 }, () => {
     return { id: uuid(), name: randomWord(), url: randomImage() };
   }),
 );
+function getAdvertising() {
+  getAdvertisingApi().then((res) => {
+    console.log('广告', res);
+    advertisedList.value = res.data.records.map((e) => {
+      return {
+        id: e.id,
+        name: e.name,
+        url: e.pic,
+      };
+    });
+  });
+}
 
 // 分类
 const categoryList = ref([
@@ -192,7 +213,7 @@ const categoryList = ref([
 
 // 热门商品
 const hotList = ref(
-  Array.from({ length: 10 }, () => {
+  Array.from({ length: 0 }, () => {
     const nowPrice = randomTool.price();
     const orgPrice = randomTool.price();
     return {
@@ -206,6 +227,23 @@ const hotList = ref(
     };
   }),
 );
+function getHotList() {
+  getProdListByTagIdApi().then((res) => {
+    // console.log('热门商品', res);
+    hotList.value = res.data.records.map((e) => {
+      return {
+        detail: e,
+        id: e.prodId,
+        name: e.prodName,
+        url: e.pic,
+        nowPrice: e.price,
+        orgPrice: e.oriPrice,
+        diffPrice: (e.price - e.oriPrice || 0).toFixed(2),
+        title: e.prodName,
+      };
+    });
+  });
+}
 
 // 评论
 const commentLevel = ref(5);
@@ -290,6 +328,14 @@ const menuArr = ref([
 .van-image {
   width: 100%;
   height: 100%;
+}
+
+.not-data {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 20rpx;
+  color: #808080;
 }
 .share-layout {
   display: flex;

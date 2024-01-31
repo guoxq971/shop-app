@@ -83,8 +83,18 @@
 import { Collapse, CollapseItem, Field } from 'vant';
 import bmBox from '@/components/bm/box/box.vue';
 import { ref } from 'vue';
+import { getConfigurationApi } from '@/api/share/share';
+import { onShow } from '@dcloudio/uni-app';
+onShow(() => {
+  getCopyright();
+});
 // 版权
 const activeCollapse = ref([]);
+function getCopyright() {
+  getConfigurationApi().then((res) => {
+    console.log('网站管理内容', res);
+  });
+}
 </script>
 
 <style scoped lang="scss">
