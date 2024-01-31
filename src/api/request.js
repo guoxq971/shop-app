@@ -54,7 +54,7 @@ export function server(url, method, params = {}, tkn = false) {
           return resolve();
         }
         // 成功
-        if (res.data.code === '00000') {
+        if (res.data.code === '200') {
           resolve(res.data);
         } else {
           // 失败

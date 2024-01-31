@@ -38,17 +38,20 @@
 
 <script setup>
 import bmNavbar from '@/subPackages/share/navbar.vue';
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 import bmBox from '@/components/bm/box/box.vue';
 import { TreeSelect, Tab, Tabs } from 'vant';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Icon } from 'vant';
 import { randomImage, randomWord, uuid } from '@/utils/commom';
 
 // 选择跳转到这个页面的分类名称
 const name = ref('');
+const id = ref('');
 onLoad((e) => {
   name.value = e.name;
+  id.value = e.id;
+  console.log('onload');
 });
 
 // 返回上一级

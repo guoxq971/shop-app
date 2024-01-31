@@ -203,6 +203,7 @@ function onCart() {
 const selectProductDetailPop = ref(null);
 function onAddToCart() {
   selectProductDetailPop.value.open({
+    type: 'cart',
     sizeList: detail.value.sizeList,
     activeSize: activeSize.value,
     colorStyleList: detail.value.styleList,
@@ -213,9 +214,13 @@ function onAddToCart() {
 
 // 立即购买
 function onBuyNow() {
-  uni.showToast({
-    title: '立即购买',
-    icon: 'none',
+  selectProductDetailPop.value.open({
+    type: 'buy',
+    sizeList: detail.value.sizeList,
+    activeSize: activeSize.value,
+    colorStyleList: detail.value.styleList,
+    activeStyleColor: activeStyle.value,
+    customization: detail.value.customization,
   });
 }
 

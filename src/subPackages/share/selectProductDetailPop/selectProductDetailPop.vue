@@ -33,7 +33,8 @@
       </view>
 
       <view class="tabbar-wrap">
-        <view class="add-to-card">ADD TO CART</view>
+        <view v-if="type === 'card'" class="add-to-card">ADD TO CART</view>
+        <view v-if="type === 'buy'" class="add-to-card">BUY NOW</view>
       </view>
     </view>
   </Popup>
@@ -48,6 +49,7 @@ import GapWrap from '../gapWrap/gapWrap.vue';
 import CustomizationWrap from '@/subPackages/share/customizationWrap/customizationWrap.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
 const { tabBarHeightUnit } = useSystemInfo();
+
 defineExpose({
   open: (param) => {
     // 尺码列表
@@ -58,6 +60,8 @@ defineExpose({
     activeStyleColor.value = param.activeStyleColor;
     // 定制
     customization.value = param.customization;
+    // 类型
+    type.value = param.type;
 
     show.value = true;
   },
@@ -66,6 +70,7 @@ defineExpose({
   },
 });
 const show = ref(false);
+const type = ref('');
 const quantity = ref(1);
 
 const sizeList = ref([]);
