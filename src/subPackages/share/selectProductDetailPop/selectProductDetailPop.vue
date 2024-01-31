@@ -4,7 +4,7 @@
     <view class="select-product-container-bd">
       <view class="select-product-container">
         <!--颜色/风格-->
-        <ColorStyleWrap :list="colorStyleList" v-model:active="activeStyleColor" type="col" />
+        <ColorStyleWrap :list="styleList" v-model:active="activeStyle" type="col" />
 
         <GapWrap />
 
@@ -42,24 +42,27 @@
 
 <script setup>
 import { Popup, Stepper } from 'vant';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
 import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
 import GapWrap from '../gapWrap/gapWrap.vue';
 import CustomizationWrap from '@/subPackages/share/customizationWrap/customizationWrap.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
+import { useCountStore } from '@/store/useCartTotalStore';
 const { tabBarHeightUnit } = useSystemInfo();
-
+const countStore = useCountStore();
 defineExpose({
   open: (param) => {
     // 尺码列表
     sizeList.value = param.sizeList;
     activeSize.value = param.activeSize;
     // color/style
-    colorStyleList.value = param.colorStyleList;
-    activeStyleColor.value = param.activeStyleColor;
+    styleList.value = param.colorStyleList;
+    activeStyle.value = param.activeStyleColor;
+    skuList.value = param.skuList;
     // 定制
     customization.value = param.customization;
+    prodId.value = param.prodId;
     // 类型
     type.value = param.type;
 
@@ -71,13 +74,47 @@ defineExpose({
 });
 const show = ref(false);
 const type = ref('');
+const prodId = ref('');
 const quantity = ref(1);
-
+const skuList = ref([]);
 const sizeList = ref([]);
 const activeSize = ref('');
-
-const colorStyleList = ref([]);
-const activeStyleColor = ref('');
+const styleList = ref([]);
+const activeStyle = ref('');
+watch(activeSize, (val) => {
+  if (val === '') {
+    styleList.value.forEach((e) => {
+      e.disabled = false;
+    });
+    return;
+  }
+  // size.name = 当前选中的尺码
+  const size = sizeList.value.find((e) => e.id === val);
+  if (!size) return;
+  // 如果skuList中存在当前选中的尺码, 则找出当前选中尺码对应的颜色
+  const colorList = skuList.value.filter((e) => e.size === size.name).map((e) => e.color);
+  // styleList中不存在colorList的颜色, 则将其disabled
+  styleList.value.forEach((e) => {
+    e.disabled = !colorList.includes(e.name);
+  });
+});
+watch(activeStyle, (val) => {
+  if (val === '') {
+    sizeList.value.forEach((e) => {
+      e.disabled = false;
+    });
+    return;
+  }
+  // style.name = 当前选中的颜色
+  const style = styleList.value.find((e) => e.id === val);
+  if (!style) return;
+  // 如果skuList中存在当前选中的颜色, 则找出当前选中颜色对应的尺码
+  const c_sizeList = skuList.value.filter((e) => e.color === style.name).map((e) => e.size);
+  // sizeList中不存在sizeList的尺码, 则将其disabled
+  sizeList.value.forEach((e) => {
+    e.disabled = !c_sizeList.includes(e.name);
+  });
+});
 
 const customization = ref({
   frontName: '',
@@ -86,8 +123,22 @@ const customization = ref({
   backNumber: '',
 });
 
-// 添加到购物车 //TODO:cjh 添加购物车的接口需要一个skuId
-function onAddCart() {}
+// 添加到购物车
+function onAddCart() {
+  const size = sizeList.value.find((e) => e.id === activeSize.value);
+  const style = styleList.value.find((e) => e.id === activeStyle.value);
+  const sku = skuList.value.find((e) => e.size === size?.name && e.color === style?.name);
+  // console.log('sku', sku, sku.value);
+  if (!sku) {
+    return;
+  }
+  // TODO:添加购物车报错
+  countStore.addCart({
+    count: quantity.value, // 产品数量
+    prodId: prodId.value, // 产品id
+    skuId: sku.skuId, // skuId
+  });
+}
 // 购买
 function onBuy() {}
 </script>

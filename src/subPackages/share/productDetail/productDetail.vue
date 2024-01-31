@@ -259,6 +259,7 @@ function getGoodsDetail() {
     console.log('styleList', styleList);
     console.log('sizeList', sizeList);
 
+    detail.value.prodId = d.prodId;
     detail.value.url = d.pic;
     detail.value.imageList = d.imgList.map((e) => ({ id: randomTool.uuid(), url: e }));
     detail.value.price = d.price;
@@ -340,11 +341,13 @@ const selectProductDetailPopRef = ref(null);
 function onAddToCart() {
   selectProductDetailPopRef.value.open({
     type: 'cart',
+    prodId: detail.value.prodId,
     sizeList: detail.value.sizeList,
     activeSize: activeSize.value,
     colorStyleList: detail.value.styleList,
     activeStyleColor: activeStyle.value,
     customization: detail.value.customization,
+    skuList: skuList.value,
   });
 }
 
@@ -362,6 +365,7 @@ function onBuyNow() {
 
 const skuList = ref([]);
 const detail = ref({
+  prodId: '',
   url: '', //randomTool.image(),
   imageList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
   // 价格
