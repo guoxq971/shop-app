@@ -3,6 +3,7 @@
   <view class="size-container">
     <view class="title">Size</view>
     <view class="size-list">
+      <view v-if="list.length === 0" class="not-data">not size</view>
       <view class="size-wrap" :class="{ 'active-size': activeSize === item.id }" @click="onActiveSize(item)" v-for="item in list" :key="item.id">
         <view class="size">{{ item.name }}</view>
       </view>
@@ -35,6 +36,13 @@ function onActiveSize(item) {
   display: flex;
   flex-direction: column;
 
+  .not-data {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20rpx;
+    color: #808080;
+  }
   .title {
     font-weight: bold;
     font-size: 28rpx;

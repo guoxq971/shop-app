@@ -48,7 +48,7 @@ const { frontName, frontNumber, backName, backNumber } = useVModels(props, emit)
 // 查看定制效果
 function onLookEffect() {
   uni.showToast({
-    title: '查看定制效果',
+    title: 'view the effect',
     icon: 'none',
   });
 }
@@ -75,7 +75,7 @@ function onLookEffect() {
         white-space: nowrap;
       }
       .ipt {
-        border: 2px solid #a9a9a9;
+        border: 2rpx solid #a9a9a9;
         padding: 12rpx 20rpx 6rpx 20rpx;
         :deep(.van-field__control) {
           font-size: 18px;

@@ -11,12 +11,12 @@
         <!--尺码列表-->
         <SizeListWrap :list="sizeList" v-model:active="activeSize" />
 
-        <GapWrap :size="gapSize"></GapWrap>
+        <GapWrap />
 
         <!--数量-->
-        <view>
-          <view>Quantity</view>
-          <view>
+        <view class="quantity-wrap">
+          <view class="title">Quantity</view>
+          <view class="chunk-wrap">
             <Stepper v-model="quantity"></Stepper>
           </view>
         </view>
@@ -33,7 +33,7 @@
       </view>
 
       <view class="tabbar-wrap">
-        <view v-if="type === 'card'" class="add-to-card">ADD TO CART</view>
+        <view v-if="type === 'cart'" class="add-to-card">ADD TO CART</view>
         <view v-if="type === 'buy'" class="add-to-card">BUY NOW</view>
       </view>
     </view>
@@ -119,6 +119,17 @@ $tabbarHeight: v-bind(tabBarHeightUnit);
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+// 数量
+.quantity-wrap {
+  .title {
+    font-weight: bold;
+    font-size: 28rpx;
+  }
+  .chunk-wrap {
+    padding: 10rpx 0 0 0;
   }
 }
 </style>

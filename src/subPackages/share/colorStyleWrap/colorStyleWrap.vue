@@ -40,6 +40,7 @@ function onActiveStyle(item) {
 // 样式/颜色
 .style-list-wrap-col {
   flex-wrap: wrap;
+  padding-bottom: 0 !important;
   .style-wrap {
     margin-bottom: 12rpx;
   }
@@ -59,7 +60,7 @@ function onActiveStyle(item) {
   .style-list-wrap {
     display: flex;
     overflow: auto;
-    padding: 10rpx 0 0 0;
+    padding: 10rpx 0 20rpx 0;
     .style-wrap {
       min-width: 120rpx;
       height: 120rpx;

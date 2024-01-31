@@ -78,7 +78,7 @@ async function onMore() {
     display: flex;
     justify-content: center;
     width: 100%;
-    padding: 10px;
+    padding: 20rpx;
     color: #808080;
   }
 }
