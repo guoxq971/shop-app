@@ -1,35 +1,35 @@
 <!--地址信息-->
 <template>
   <view class="container">
-    <!--    状态栏-->
-    <view :style="{ height: statusHeight + 'px' }" />
+    <!--    状态栏及导航栏盒子-->
+    <statusBar></statusBar>
     <!--    导航栏-->
     <NavBar title="Confirm the Order" fixed left-text="Back" left-arrow @click-left="onClickLeft" />
     <view class="container-body">
-      <Form>
+      <Form ref="ruleForm" @submit="onSubmit">
         <CellGroup inset class="f-group">
           <view class="group-title">Shipping Address</view>
           <view class="group-row">
             <Field v-model="formData.firstName" class="f-border m-r10" placeholder="First Name*" :rules="[{ required: true, message: 'First Name' }]"></Field>
             <Field v-model="formData.lastName" placeholder="Last Name*" class="f-border" :rules="[{ required: true, message: 'First Name' }]"></Field>
           </view>
-          <Field v-model="formData.lastName" placeholder="Email*" class="f-border" :rules="[{ required: true, message: 'Email' }]"></Field>
-          <Field v-model="formData.lastName" placeholder="Phone*" class="f-border" :rules="[{ required: true, message: 'Phone' }]"></Field>
-          <Field v-model="formData.lastName" placeholder="Address 1*" class="f-border" :rules="[{ required: true, message: 'Address 1' }]"></Field>
-          <Field v-model="formData.lastName" placeholder="Address 2(Apt,Unit,Etc)" class="f-border" :rules="[{ required: true, message: 'Address 2(Apt,Unit,Etc)' }]"></Field>
+          <Field v-model="formData.email" placeholder="Email*" class="f-border" :rules="[{ required: true, message: 'Email' }]"></Field>
+          <Field v-model="formData.phone" placeholder="Phone*" class="f-border" :rules="[{ required: true, message: 'Phone' }]"></Field>
+          <Field v-model="formData.address" placeholder="Address 1*" class="f-border" :rules="[{ required: true, message: 'Address 1' }]"></Field>
+          <Field v-model="formData.addressTwo" placeholder="Address 2(Apt,Unit,Etc)" class="f-border" :rules="[{ required: true, message: 'Address 2(Apt,Unit,Etc)' }]"></Field>
           <Field
-            v-model="formData.region"
+            v-model="formData.countryId"
             is-link
             readonly
             name="picker"
-            @click="showPopup('region')"
+            @click="showPopup('countryId')"
             placeholder="Choose a Country/Region"
             class="f-border"
             :rules="[{ required: true, message: 'Choose a Country/Region' }]"
           ></Field>
-          <Field v-model="formData.lastName" placeholder="Postal Code*" class="f-border" :rules="[{ required: true, message: 'Choose a Country/Region' }]"></Field>
-          <Field v-model="formData.lastName" placeholder="Citity*" class="f-border" :rules="[{ required: true, message: 'Citity' }]"></Field>
-          <Field v-model="formData.lastName" placeholder="State/Province/Territory*" class="f-border" :rules="[{ required: true, message: 'State/Province/Territory' }]"></Field>
+          <Field v-model="formData.postalCode" placeholder="Postal Code*" class="f-border" :rules="[{ required: true, message: 'Choose a Country/Region' }]"></Field>
+          <Field v-model="formData.city" placeholder="Citity*" class="f-border" :rules="[{ required: true, message: 'Citity' }]"></Field>
+          <Field v-model="formData.state" placeholder="State/Province/Territory*" class="f-border" :rules="[{ required: true, message: 'State/Province/Territory' }]"></Field>
         </CellGroup>
         <CellGroup class="f-group" inset>
           <view class="group-service">
@@ -60,18 +60,36 @@
 
 <script setup>
 import { NavBar, Form, Field, CellGroup, Picker, Popup, Cell } from 'vant';
-
+import statusBar from '@/components/statusBar/statusBar.vue';
 import { ref, reactive } from 'vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
+import { infoAddress, addAddress, updateAddress } from '@/api/cart/address';
+
 const { statusHeight, statusHeightUnit } = useSystemInfo();
 import TotalPayment from './TotalPayment.vue';
 
 const formData = reactive({
+  addressId: '', // 地址id
   firstName: '',
   lastName: '',
-  region: '',
-  note: '',
+  email: '',
+  phone: '', // 手机号
+  address: '', // 地址1
+  addressTwo: '', // 地址2
+  countryId: '', // 国家id
+  postalCode: '', //
+  city: '', //
+  state: '',
 });
+// 获取地址信息
+const getAddressInfo = async () => {
+  const res = await infoAddress();
+  if (res.data) {
+    Object.keys(formData).forEach((key) => (formData[key] = res.data[key]));
+  }
+};
+
+getAddressInfo();
 
 let service = reactive({
   price: '',
@@ -80,11 +98,8 @@ let service = reactive({
 });
 
 const regionList = [
-  { text: '杭州', value: 'Hangzhou' },
-  { text: '宁波', value: 'Ningbo' },
-  { text: '温州', value: 'Wenzhou' },
-  { text: '绍兴', value: 'Shaoxing' },
-  { text: '湖州', value: 'Huzhou' },
+  { text: 'America', value: 'us' },
+  { text: 'Canada', value: 'ca' },
 ];
 
 const deliveryList = [
@@ -106,7 +121,7 @@ const pType = ref('');
 const showPopup = (type) => {
   region.value = [];
   pType.value = type;
-  if (type === 'region') {
+  if (type === 'countryId') {
     pTitle.value = 'Country/Region';
     columns.value = regionList;
   } else {
@@ -117,8 +132,8 @@ const showPopup = (type) => {
 };
 
 const onConfirm = (data) => {
-  if (pTitle.value === 'onConfirm') {
-    formData.region = data.selectedOptions[0].text;
+  if (pTitle.value === 'Country/Region') {
+    formData.countryId = data.selectedOptions[0].text;
   } else {
     Object.keys(service).forEach((key) => {
       service[key] = data.selectedOptions[0][key];
@@ -133,10 +148,25 @@ const onClickLeft = () => {
   });
 };
 
+const ruleForm = ref(null);
 const checkOut = () => {
-  uni.navigateTo({
-    url: '/subPackages/cart/CheckOut',
-  });
+  ruleForm.value.submit();
+};
+
+const onSubmit = async () => {
+  let res = '';
+  if (formData.addressId) {
+    res = await updateAddress(formData);
+  } else {
+    const obj = {};
+    Object.keys(formData).forEach((key) => (obj[key] = formData[key]));
+    res = await addAddress(formData);
+  }
+  if (res) {
+    uni.navigateTo({
+      url: '/subPackages/cart/CheckOut',
+    });
+  }
 };
 </script>
 

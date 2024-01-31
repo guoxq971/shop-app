@@ -18,7 +18,7 @@ export const Method = {
  * @returns {promise}
  *
  * */
-export function server(url, method, params, tkn = false) {
+export function server(url, method, params = {}, tkn = false) {
   uni.showLoading({ title: 'loading...' });
   let promise = new Promise((resolve, reject) => {
     // 这里是获取 token

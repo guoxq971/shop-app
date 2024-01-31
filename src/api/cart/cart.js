@@ -22,3 +22,13 @@ export const deleteItem = (data = []) => {
 export const prodCount = () => {
   return server('/p/basket/prodCount', Method.GET, {});
 };
+
+//获取选中购物项总计、选中的商品数量
+export const totalPay = (data = []) => {
+  return server('/p/basket/totalPay', Method.POST, data);
+};
+
+//添加到购物车
+export const addItem = (data = {}) => {
+  return server('/p/basket/addItem', Method.POST, data);
+};
