@@ -27,3 +27,18 @@ export const getGoodsRecommendApi = (data = {}) => {
 export const getGoodsListApi = (data = {}) => {
   return server(`/prod/prod/listCategoryProduct/${data.pageNum}/${data.pageSize}`, Method.POST, data);
 };
+
+//获取商品详情
+export const getDetailApi = (data = {}) => {
+  return server(`/prod/prod/getDetail/${data.prodId}`, Method.GET, data);
+};
+
+//获取商品相关评论 type:类型(0-全部1-最新评论)
+export const getListCommentApi = (data = {}) => {
+  return server(`/prod/prod/listComment/${data.prodId}/${data.type}`, Method.GET, data);
+};
+
+//获取商品相关产品 TODO:wpk还没写
+export const getRelationApi = (data = {}) => {
+  return server(`/getRelation/${data.prodId}`, Method.GET, data);
+};
