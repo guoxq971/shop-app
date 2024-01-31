@@ -1,5 +1,5 @@
 <template>
-  <view class="container">
+  <view class="container van-safe-area-top van-safe-area-bottom">
     <!--    状态栏及导航栏盒子-->
     <statusBar></statusBar>
     <!--    导航栏-->
