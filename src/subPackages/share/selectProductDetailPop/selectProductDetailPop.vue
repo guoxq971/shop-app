@@ -33,8 +33,8 @@
       </view>
 
       <view class="tabbar-wrap">
-        <view v-if="type === 'cart'" class="add-to-card">ADD TO CART</view>
-        <view v-if="type === 'buy'" class="add-to-card">BUY NOW</view>
+        <view v-if="type === 'cart'" class="add-to-card" @click="onAddCart">ADD TO CART</view>
+        <view v-if="type === 'buy'" class="add-to-card" @click="onBuy">BUY NOW</view>
       </view>
     </view>
   </Popup>
@@ -85,6 +85,11 @@ const customization = ref({
   backName: '',
   backNumber: '',
 });
+
+// 添加到购物车 //TODO:cjh 添加购物车的接口需要一个skuId
+function onAddCart() {}
+// 购买
+function onBuy() {}
 </script>
 
 <style scoped lang="scss">

@@ -54,7 +54,7 @@ export function server(url, method, params = {}, tkn = false) {
           return resolve();
         }
         // 成功
-        if (res.data.code === '200') {
+        if (['200', '00000'].includes(res.data.code)) {
           resolve(res.data);
         } else {
           // 失败

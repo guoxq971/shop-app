@@ -269,10 +269,6 @@ function onCustomer() {
 // 购物车
 const shoppingCartPopRef = ref(null);
 function onCart() {
-  // uni.showToast({
-  //   title: 'shopping cart',
-  //   icon: 'none',
-  // });
   shoppingCartPopRef.value.open();
 }
 
