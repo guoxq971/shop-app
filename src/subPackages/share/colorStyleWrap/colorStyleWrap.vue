@@ -12,9 +12,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { Image as VanImage } from 'vant';
-const emit = defineEmits(['select']);
+import { useVModel } from '@vueuse/core';
+const emit = defineEmits(['select', 'update:active']);
 const props = defineProps({
   list: { type: Array, default: () => [] },
   active: { type: String, default: '' },
@@ -23,7 +24,7 @@ const props = defineProps({
 });
 const isCol = computed(() => props.type === 'col');
 
-const activeStyle = ref('');
+const activeStyle = useVModel(props, 'active', emit);
 function onActiveStyle(item) {
   activeStyle.value = item.id;
   emit('select', item);
@@ -39,19 +40,18 @@ function onActiveStyle(item) {
 // 样式/颜色
 .style-list-wrap-col {
   flex-wrap: wrap;
+  padding-bottom: 0 !important;
   .style-wrap {
-    margin-bottom: 6px;
+    margin-bottom: 12rpx;
   }
 }
 .color-style-container {
-  margin-top: 17px;
   display: flex;
   flex-direction: column;
-  padding: 0 10px;
 
   .title {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 28rpx;
   }
   .active-title {
     color: var(--primary-color);
@@ -60,14 +60,14 @@ function onActiveStyle(item) {
   .style-list-wrap {
     display: flex;
     overflow: auto;
-    padding: 5px 0 9px 0;
+    padding: 10rpx 0 20rpx 0;
     .style-wrap {
-      min-width: 60px;
-      height: 60px;
-      border: 2px solid #bbb;
-      padding: 2px;
-      border-radius: 1px;
-      margin-right: 6px;
+      min-width: 120rpx;
+      height: 120rpx;
+      border: 4rpx solid #bbb;
+      padding: 4rpx;
+      border-radius: 2rpx;
+      margin-right: 12rpx;
       .style {
         width: 100%;
         height: 100%;

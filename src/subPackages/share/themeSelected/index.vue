@@ -22,7 +22,7 @@
                   <view class="name">{{ item.name }}</view>
                   <bmBox width="100%">
                     <view class="image-wrap">
-                      <image class="image" :src="item.url"></image>
+                      <VanImage class="image" :src="$basePathImg + item.url"></VanImage>
                     </view>
                   </bmBox>
                 </view>
@@ -38,18 +38,13 @@
 
 <script setup>
 import bmNavbar from '@/subPackages/share/navbar.vue';
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 import bmBox from '@/components/bm/box/box.vue';
 import { TreeSelect, Tab, Tabs } from 'vant';
-import { ref } from 'vue';
-import { Icon } from 'vant';
+import { ref, onMounted } from 'vue';
+import { Icon, Image as VanImage } from 'vant';
 import { randomImage, randomWord, uuid } from '@/utils/commom';
-
-// 选择跳转到这个页面的分类名称
-const name = ref('');
-onLoad((e) => {
-  name.value = e.name;
-});
+import { getCategoryListApi, getCategoryListPartSecondApi, getCategoryListSecondApi } from '@/api/share/share';
 
 // 返回上一级
 function onBack() {
@@ -61,52 +56,107 @@ function onBack() {
   }
 }
 
+// 选择跳转到这个页面的分类名称
+const name = ref('');
+const id = ref('');
+onLoad((e) => {
+  name.value = e.name;
+  id.value = e.id;
+});
+
+onShow(() => {
+  getCategoryList();
+});
+// 获取分类列表
+async function getCategoryList() {
+  // 左侧菜单
+  getCategoryListPartSecondApi({ categoryType: 0, parentId: id.value }).then((leftRes) => {
+    // console.log('左侧菜单', leftRes);
+    items.value = leftRes.data.map((e) => {
+      return {
+        detail: e,
+        id: e.categoryId,
+        url: e.pic,
+        text: e.categoryName,
+      };
+    });
+  });
+
+  // 右侧顶部菜单
+  getCategoryListApi({ categoryType: 1 }).then((rightRes) => {
+    // console.log('右侧顶部菜单', rightRes);
+    tabsList.value = rightRes.data.map((e) => {
+      return {
+        detail: e,
+        label: e.categoryName,
+        value: e.categoryName,
+      };
+    });
+    if (tabsList.value.length) {
+      activeName.value = tabsList.value[0].value;
+    }
+  });
+
+  // 右侧列表
+  getCategoryListSecondApi({ categoryType: 1 }).then((rightListRes) => {
+    // console.log('右侧列表', rightListRes);
+    list.value = rightListRes.data.map((e) => {
+      return {
+        detail: e,
+        id: e.categoryId,
+        name: e.categoryName,
+        url: e.pic,
+      };
+    });
+  });
+}
+
 // 左侧导航
 const activeIndex = ref(0);
 const items = ref([
-  { id: uuid(), url: randomImage(), text: randomWord() },
-  { id: uuid(), url: randomImage(), text: randomWord() },
-  { id: uuid(), url: randomImage(), text: randomWord() },
-  { id: uuid(), url: randomImage(), text: randomWord() },
-  { id: uuid(), url: randomImage(), text: randomWord() },
-  { id: uuid(), url: randomImage(), text: randomWord() },
-  { id: uuid(), url: randomImage(), text: randomWord() },
-  { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
+  // { id: uuid(), url: randomImage(), text: randomWord() },
 ]);
 
 // 右侧选项卡
-const activeName = ref('color');
-const tabsList = [
-  { label: 'Color', value: 'color' },
-  { label: 'Style', value: 'style' },
-  { label: 'Holiday', value: 'holiday' },
-];
+const activeName = ref('');
+const tabsList = ref([
+  // { label: 'Color', value: 'color' },
+  // { label: 'Style', value: 'style' },
+  // { label: 'Holiday', value: 'holiday' },
+]);
 const list = ref([
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
-  { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
+  // { id: uuid(), url: randomImage(), name: randomWord() },
 ]);
 // 选择某个主题
 function onClick(item) {
   uni.navigateTo({
-    url: `/subPackages/share/productList/index?categoryName=${name.value}&tagName=${item.name}`,
+    url: `/subPackages/share/productList/index?categoryName=${name.value}&tagName=${item.name}&categoryId=${item.id}`,
   });
 }
 </script>
@@ -138,7 +188,7 @@ function onClick(item) {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      padding: 28rpx 16px;
+      padding: 28rpx 10px;
 
       .box-wrap {
         width: 31.5%;

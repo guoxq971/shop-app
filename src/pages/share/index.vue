@@ -7,7 +7,7 @@
     <view class="body-wrap">
       <!--广告-->
       <view class="advertised" style="height: 100rpx">
-        <image class="image" :src="advertisedList[0].url" />
+        <VanImage class="image" :src="advertisedList[0].url" />
       </view>
 
       <!--分类-->
@@ -15,7 +15,7 @@
         <view class="title">Shop Your Favorite League</view>
         <view class="list">
           <view class="item-container" v-for="item in categoryList" :key="item.id">
-            <image class="item-head" :src="item.url"></image>
+            <VanImage class="item-head" :src="item.url"></VanImage>
             <view class="item-name">{{ item.name }}</view>
           </view>
         </view>
@@ -23,7 +23,7 @@
 
       <!--广告-->
       <view class="advertised" style="height: 700rpx">
-        <image class="image" :src="advertisedList[1].url" />
+        <VanImage class="image" :src="advertisedList[1].url" />
       </view>
 
       <!--热门商品-->
@@ -33,9 +33,10 @@
           <view class="title-right">VIEW ALL</view>
         </view>
         <view class="list">
+          <view class="not-data" v-if="hotList.length === 0">not data</view>
           <view class="item" v-for="item in hotList" :key="item.id">
             <view class="image-wrap">
-              <image :src="item.url"></image>
+              <VanImage :src="$basePathImg + item.url"></VanImage>
             </view>
             <view class="item-body-wrap">
               <!--当前价格-->
@@ -45,7 +46,7 @@
                 </priceWrap>
               </view>
               <!--原价格-->
-              <view class="line org-price">
+              <view class="line org-price" v-if="item.orgPrice">
                 <priceWrap isDel :value="item.orgPrice" color="#6b6b6b">
                   <template #left>Regular:</template>
                 </priceWrap>
@@ -85,7 +86,7 @@
 
       <!--广告-->
       <view class="advertised" style="height: 250rpx">
-        <image class="image" :src="advertisedList[2].url" />
+        <VanImage class="image" :src="advertisedList[2].url" />
       </view>
 
       <!--分类2-->
@@ -94,7 +95,7 @@
           <view class="scroll-list">
             <view class="scroll-list__line" v-for="(item, index) in menuArr" :key="index">
               <view class="scroll-list__line__item" v-for="(item1, index1) in item" :key="index1" :class="[index1 === item.length - 1 && 'scroll-list__line__item--no-margin-right']">
-                <image class="scroll-list__line__item__image" :src="item1.icon"></image>
+                <VanImage class="scroll-list__line__item__image" :src="item1.icon"></VanImage>
                 <view class="scroll-list__line__item__text">{{ item1.name }}</view>
               </view>
             </view>
@@ -104,37 +105,44 @@
 
       <!--广告-->
       <view class="advertised" style="height: 550rpx">
-        <image class="image" :src="advertisedList[3].url" />
+        <VanImage class="image" :src="advertisedList[3].url" />
       </view>
       <view class="advertised" style="height: 220rpx">
-        <image class="image" :src="advertisedList[4].url" />
+        <VanImage class="image" :src="advertisedList[4].url" />
       </view>
       <view class="advertised" style="height: 220rpx">
-        <image class="image" :src="advertisedList[5].url" />
+        <VanImage class="image" :src="advertisedList[5].url" />
       </view>
       <view class="advertised" style="height: 220rpx">
-        <image class="image" :src="advertisedList[6].url" />
+        <VanImage class="image" :src="advertisedList[6].url" />
       </view>
       <view class="advertised" style="height: 700rpx">
-        <image class="image" :src="advertisedList[7].url" />
+        <VanImage class="image" :src="advertisedList[7].url" />
       </view>
 
       <!--评论-->
       <view class="comment-wrap">
         <view class="comment-title">
-          <view class="title-left">☆☆☆☆☆ 437,466 Reviews</view>
+          <view class="title-left">
+            <Rate class="rate" v-model="commentLevel" :size="14" color="#ffd21e" void-icon="star" void-color="#eee" allow-half :count="5" readonly />
+            <view class="count">{{ commentCount }} Reviews</view>
+          </view>
           <view class="title-right">move</view>
         </view>
         <view class="list">
-          <view class="item" v-for="item in hotList" :key="item.id">
-            <view class="image-wrap">
-              <image :src="item.url"></image>
+          <view class="item" v-for="item in commentList" :key="item.id">
+            <view class="comment-image-wrap">
+              <VanImage :src="item.url"></VanImage>
             </view>
             <view class="item-body-wrap">
-              <view class="line now-price">卖家名</view>
-              <view class="line org-price">时间</view>
-              <view class="line diff-num">评星</view>
-              <view class="line title">描述</view>
+              <view class="line name">{{ item.name }}</view>
+              <view class="line time">{{ item.time }}</view>
+              <view class="line">
+                <Rate class="rate" v-model="item.level" :size="14" color="#ffd21e" void-icon="star" void-color="#eee" allow-half :count="5" readonly />
+              </view>
+              <view class="line title">
+                <TextEllipsis class="title" rows="4" :content="item.content" />
+              </view>
             </view>
           </view>
         </view>
@@ -146,102 +154,46 @@
       </view>
 
       <!--底部 = 注册 & logo & 版权-->
-      <view class="copyright-wrap">
-        <view class="copyright-title">SIGN UP & SAVE</view>
-
-        <!--登陆/注册-->
-        <view class="sign-wrap">
-          <view class="sign-wrap-bd">
-            <view class="xxx">xxxxxxxxxxx</view>
-            <Field class="ipt" type="text" placeholder="Enter your email address..." />
-            <view class="btn-wrap">
-              <VanButton class="btn">SIGN UP</VanButton>
-            </view>
-          </view>
-        </view>
-
-        <!--网站优势-->
-        <view class="advantage">
-          <view class="advantage-bd">
-            <bm-box v-for="item in 4" width="50%">
-              <view class="item-box">
-                <view class="box">网站优势{{ item }}</view>
-              </view>
-            </bm-box>
-          </view>
-        </view>
-
-        <!--logo-->
-        <view class="logo-wrap">
-          <view class="logo">logo</view>
-        </view>
-
-        <!--折叠面板-->
-        <view class="collapse-wrap">
-          <Collapse v-model="activeCollapse">
-            <CollapseItem title="CONTACT & INFO" name="1">
-              <text>CONTACT & INFO</text>
-            </CollapseItem>
-            <CollapseItem title="TERMS & POLICIES" name="2">
-              <text>TERMS & POLICIES</text>
-            </CollapseItem>
-            <CollapseItem title="SAY CONNECTED WITH US" name="3">
-              <text>SAY CONNECTED WITH US</text>
-            </CollapseItem>
-          </Collapse>
-        </view>
-
-        <!--多个链接-->
-        <view class="link-wrap">
-          <view class="link-wrap-bd">
-            <bm-box width="20%" class="link">
-              <view class="link-item">twitter</view>
-            </bm-box>
-            <bm-box width="20%" class="link">
-              <view class="link-item">face</view>
-            </bm-box>
-            <bm-box width="20%" class="link">
-              <view class="link-item">ins</view>
-            </bm-box>
-            <bm-box width="20%" class="link">
-              <view class="link-item">xxx</view>
-            </bm-box>
-            <bm-box width="20%" class="link">
-              <view class="link-item">xxx</view>
-            </bm-box>
-          </view>
-        </view>
-
-        <!--版权-->
-        <view class="copyright-wrap-bottom">
-          <view class="chunk"></view>
-          <view class="text">2023 xxxxxx. All Right Reserved Powered by xxx</view>
-        </view>
-        <view class="copyright-wrap-chunk-wrap">
-          <view class="chunk">paypal</view>
-          <view class="chunk">Klarna</view>
-          <view class="chunk">stripe</view>
-        </view>
-      </view>
+      <copyrightWrap />
     </view>
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { Icon, TextEllipsis, Button as VanButton, Field, Collapse, CollapseItem } from 'vant';
+import { Rate, Icon, TextEllipsis, Image as VanImage } from 'vant';
 import { randomWord, randomImage, uuid, randomTool } from '@/utils/commom';
-import bmBox from '@/components/bm/box/box.vue';
 import bmNavbar from '@/subPackages/share/navbar.vue';
 import priceWrap from '@/subPackages/share/priceWrap.vue';
+import copyrightWrap from '@/subPackages/share/copyrightWrap/copyrightWrap.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
+import { getAdvertisingApi, getProdListByTagIdApi } from '@/api/share/share';
+import { onShow } from '@dcloudio/uni-app';
 const { tabBarHeightUnit } = useSystemInfo();
 
+onShow(() => {
+  getHotList();
+  getAdvertising();
+});
+
+// 广告位 TODO: 404接口
 const advertisedList = ref(
   Array.from({ length: 10 }, () => {
     return { id: uuid(), name: randomWord(), url: randomImage() };
   }),
 );
+function getAdvertising() {
+  getAdvertisingApi().then((res) => {
+    console.log('广告', res);
+    advertisedList.value = res.data.records.map((e) => {
+      return {
+        id: e.id,
+        name: e.name,
+        url: e.pic,
+      };
+    });
+  });
+}
 
 // 分类
 const categoryList = ref([
@@ -261,7 +213,7 @@ const categoryList = ref([
 
 // 热门商品
 const hotList = ref(
-  Array.from({ length: 10 }, () => {
+  Array.from({ length: 0 }, () => {
     const nowPrice = randomTool.price();
     const orgPrice = randomTool.price();
     return {
@@ -272,6 +224,45 @@ const hotList = ref(
       orgPrice: orgPrice,
       diffPrice: (nowPrice - orgPrice).toFixed(2),
       title: randomTool.title(),
+    };
+  }),
+);
+function getHotList() {
+  getProdListByTagIdApi().then((res) => {
+    // console.log('热门商品', res);
+    hotList.value = res.data.records.map((e) => {
+      return {
+        detail: e,
+        id: e.prodId,
+        name: e.prodName,
+        url: e.pic,
+        nowPrice: e.price,
+        orgPrice: e.oriPrice,
+        diffPrice: (e.price - e.oriPrice || 0).toFixed(2),
+        title: e.prodName,
+      };
+    });
+  });
+}
+
+// 评论
+const commentLevel = ref(5);
+const commentCount = ref(randomTool.num(0, 20));
+const commentList = ref(
+  Array.from({ length: commentCount.value }, () => {
+    const nowPrice = randomTool.price();
+    const orgPrice = randomTool.price();
+    return {
+      id: uuid(),
+      name: randomWord(),
+      url: randomImage(),
+      level: randomTool.num(0, 5),
+      content: randomTool.title(30),
+      nowPrice: nowPrice,
+      orgPrice: orgPrice,
+      diffPrice: (nowPrice - orgPrice).toFixed(2),
+      title: randomTool.title(),
+      time: randomTool.time(),
     };
   }),
 );
@@ -331,14 +322,21 @@ const menuArr = ref([
     },
   ],
 ]);
-
-// 版权
-const activeCollapse = ref([]);
 </script>
 
 <style lang="scss">
-$searchPaddingLeftRight: 18rpx;
+.van-image {
+  width: 100%;
+  height: 100%;
+}
 
+.not-data {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 20rpx;
+  color: #808080;
+}
 .share-layout {
   display: flex;
   flex-direction: column;
@@ -348,6 +346,7 @@ $searchPaddingLeftRight: 18rpx;
   .body-wrap {
     flex: 1;
     overflow: auto;
+    padding: 0 18rpx;
 
     // 广告
     .advertised {
@@ -366,7 +365,7 @@ $searchPaddingLeftRight: 18rpx;
 
     // 分类
     .category-wrap {
-      padding: 0 54rpx;
+      padding: 0 36rpx;
 
       .title {
         margin: 18rpx 0;
@@ -393,6 +392,7 @@ $searchPaddingLeftRight: 18rpx;
           .item-head {
             box-shadow: rgba(0, 0, 0, 0.1) 0rpx 8rpx 24rpx;
             border-radius: 50%;
+            overflow: hidden;
             width: 130rpx;
             height: 130rpx;
           }
@@ -407,7 +407,7 @@ $searchPaddingLeftRight: 18rpx;
 
     // 热门商品
     .hot-commodity-wrap {
-      padding: 10rpx $searchPaddingLeftRight;
+      padding: 10rpx 0;
 
       .hot-title {
         display: flex;
@@ -509,7 +509,7 @@ $searchPaddingLeftRight: 18rpx;
     // 分类2
     .category-wrap2 {
       margin-top: 40rpx;
-      padding: 0 30rpx;
+      padding: 0 12rpx;
       .scroll-list {
         display: flex;
         flex-direction: column;
@@ -526,6 +526,7 @@ $searchPaddingLeftRight: 18rpx;
               width: 200rpx;
               height: 200rpx;
               border-radius: 50%;
+              overflow: hidden;
               border: 2rpx solid #f2f2f2;
             }
             .scroll-list__line__item__text {
@@ -541,14 +542,20 @@ $searchPaddingLeftRight: 18rpx;
 
     // 评论
     .comment-wrap {
-      padding: 10rpx $searchPaddingLeftRight;
+      padding: 10rpx 0;
 
       .comment-title {
         display: flex;
         justify-content: space-between;
-        padding: 24rpx 0;
+        align-items: center;
+        padding: 24rpx 0 0 0;
         margin-bottom: 10rpx;
         .title-left {
+          display: flex;
+          align-items: center;
+          .count {
+            margin-left: 20rpx;
+          }
         }
         .title-right {
           font-weight: bold;
@@ -569,13 +576,10 @@ $searchPaddingLeftRight: 18rpx;
           margin-bottom: 20rpx;
           border: 2rpx solid #e8e8e8;
 
-          .image-wrap {
+          .comment-image-wrap {
             margin-bottom: 18rpx;
             width: 100%;
             height: 450rpx;
-            //border: 2rpx solid #f2f2f2;
-            border-radius: 8rpx;
-            overflow: hidden;
             image {
               width: 100%;
               height: 100%;
@@ -585,24 +589,27 @@ $searchPaddingLeftRight: 18rpx;
           .item-body-wrap {
             padding: 3px 8px 9px 8px;
             .line {
-              height: 44rpx;
               font-size: 20rpx;
               display: flex;
-              justify-content: center;
               align-items: center;
-              background-color: #f2f2f2;
+              margin-bottom: 10rpx;
+              &:last-child {
+                margin-bottom: 0;
+              }
             }
-            .now-price {
-              margin-bottom: 6rpx;
+            .name {
+              font-size: 16px;
+              font-weight: 600;
             }
-            .org-price {
-              margin-bottom: 6rpx;
-            }
-            .diff-num {
+            .time {
+              font-size: 12px;
+              color: #6f6f6f;
+              letter-spacing: 0.6px;
             }
             .title {
-              margin-top: 18rpx;
-              height: 90rpx;
+              width: 100%;
+              font-size: 14px;
+              letter-spacing: 0.4px;
             }
           }
         }
@@ -616,149 +623,6 @@ $searchPaddingLeftRight: 18rpx;
         .more-btn {
           border: 2rpx solid #4d4d4d;
           padding: 14rpx 32rpx;
-        }
-      }
-    }
-
-    // 版权
-    .copyright-wrap {
-      border-top: 2rpx solid #bbb;
-
-      .copyright-title {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 88rpx;
-        font-weight: bold;
-      }
-
-      // 登录/注册
-      .sign-wrap {
-        border-bottom: 2rpx solid #bbb;
-        padding: 20rpx 0 32rpx 0;
-        .sign-wrap-bd {
-          padding: 0 $searchPaddingLeftRight;
-
-          .xxx {
-            color: #888;
-            margin-bottom: 12rpx;
-          }
-          .ipt {
-            margin-bottom: 12rpx;
-          }
-          .btn-wrap {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            .btn {
-              width: 100%;
-            }
-          }
-        }
-      }
-
-      // 网站优势
-      .advantage {
-        border-bottom: 2rpx solid #bbb;
-        padding: 20rpx 0 32rpx 0;
-        .advantage-bd {
-          display: flex;
-          flex-wrap: wrap;
-          padding: 0 40rpx;
-          .item-box {
-            padding: 8rpx;
-            width: 100%;
-            height: 100%;
-            .box {
-              width: 100%;
-              height: 100%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              border: 2rpx solid #bbb;
-            }
-          }
-        }
-      }
-
-      // logo
-      .logo-wrap {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 47px;
-        margin-top: 10px;
-        .logo {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border: 1px solid #bbb;
-          width: 45%;
-          height: 37px;
-        }
-      }
-
-      // 折叠面板
-      .collapse-wrap {
-        padding: 0 20rpx;
-        margin-top: 30rpx;
-      }
-
-      // 多个链接
-      .link-wrap {
-        margin-top: 60rpx;
-        padding: 0 40rpx;
-        .link-wrap-bd {
-          gap: 20rpx;
-          display: flex;
-          justify-content: center;
-          border-bottom: 2rpx solid #bbb;
-          padding: 0 66rpx 54rpx 66rpx;
-        }
-        .link-item {
-          width: 100%;
-          height: 100%;
-          font-size: 26rpx;
-          border-radius: 6rpx;
-          border: 2rpx solid #bbb;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-
-      // 版权
-      .copyright-wrap-bottom {
-        display: flex;
-        justify-content: center;
-        margin-top: 30rpx;
-        padding: 30rpx 0;
-        .chunk {
-          width: 36rpx;
-          height: 36rpx;
-          background: #bbb;
-        }
-        .text {
-          font-size: 24rpx;
-          font-weight: bold;
-          margin-left: 14rpx;
-          display: flex;
-          align-items: center;
-        }
-      }
-      .copyright-wrap-chunk-wrap {
-        display: flex;
-        justify-content: center;
-        gap: 20rpx;
-        margin-bottom: 26rpx;
-        .chunk {
-          background: #f2f2f2;
-          width: 188rpx;
-          height: 60rpx;
-          border-radius: 6px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
         }
       }
     }

@@ -107,10 +107,20 @@ export function randomColor() {
  * @returns {number}
  */
 export function randomInt(min, max) {
-    // 使用 Math.floor() 将浮点数向下取整为整数
-    return Math.floor(Math.random() * (max - min) + min);
+  // 使用 Math.floor() 将浮点数向下取整为整数
+  return Math.floor(Math.random() * (max - min) + min);
 }
 
+/**
+ * 随机时间
+ * @returns {string}
+ */
+export function randomTime() {
+  const start = new Date(2012, 0, 1);
+  const end = new Date();
+  const timestamp = randomInt(+start, +end);
+  return new Date(timestamp).toLocaleDateString();
+}
 
 export const randomTool = {
   uuid,
@@ -121,4 +131,5 @@ export const randomTool = {
   num: randomNumber,
   goodsList: createGoodsList,
   color: randomColor,
+  time: randomTime,
 };

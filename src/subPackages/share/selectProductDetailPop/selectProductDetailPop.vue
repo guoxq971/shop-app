@@ -1,30 +1,140 @@
 <!--选择产品信息-->
 <template>
-  <Popup v-model:show="show" position="bottom" :style="{ height: '80%' }">
-    <view>
-      <ColorStyleWrap :list="colorStyleList" :active="activeStyleColor" type="col" />
+  <Popup v-model:show="show" position="bottom" :style="{ height: '85%' }">
+    <view class="select-product-container-bd">
+      <view class="select-product-container">
+        <!--颜色/风格-->
+        <ColorStyleWrap :list="colorStyleList" v-model:active="activeStyleColor" type="col" />
+
+        <GapWrap />
+
+        <!--尺码列表-->
+        <SizeListWrap :list="sizeList" v-model:active="activeSize" />
+
+        <GapWrap />
+
+        <!--数量-->
+        <view class="quantity-wrap">
+          <view class="title">Quantity</view>
+          <view class="chunk-wrap">
+            <Stepper v-model="quantity"></Stepper>
+          </view>
+        </view>
+
+        <GapWrap />
+
+        <!--定制-->
+        <CustomizationWrap
+          v-model:front-name="customization.frontName"
+          v-model:front-number="customization.frontNumber"
+          v-model:back-name="customization.backName"
+          v-model:back-number="customization.backNumber"
+        />
+      </view>
+
+      <view class="tabbar-wrap">
+        <view v-if="type === 'cart'" class="add-to-card" @click="onAddCart">ADD TO CART</view>
+        <view v-if="type === 'buy'" class="add-to-card" @click="onBuy">BUY NOW</view>
+      </view>
     </view>
   </Popup>
 </template>
 
 <script setup>
-import { Popup } from 'vant';
+import { Popup, Stepper } from 'vant';
 import { ref } from 'vue';
 import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
+import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
+import GapWrap from '../gapWrap/gapWrap.vue';
+import CustomizationWrap from '@/subPackages/share/customizationWrap/customizationWrap.vue';
+import { useSystemInfo } from '@/hooks/useSystemInfo';
+const { tabBarHeightUnit } = useSystemInfo();
+
 defineExpose({
   open: (param) => {
+    // 尺码列表
+    sizeList.value = param.sizeList;
+    activeSize.value = param.activeSize;
+    // color/style
     colorStyleList.value = param.colorStyleList;
     activeStyleColor.value = param.activeStyleColor;
+    // 定制
+    customization.value = param.customization;
+    // 类型
+    type.value = param.type;
+
     show.value = true;
   },
   close: () => {
     show.value = false;
   },
 });
-
 const show = ref(false);
+const type = ref('');
+const quantity = ref(1);
+
+const sizeList = ref([]);
+const activeSize = ref('');
+
 const colorStyleList = ref([]);
 const activeStyleColor = ref('');
+
+const customization = ref({
+  frontName: '',
+  frontNumber: '',
+  backName: '',
+  backNumber: '',
+});
+
+// 添加到购物车 //TODO:cjh 添加购物车的接口需要一个skuId
+function onAddCart() {}
+// 购买
+function onBuy() {}
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+$tabbarHeight: v-bind(tabBarHeightUnit);
+.select-product-container-bd {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.select-product-container {
+  padding: 20rpx 20rpx;
+  height: calc(100% - $tabbarHeight);
+  overflow: auto;
+}
+.tabbar-wrap {
+  display: flex;
+  align-items: center;
+  height: $tabbarHeight;
+  padding: 20rpx;
+  justify-content: center;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  background: #fff;
+  border-top: 2rpx solid #bbb;
+  .add-to-card {
+    width: 80%;
+    height: 80rpx;
+    border: 2rpx solid;
+    font-size: 28rpx;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// 数量
+.quantity-wrap {
+  .title {
+    font-weight: bold;
+    font-size: 28rpx;
+  }
+  .chunk-wrap {
+    padding: 10rpx 0 0 0;
+  }
+}
+</style>

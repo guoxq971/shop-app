@@ -6,7 +6,7 @@
       <bmBox :width="imageWidth">
         <view class="image-wrap">
           <view class="hot">SHIPS FREE</view>
-          <image :src="item.url"></image>
+          <VanImage :src="$basePathImg + item.url"></VanImage>
         </view>
       </bmBox>
 
@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { Rate, TextEllipsis } from 'vant';
+import { Rate, TextEllipsis, Image as VanImage } from 'vant';
 import bmBox from '@/components/bm/box/box.vue';
 import { computed, ref } from 'vue';
 
@@ -48,6 +48,11 @@ function onDetail(item) {
 </script>
 
 <style scoped lang="scss">
+:deep(.van-image) {
+  width: 100%;
+  height: 100%;
+}
+
 .bm-goods-list-wrap {
   flex-wrap: wrap;
   justify-content: space-between;
@@ -62,6 +67,7 @@ function onDetail(item) {
   display: flex;
   overflow: auto;
   padding-bottom: 20rpx;
+  width: 100%;
 
   $itemWidth: v-bind(width);
   .goods-item {
