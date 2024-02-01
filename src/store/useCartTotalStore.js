@@ -25,6 +25,10 @@ export const useCountStore = defineStore('countStore', () => {
   const delCart = async (item) => {
     const res = await deleteItem([item.basketId]);
     if (res) {
+      const len = checkboxValue.value.findIndex((check) => check === item.basketId);
+      if (len > -1) {
+        checkboxValue.value.splice(len, 1);
+      }
       await getCartList();
     }
   };
@@ -86,6 +90,15 @@ export const useCountStore = defineStore('countStore', () => {
     }
   };
 
+  // 根据勾选的产品的id获取产品列表
+  const getCartListById = () => {
+    let arr = [];
+    if (checkboxValue.value.length > 0) {
+      arr = list.value.filter((item) => checkboxValue.value.includes(item.basketId));
+    }
+    return arr;
+  };
+
   return {
     list,
     cartTotal,
@@ -97,5 +110,6 @@ export const useCountStore = defineStore('countStore', () => {
     cartNum,
     getCartPrice,
     addCart,
+    getCartListById,
   };
 });

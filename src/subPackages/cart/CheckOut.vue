@@ -1,9 +1,9 @@
 <template>
   <view class="container">
-    <!--    状态栏-->
-    <view :style="{ height: statusHeight + 'px' }" />
+    <!--    状态栏及导航栏盒子-->
+    <statusBar></statusBar>
     <!--    导航栏-->
-    <NavBar title="Confirm the Order" left-text="Back" left-arrow @click-left="onClickLeft" />
+    <NavBar title="Confirm the Order" fixed left-text="Back" left-arrow @click-left="onClickLeft" />
     <view class="container-body">
       <view class="body-info">
         <productBox v-for="item in list" :key="item.uuid" :info="item"></productBox>
@@ -19,18 +19,29 @@
 
 <script setup>
 import { NavBar, Button } from 'vant';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import TotalPayment from './TotalPayment.vue';
-import { useSystemInfo } from '@/hooks/useSystemInfo';
 import { randomTool, randomInt } from '@/utils/commom';
 import productBox from './components/productBox.vue';
+import { useOrderExpress } from '@/store/useOrderExpress';
+import { useCountStore } from '@/store/useCartTotalStore';
+import { storeToRefs } from 'pinia';
+import statusBar from '@/components/statusBar/statusBar.vue';
+import { orderInfo, createOrder, paymentOrder } from '@/api/cart/payment';
 
-const { statusHeight } = useSystemInfo();
-
-const checkOut = () => {
-  uni.navigateTo({
-    url: '/subPackages/cart/checkout',
-  });
+const checkOut = async () => {
+  // 创建订单
+  const res = await createOrder({});
+  if (res) {
+    // 支付
+    const pRes = await paymentOrder({});
+    if (pRes) {
+      uni.navigateTo({
+        // url: '/subPackages/cart/paySuccess',
+        url: '/subPackages/cart/payFail',
+      });
+    }
+  }
 };
 
 const payWay = ref('PayPal');
@@ -53,6 +64,25 @@ const list = Array.from({ length: 10 }, () => {
     image: randomTool.image(),
     count: randomInt(1, 20),
   };
+});
+
+const { expressInfo } = storeToRefs(useOrderExpress());
+const { checkboxValue } = storeToRefs(useCountStore());
+console.log('checkboxValue', checkboxValue.value);
+const getOrderInfo = async () => {
+  const obj = {
+    addressId: expressInfo.value.addressId, // 地址id
+    basketIdList: checkboxValue.value, // 地址id
+    remark: expressInfo.value.remark, // 地址id
+    expressId: expressInfo.value.expressId, // 快递id
+    transfeeId: expressInfo.value.transfeeId, // 快递运费id
+  };
+  const res = await orderInfo(obj);
+  console.log('res', res);
+};
+
+onMounted(() => {
+  getOrderInfo();
 });
 </script>
 

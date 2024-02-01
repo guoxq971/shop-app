@@ -34,18 +34,19 @@
         <CellGroup class="f-group" inset>
           <view class="group-service">
             <view class="service-title">Delivery service</view>
-            <Cell :title="service.text" :value="service.price" :label="service.label" center is-link @click="showPopup('delivery')">
-              <template #value>
-                <!--                style="display: flex; align-items: flex-end; justify-content: flex-end; font-size: 36rpx"-->
-                <view v-if="service.price" style="display: flex; align-items: baseline; justify-content: flex-end">
-                  <sub style="font-size: 24rpx; margin-right: 6rpx">$</sub>
-                  <text style="font-weight: 700; font-size: 36rpx">{{ service.price }}</text>
-                </view>
-              </template>
-            </Cell>
+            <view style="flex: 1">
+              <Cell :title="expressInfo.name" :value="expressInfo.expressFee" :label="expressInfo.label" center is-link @click="showPopup('delivery')">
+                <template #value>
+                  <view v-if="expressInfo.expressFee" style="display: flex; align-items: center; justify-content: flex-end">
+                    <Price :price="expressInfo.expressFee" color="#969799"></Price>
+                  </view>
+                </template>
+              </Cell>
+              <view v-if="!expressTip" style="color: #ee0a24; font-size: 24rpx; text-align: left">Delivery service</view>
+            </view>
           </view>
           <view class="service-note">Order note</view>
-          <Field class="f-border" v-model="formData.note" type="textarea" autosize rows="2"></Field>
+          <Field class="f-border" v-model="expressInfo.remark" type="textarea" autosize rows="2"></Field>
         </CellGroup>
       </Form>
     </view>
@@ -53,7 +54,15 @@
   </view>
   <Popup v-model:show="showPicker" round position="bottom">
     <Picker v-model="region" :title="pTitle" @confirm="onConfirm" @click-option="onConfirm" :columns="columns" @cancel="showPicker = false">
-      <template #option="item">{{ item.text }} - {{ item.label }}</template>
+      <template #option="item">
+        <view class="option">
+          <view>
+            <view>{{ item.name }}</view>
+            <view v-if="item.label" class="option-label">({{ item.label }})</view>
+          </view>
+          <Price :price="item.expressFee" color="#969799"></Price>
+        </view>
+      </template>
     </Picker>
   </Popup>
 </template>
@@ -61,13 +70,15 @@
 <script setup>
 import { NavBar, Form, Field, CellGroup, Picker, Popup, Cell } from 'vant';
 import statusBar from '@/components/statusBar/statusBar.vue';
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
-import { infoAddress, addAddress, updateAddress } from '@/api/cart/address';
-
-const { statusHeight, statusHeightUnit } = useSystemInfo();
+import { infoAddress, addAddress, updateAddress, listExpressByProdList } from '@/api/cart/address';
 import TotalPayment from './TotalPayment.vue';
-
+import { useCountStore } from '@/store/useCartTotalStore';
+import Price from '@/components/price/index.vue';
+import { useOrderExpress } from '@/store/useOrderExpress';
+import { storeToRefs } from 'pinia';
+const { statusHeight, statusHeightUnit } = useSystemInfo();
 const formData = reactive({
   addressId: '', // 地址id
   firstName: '',
@@ -86,27 +97,39 @@ const getAddressInfo = async () => {
   const res = await infoAddress();
   if (res.data) {
     Object.keys(formData).forEach((key) => (formData[key] = res.data[key]));
+    if (res.data.addressId) expressInfo.value.addressId = res.data.addressId;
   }
 };
 
-getAddressInfo();
+const { expressInfo } = storeToRefs(useOrderExpress());
 
-let service = reactive({
-  price: '',
-  text: '',
-  label: '',
-});
+const deliveryList = ref([]);
+const store = useCountStore();
+// 根据产品id获取物流信息
+const getExpressList = async () => {
+  const productList = store.getCartListById();
+  const ids = productList.map((item) => item.prodId);
+  const res = await listExpressByProdList(ids);
+  const list = [];
+  if (res) {
+    res?.data.forEach((item) => {
+      list.push({
+        seqId: item.seqId, // 快递主键
+        value: item.seqId,
+        name: item.name, // 快递名称
+        expressFee: item.expressFee, // 快递运费
+        transfeeId: item.transfeeId, // 运费表id
+        label: 'About 10 days',
+      });
+    });
+    deliveryList.value = list;
+  }
+};
 
-const regionList = [
-  { text: 'America', value: 'us' },
-  { text: 'Canada', value: 'ca' },
-];
-
-const deliveryList = [
-  { text: 'USPS', value: '1', label: 'About 10 days', price: '200' },
-  { text: 'DHL', value: '2', label: 'About 20 days', price: '100' },
-  { text: 'PHL', value: '3', label: 'About 15 days', price: '100' },
-];
+const regionList = ref([
+  { name: 'America', value: 'us' },
+  { name: 'Canada', value: 'ca' },
+]);
 
 const columns = ref([]);
 
@@ -123,21 +146,26 @@ const showPopup = (type) => {
   pType.value = type;
   if (type === 'countryId') {
     pTitle.value = 'Country/Region';
-    columns.value = regionList;
+    columns.value = regionList.value;
   } else {
     pTitle.value = 'Delivery service';
-    columns.value = deliveryList;
+    columns.value = deliveryList.value;
+    region.value = expressInfo.seqId ? [expressInfo.seqId] : [];
   }
   showPicker.value = true;
 };
 
+const expressTip = ref(true);
 const onConfirm = (data) => {
   if (pTitle.value === 'Country/Region') {
     formData.countryId = data.selectedOptions[0].text;
   } else {
-    Object.keys(service).forEach((key) => {
-      service[key] = data.selectedOptions[0][key];
+    Object.keys(expressInfo.value).forEach((key) => {
+      if (!['remark'].includes(key)) {
+        expressInfo.value[key] = data.selectedOptions[0][key];
+      }
     });
+    expressTip.value = !!expressInfo.value.seqId;
   }
   showPicker.value = false;
 };
@@ -150,17 +178,22 @@ const onClickLeft = () => {
 
 const ruleForm = ref(null);
 const checkOut = () => {
+  expressTip.value = !!expressInfo.value.seqId;
   ruleForm.value.submit();
 };
 
 const onSubmit = async () => {
   let res = '';
+  if (!expressTip.value) return;
   if (formData.addressId) {
     res = await updateAddress(formData);
   } else {
     const obj = {};
     Object.keys(formData).forEach((key) => (obj[key] = formData[key]));
     res = await addAddress(formData);
+    if (res) {
+      expressInfo.value.addressId = res.data;
+    }
   }
   if (res) {
     uni.navigateTo({
@@ -168,6 +201,13 @@ const onSubmit = async () => {
     });
   }
 };
+onMounted(() => {
+  getAddressInfo();
+  getExpressList();
+  Object.keys(expressInfo.value).forEach((key) => {
+    expressInfo.value[key] = '';
+  });
+});
 </script>
 
 <style scoped lang="scss">
@@ -195,19 +235,19 @@ const onSubmit = async () => {
         font-size: 36rpx;
       }
 
-      .group-row,
-      .group-service {
+      .group-row {
         display: flex;
       }
 
       .group-service {
+        display: flex;
         width: 100%;
         justify-content: space-between;
         align-items: center;
         border-bottom: 2rpx solid #e5e5e5;
 
         .service-title {
-          width: 75%;
+          width: 40%;
         }
       }
       .service-note {
@@ -215,6 +255,18 @@ const onSubmit = async () => {
       }
     }
   }
+}
+
+.option {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 40rpx;
+}
+.option-label {
+  color: #969799;
+  font-size: 28rpx;
 }
 
 :deep(.van-cell-group--inset) {

@@ -17,3 +17,8 @@ export const addAddress = (data) => {
 export const updateAddress = (data) => {
   return server('/p/tiShippingAddress/update', Method.POST, data);
 };
+
+// 获取物流方式(通过产品,包含运费)
+export const listExpressByProdList = (data = []) => {
+  return server('/express/listExpressByProdList', Method.POST, data);
+};
