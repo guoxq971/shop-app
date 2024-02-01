@@ -90,6 +90,17 @@
           }
         }
       ]
+    },
+    {
+     " root": "subPackages/order",
+      "pages": [
+        {
+          "path": "orderListPage",
+          "style": {
+            "navigationBarTitleText": "orderListPage"
+          }
+        }
+      ]
     }
   ],
   "globalStyle": {

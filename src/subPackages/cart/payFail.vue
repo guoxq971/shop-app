@@ -13,7 +13,7 @@
     </view>
     <view class="container-footer">
       <Button type="danger" round size="normal" class="footer-text">Pay Again</Button>
-      <Button type="danger" round size="normal" @click="onClickLeft">Go Home</Button>
+      <Button type="danger" round size="normal" @click="goHome">Go Home</Button>
     </view>
   </view>
 </template>
@@ -23,6 +23,12 @@ import statusBar from '@/components/statusBar/statusBar.vue';
 import { NavBar, Icon, Button } from 'vant';
 
 const onClickLeft = () => {
+  uni.navigateTo({
+    url: '/subPackages/cart/CheckOut',
+  });
+};
+
+const goHome = () => {
   uni.switchTab({
     url: '/pages/share/index',
   });
