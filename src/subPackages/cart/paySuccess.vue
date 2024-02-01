@@ -38,7 +38,7 @@
 
     <view class="container-footer">
       <Button type="primary" round size="normal" class="footer-text">check an order</Button>
-      <Button type="primary" round size="normal" @click="onClickLeft">Go Home</Button>
+      <Button type="primary" round size="normal" @click="goHome">Go Home</Button>
     </view>
   </view>
 </template>
@@ -50,6 +50,12 @@ import { NavBar, Icon, Button } from 'vant';
 const onClickLeft = () => {
   uni.navigateTo({
     url: '/subPackages/cart/CheckOut',
+  });
+};
+
+const goHome = () => {
+  uni.switchTab({
+    url: '/pages/share/index',
   });
 };
 </script>

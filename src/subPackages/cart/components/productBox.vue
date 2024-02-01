@@ -2,22 +2,22 @@
 <template>
   <view class="info-box">
     <!--    <VanImage :src="globalData.prefixImg + info.pic" class="box-image"></VanImage>-->
-    <VanImage :src="info.image" class="box-image" width="200rpx" height="200rpx" radius="8rpx"></VanImage>
+    <VanImage :src="$basePathImg + info.pic" class="box-image" width="200rpx" height="200rpx" radius="8rpx"></VanImage>
     <view class="box-right">
       <view class="right-title">
-        <view class="title-name">{{ info.name }}</view>
+        <view class="title-name">{{ info.productName }}</view>
         <view>
           <slot name="title-right"></slot>
         </view>
       </view>
-      <view class="right-size">Black - XL</view>
+      <view class="right-size">{{ info.productSpec }}</view>
       <view class="right-price">
         <view class="price-num">
           <sub style="margin-right: 4rpx">$</sub>
           <view class="price-num">{{ info.price }}</view>
         </view>
         <view>
-          <slot name="price-right">x {{ info.count }}</slot>
+          <slot name="price-right">x {{ info.basketCount }}</slot>
         </view>
       </view>
     </view>
@@ -32,8 +32,6 @@ defineProps({
     default: () => ({}),
   },
 });
-
-const { globalData } = getApp();
 </script>
 
 <style scoped lang="scss">
@@ -42,6 +40,7 @@ const { globalData } = getApp();
   display: flex;
   background-color: #ffffff;
   margin-bottom: 12rpx;
+  width: 100%;
 
   .box-image {
     width: 200rpx;
@@ -55,6 +54,7 @@ const { globalData } = getApp();
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex: 1;
 
     .right-title {
       display: flex;

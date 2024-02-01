@@ -22,15 +22,22 @@ export const useCountStore = defineStore('countStore', () => {
   };
 
   // 删除购物车
-  const delCart = async (item) => {
-    const res = await deleteItem([item.basketId]);
+  const delCart = async (basketIds) => {
+    const res = await deleteItem(basketIds);
     if (res) {
       const len = checkboxValue.value.findIndex((check) => check === item.basketId);
       if (len > -1) {
         checkboxValue.value.splice(len, 1);
       }
       await getCartList();
+      await getCartPrice();
     }
+  };
+
+  // 清空勾选数据和价格
+  const clearCart = async () => {
+    checkboxValue.value = [];
+    await getCartPrice();
   };
 
   // 修改购物车的数量
@@ -111,5 +118,6 @@ export const useCountStore = defineStore('countStore', () => {
     getCartPrice,
     addCart,
     getCartListById,
+    clearCart,
   };
 });

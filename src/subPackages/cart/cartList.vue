@@ -8,7 +8,7 @@
         </view>
 
         <view class="group-right">
-          <VanImage :src="globalData.prefixImg + item.pic" width="100px" radius="4" height="100px" />
+          <VanImage :src="$basePathImg + item.pic" width="100px" radius="4" height="100px" />
           <view class="group-right-box">
             <view class="m-10 right-box-title">
               <text class="title-text">{{ item.prodName }}</text>
@@ -43,11 +43,10 @@ import { onMounted } from 'vue';
 import { useCountStore } from '@/store/useCartTotalStore';
 
 const store = useCountStore();
-const { globalData } = getApp();
 
 // 删除
 const tapDel = (item) => {
-  store.delCart(item);
+  store.delCart([item.basketId]);
 };
 
 onMounted(() => {

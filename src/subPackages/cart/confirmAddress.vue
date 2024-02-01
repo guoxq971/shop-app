@@ -161,7 +161,7 @@ const onConfirm = (data) => {
     formData.countryId = data.selectedOptions[0].text;
   } else {
     Object.keys(expressInfo.value).forEach((key) => {
-      if (!['remark'].includes(key)) {
+      if (!['remark', 'addressId'].includes(key)) {
         expressInfo.value[key] = data.selectedOptions[0][key];
       }
     });
