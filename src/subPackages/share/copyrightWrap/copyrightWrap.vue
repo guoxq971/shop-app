@@ -33,15 +33,18 @@
     <!--折叠面板-->
     <view class="collapse-wrap">
       <Collapse v-model="activeCollapse">
-        <CollapseItem title="CONTACT & INFO" name="1">
-          <text>CONTACT & INFO</text>
+        <CollapseItem v-for="item in collapseList" :key="item.id" :title="item.title" :name="item.id">
+          <view v-html="item.content"></view>
         </CollapseItem>
-        <CollapseItem title="TERMS & POLICIES" name="2">
-          <text>TERMS & POLICIES</text>
-        </CollapseItem>
-        <CollapseItem title="SAY CONNECTED WITH US" name="3">
-          <text>SAY CONNECTED WITH US</text>
-        </CollapseItem>
+        <!--        <CollapseItem title="CONTACT & INFO" name="1">-->
+        <!--          <text>CONTACT & INFO</text>-->
+        <!--        </CollapseItem>-->
+        <!--        <CollapseItem title="TERMS & POLICIES" name="2">-->
+        <!--          <text>TERMS & POLICIES</text>-->
+        <!--        </CollapseItem>-->
+        <!--        <CollapseItem title="SAY CONNECTED WITH US" name="3">-->
+        <!--          <text>SAY CONNECTED WITH US</text>-->
+        <!--        </CollapseItem>-->
       </Collapse>
     </view>
 
@@ -80,19 +83,39 @@
 </template>
 
 <script setup>
-import { Collapse, CollapseItem, Field } from 'vant';
+import { Collapse, CollapseItem, Field, Button as VanButton } from 'vant';
 import bmBox from '@/components/bm/box/box.vue';
 import { ref } from 'vue';
 import { getConfigurationApi } from '@/api/share/share';
 import { onShow } from '@dcloudio/uni-app';
+import { randomTool } from '@/utils/commom';
 onShow(() => {
   getCopyright();
 });
 // 版权
 const activeCollapse = ref([]);
+
+const collapseList = ref(
+  Array.from({ length: 0 }, () => {
+    return {
+      id: randomTool.uuid(),
+      title: 'title',
+      content: '<h1>content</h1>',
+    };
+  }),
+);
+// 获取折叠面板信息
 function getCopyright() {
   getConfigurationApi().then((res) => {
     console.log('网站管理内容', res);
+    collapseList.value = res.data.map((e) => {
+      return {
+        detail: e,
+        id: randomTool.uuid(),
+        title: e.keyName,
+        content: e.configurationValue,
+      };
+    });
   });
 }
 </script>
