@@ -47,10 +47,10 @@ export const getRelationApi = (data = {}) => {
 export const getAdvertisingApi = (data = {}) => {
   const obj = Object.assign(
     {
-      shopId: '',
-      sort: '',
+      shopId: data.shopId || '',
+      sort: data.sort || '',
     },
-    data,
+    data || {},
   );
   return server(`/p/indexImg/getAdvertising`, Method.GET, obj);
 };
@@ -62,12 +62,18 @@ export const getProdListByTagIdApi = (data = {}) => {
       tagId: 2, //2-热卖
       size: 6,
     },
-    data,
+    data || {},
   );
   return server(`/prod/prodListByTagId`, Method.GET, obj);
 };
 
 //获取网站管理内容
 export const getConfigurationApi = (data = {}) => {
-  return server(`/p/indexImg/getConfiguration`, Method.GET, data);
+  const obj = Object.assign(
+    {
+      shopId: 1,
+    },
+    data || {},
+  );
+  return server(`/p/indexImg/getConfiguration`, Method.GET, obj);
 };

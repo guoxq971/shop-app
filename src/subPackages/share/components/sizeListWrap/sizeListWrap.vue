@@ -4,7 +4,7 @@
     <view class="title">Size</view>
     <view class="size-list">
       <view v-if="list.length === 0" class="not-data">not size</view>
-      <view class="size-wrap" :class="{ 'active-size': activeSize === item.id }" @click="onActiveSize(item)" v-for="item in list" :key="item.id">
+      <view class="size-wrap" :class="{ 'active-size': activeSize === item.id, disabled: item.disabled }" @click="onActiveSize(item)" v-for="item in list" :key="item.id">
         <view class="size">{{ item.name }}</view>
       </view>
     </view>
@@ -26,12 +26,23 @@ const isCol = computed(() => props.type === 'col');
 const activeSize = useVModel(props, 'active', emit);
 
 function onActiveSize(item) {
+  if (item?.disabled) return;
+
+  // 如果相同就取消选中
+  if (activeSize.value === item.id) {
+    activeSize.value = '';
+    return;
+  }
+
   activeSize.value = item.id;
   emit('select', item);
 }
 </script>
 
 <style scoped lang="scss">
+.disabled {
+  filter: blur(0.6px);
+}
 .size-container {
   display: flex;
   flex-direction: column;

@@ -6,9 +6,7 @@
 
     <view class="body-wrap">
       <!--广告-->
-      <view class="advertised" style="height: 100rpx">
-        <VanImage class="image" :src="advertisedList[0].url" />
-      </view>
+      <Advertised height="100rpx" :src="advertisedList[0].url"></Advertised>
 
       <!--分类-->
       <view class="category-wrap">
@@ -22,9 +20,7 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 700rpx">
-        <VanImage class="image" :src="advertisedList[1].url" />
-      </view>
+      <Advertised height="700rpx" :src="advertisedList[1].url"></Advertised>
 
       <!--热门商品-->
       <view class="hot-commodity-wrap">
@@ -85,9 +81,7 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 250rpx">
-        <VanImage class="image" :src="advertisedList[2].url" />
-      </view>
+      <Advertised height="250rpx" :src="advertisedList[2].url"></Advertised>
 
       <!--分类2-->
       <view class="category-wrap2">
@@ -104,21 +98,11 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 550rpx">
-        <VanImage class="image" :src="advertisedList[3].url" />
-      </view>
-      <view class="advertised" style="height: 220rpx">
-        <VanImage class="image" :src="advertisedList[4].url" />
-      </view>
-      <view class="advertised" style="height: 220rpx">
-        <VanImage class="image" :src="advertisedList[5].url" />
-      </view>
-      <view class="advertised" style="height: 220rpx">
-        <VanImage class="image" :src="advertisedList[6].url" />
-      </view>
-      <view class="advertised" style="height: 700rpx">
-        <VanImage class="image" :src="advertisedList[7].url" />
-      </view>
+      <Advertised height="550rpx" :src="advertisedList[3].url"></Advertised>
+      <Advertised height="220rpx" :src="advertisedList[4].url"></Advertised>
+      <Advertised height="220rpx" :src="advertisedList[5].url"></Advertised>
+      <Advertised height="220rpx" :src="advertisedList[6].url"></Advertised>
+      <Advertised height="700rpx" :src="advertisedList[7].url"></Advertised>
 
       <!--评论-->
       <view class="comment-wrap">
@@ -165,35 +149,23 @@ import { Rate, Icon, TextEllipsis, Image as VanImage } from 'vant';
 import { randomWord, randomImage, uuid, randomTool } from '@/utils/commom';
 import bmNavbar from '@/subPackages/share/navbar.vue';
 import priceWrap from '@/subPackages/share/priceWrap.vue';
-import copyrightWrap from '@/subPackages/share/copyrightWrap/copyrightWrap.vue';
+import copyrightWrap from '@/subPackages/share/components/copyrightWrap/copyrightWrap.vue';
+import Advertised from '@/subPackages/share/components/advertised.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
 import { getAdvertisingApi, getProdListByTagIdApi } from '@/api/share/share';
 import { onShow } from '@dcloudio/uni-app';
+import { storeToRefs } from 'pinia';
+import { useAdvertisedStore } from '@/store/useAdvertisedStore';
 const { tabBarHeightUnit } = useSystemInfo();
 
 onShow(() => {
   getHotList();
-  getAdvertising();
+  adStore.getAdvertising();
 });
 
-// 广告位 TODO: 404接口
-const advertisedList = ref(
-  Array.from({ length: 10 }, () => {
-    return { id: uuid(), name: randomWord(), url: randomImage() };
-  }),
-);
-function getAdvertising() {
-  getAdvertisingApi().then((res) => {
-    console.log('广告', res);
-    advertisedList.value = res.data.records.map((e) => {
-      return {
-        id: e.id,
-        name: e.name,
-        url: e.pic,
-      };
-    });
-  });
-}
+// 广告
+const adStore = useAdvertisedStore();
+const { advertisedList } = storeToRefs(adStore);
 
 // 分类
 const categoryList = ref([
@@ -245,7 +217,7 @@ function getHotList() {
   });
 }
 
-// 评论
+// 评论 TODO:cjh接口
 const commentLevel = ref(5);
 const commentCount = ref(randomTool.num(0, 20));
 const commentList = ref(
@@ -468,7 +440,7 @@ const menuArr = ref([
             .diff-num {
             }
             .title {
-              font-size: 22rpx;
+              font-size: 24rpx;
               letter-spacing: 0.2rpx;
               margin-top: 8rpx;
             }
