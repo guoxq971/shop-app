@@ -63,6 +63,7 @@ const changeAll = (value) => {
 
 <style scoped lang="scss">
 .footer {
+  position: relative;
   margin-top: 2rpx;
   padding: 10rpx;
   background-color: #ffffff;
@@ -71,7 +72,7 @@ const changeAll = (value) => {
   align-items: center;
   box-sizing: border-box;
   border-top: 2rpx solid #a1a2a4;
-  height: calc(110rpx + env(safe-area-inset-bottom));
+  height: 100rpx;
 
   .footer-box {
     width: 100%;

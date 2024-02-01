@@ -78,9 +78,15 @@
           }
         },
         {
-          "path": "PaySuccessOrFailure",
+          "path": "paySuccess",
           "style": {
             "navigationBarTitleText": "Success"
+          }
+        },
+        {
+          "path": "payFail",
+          "style": {
+            "navigationBarTitleText": "Fail"
           }
         }
       ]
