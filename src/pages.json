@@ -92,7 +92,7 @@
       ]
     },
     {
-     " root": "subPackages/order",
+      "root": "subPackages/order",
       "pages": [
         {
           "path": "orderListPage",
