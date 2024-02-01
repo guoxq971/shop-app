@@ -43,10 +43,10 @@
 <script setup>
 import { Popup, Stepper } from 'vant';
 import { ref, watch } from 'vue';
-import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
-import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
-import GapWrap from '../gapWrap/gapWrap.vue';
-import CustomizationWrap from '@/subPackages/share/customizationWrap/customizationWrap.vue';
+import ColorStyleWrap from '../components/colorStyleWrap/colorStyleWrap.vue';
+import SizeListWrap from '../components/sizeListWrap/sizeListWrap.vue';
+import GapWrap from '../components/gapWrap/gapWrap.vue';
+import CustomizationWrap from '@/subPackages/share/components/customizationWrap/customizationWrap.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
 import { useCountStore } from '@/store/useCartTotalStore';
 const { tabBarHeightUnit } = useSystemInfo();

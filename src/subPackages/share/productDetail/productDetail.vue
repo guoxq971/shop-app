@@ -166,13 +166,13 @@
 
 <script setup>
 import { Icon, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview } from 'vant';
-import GapWrap from '../gapWrap/gapWrap.vue';
-import GoodsListMore from '../goodsList/goodsListMore.vue';
+import GapWrap from '../components/gapWrap/gapWrap.vue';
+import GoodsListMore from '../components/goodsList/goodsListMore.vue';
 import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
 import ShoppingCartPop from '../shoppingCartPop/shoppingCartPop.vue';
-import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
-import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
-import CustomizationWrap from '../customizationWrap/customizationWrap.vue';
+import ColorStyleWrap from '../components/colorStyleWrap/colorStyleWrap.vue';
+import SizeListWrap from '../components/sizeListWrap/sizeListWrap.vue';
+import CustomizationWrap from '../components/customizationWrap/customizationWrap.vue';
 import { ref, watch } from 'vue';
 import { randomTool } from '@/utils/commom';
 import { useSystemInfo } from '@/hooks/useSystemInfo';

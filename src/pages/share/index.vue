@@ -6,7 +6,7 @@
 
     <view class="body-wrap">
       <!--广告-->
-      <Advertised height="100rpx" :src="advertisedList[1].url"></Advertised>
+      <Advertised height="100rpx" :src="advertisedList[0].url"></Advertised>
 
       <!--分类-->
       <view class="category-wrap">
@@ -20,7 +20,7 @@
       </view>
 
       <!--广告-->
-      <Advertised height="700rpx" :src="advertisedList[2].url"></Advertised>
+      <Advertised height="700rpx" :src="advertisedList[1].url"></Advertised>
 
       <!--热门商品-->
       <view class="hot-commodity-wrap">
@@ -81,7 +81,7 @@
       </view>
 
       <!--广告-->
-      <Advertised height="250rpx" :src="advertisedList[3].url"></Advertised>
+      <Advertised height="250rpx" :src="advertisedList[2].url"></Advertised>
 
       <!--分类2-->
       <view class="category-wrap2">
@@ -98,11 +98,11 @@
       </view>
 
       <!--广告-->
-      <Advertised height="550rpx" :src="advertisedList[4].url"></Advertised>
+      <Advertised height="550rpx" :src="advertisedList[3].url"></Advertised>
+      <Advertised height="220rpx" :src="advertisedList[4].url"></Advertised>
       <Advertised height="220rpx" :src="advertisedList[5].url"></Advertised>
       <Advertised height="220rpx" :src="advertisedList[6].url"></Advertised>
-      <Advertised height="220rpx" :src="advertisedList[7].url"></Advertised>
-      <Advertised height="700rpx" :src="advertisedList[8].url"></Advertised>
+      <Advertised height="700rpx" :src="advertisedList[7].url"></Advertised>
 
       <!--评论-->
       <view class="comment-wrap">
@@ -149,38 +149,23 @@ import { Rate, Icon, TextEllipsis, Image as VanImage } from 'vant';
 import { randomWord, randomImage, uuid, randomTool } from '@/utils/commom';
 import bmNavbar from '@/subPackages/share/navbar.vue';
 import priceWrap from '@/subPackages/share/priceWrap.vue';
-import copyrightWrap from '@/subPackages/share/copyrightWrap/copyrightWrap.vue';
+import copyrightWrap from '@/subPackages/share/components/copyrightWrap/copyrightWrap.vue';
 import Advertised from '@/subPackages/share/components/advertised.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
 import { getAdvertisingApi, getProdListByTagIdApi } from '@/api/share/share';
 import { onShow } from '@dcloudio/uni-app';
+import { storeToRefs } from 'pinia';
+import { useAdvertisedStore } from '@/store/useAdvertisedStore';
 const { tabBarHeightUnit } = useSystemInfo();
 
 onShow(() => {
   getHotList();
-  getAdvertising();
+  adStore.getAdvertising();
 });
 
 // 广告
-const advertisedList = ref(
-  Array.from({ length: 9 }, (item, index) => {
-    return { detail: {}, id: uuid(), name: randomWord(), url: '', url2: randomImage(), sort: index };
-  }),
-);
-function getAdvertising() {
-  getAdvertisingApi().then((res) => {
-    // console.log('广告', res);
-    for (let item of res.data) {
-      const d = advertisedList.value.find((e) => e.sort === item.sort);
-      if (!d) continue;
-      d.detail = item;
-      d.url = item.img;
-      d.name = item.name;
-      d.id = item.id;
-    }
-  });
-  console.log('广告', advertisedList.value);
-}
+const adStore = useAdvertisedStore();
+const { advertisedList } = storeToRefs(adStore);
 
 // 分类
 const categoryList = ref([
@@ -232,7 +217,7 @@ function getHotList() {
   });
 }
 
-// 评论
+// 评论 TODO:cjh接口
 const commentLevel = ref(5);
 const commentCount = ref(randomTool.num(0, 20));
 const commentList = ref(

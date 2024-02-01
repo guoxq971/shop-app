@@ -47,8 +47,8 @@ export const getRelationApi = (data = {}) => {
 export const getAdvertisingApi = (data = {}) => {
   const obj = Object.assign(
     {
-      shopId: 1,
-      sort: '',
+      shopId: data.shopId || '',
+      sort: data.sort || '',
     },
     data || {},
   );

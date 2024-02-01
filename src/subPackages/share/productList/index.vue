@@ -12,8 +12,9 @@
 
     <!--主体-内容-->
     <view class="body-wrap">
-      <view class="advertised" style="height: 100rpx; margin-bottom: 10rpx">广告1</view>
-      <view class="advertised" style="height: 360rpx">广告2</view>
+      <!--广告-->
+      <Advertised height="100rpx" :src="advertisedList[0].url" />
+      <Advertised height="360rpx" :src="advertisedList[1].url" />
 
       <!--特色商品-->
       <view class="featured-commodity-wrap">
@@ -56,12 +57,15 @@
 <script setup>
 import { Icon } from 'vant';
 import bmNavbar from '@/subPackages/share/navbar.vue';
-import GoodsList from '../goodsList/goodsList.vue';
-import goodsListMore from '../goodsList/goodsListMore.vue';
+import GoodsList from '../components/goodsList/goodsList.vue';
+import goodsListMore from '../components/goodsList/goodsListMore.vue';
 import { onLoad, onShow } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
 import { getGoodsRecommendApi, getGoodsListApi } from '@/api/share/share';
+import { useAdvertisedStore } from '@/store/useAdvertisedStore';
+import Advertised from '@/subPackages/share/components/advertised.vue';
+import { storeToRefs } from 'pinia';
 
 // 返回上一页
 function onBack() {
@@ -72,7 +76,12 @@ onShow(() => {
   getRecommendGoodsList();
   param.value.pageNum = 1;
   getGoodsList();
+  adStore.getAdvertising({ sort: 21 });
 });
+
+// 广告
+const adStore = useAdvertisedStore();
+const { advertisedList } = storeToRefs(adStore);
 
 // 获取推荐商品列表
 function getRecommendGoodsList() {
@@ -197,7 +206,7 @@ $searchPaddingLeftRight: 18rpx;
       .featured-commodity-wrap-title {
         display: flex;
         justify-content: space-between;
-        padding: 24rpx 0;
+        padding: 24rpx 0 18rpx 0;
         font-weight: bold;
         margin-bottom: 10rpx;
         .title-left {

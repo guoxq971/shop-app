@@ -12,7 +12,6 @@ const props = defineProps({
   height: { type: String, default: '100rpx' },
 });
 const src_computed = computed(() => {
-  console.log('props.src', props.src);
   if (!props.src) return '';
   // 判断是否有http
   if (props.src?.startsWith('http')) {

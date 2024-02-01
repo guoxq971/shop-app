@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import GoodsList from '@/subPackages/share/goodsList/goodsList.vue';
+import GoodsList from '@/subPackages/share/components/goodsList/goodsList.vue';
 import { ref } from 'vue';
 import { randomTool } from '@/utils/commom';
 import { useVModels } from '@vueuse/core';
