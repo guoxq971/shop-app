@@ -88,10 +88,14 @@ const userinfo = reactive({
 
 const goOrderPage = (status) => {
   uni.navigateTo({
-    // url: `/subPackages/myOrder/orderListPage?status=${status}`,
-    url: '/subPackages/order/orderListPage',
-    // url: '/subPackages/cart/CheckOut',
+    // url: `/subPackages/share/productDetail/productDetail?id`,
+    url: `subPackages/order/orderListPage`,
   });
+  // uni.navigateTo({
+  //   // url: `/subPackages/myOrder/orderListPage?status=${status}`,
+  //   url: '/subPackages/order/orderListPage',
+  //   // url: '/subPackages/cart/CheckOut',
+  // });
 };
 </script>
 

@@ -1,9 +1,8 @@
 import { getAdvertisingApi } from '@/api/share/share';
 import { randomTool } from '@/utils/commom';
-import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const useAdvertisedStore = defineStore('advertisedStore', () => {
+export function useAdvertised() {
   // 广告
   const advertisedList = ref(
     Array.from({ length: 10 }, (item, index) => {
@@ -38,7 +37,7 @@ export const useAdvertisedStore = defineStore('advertisedStore', () => {
         d.name = item.name;
         d.id = item.id;
       }
-      console.log('广告 advertisedList.value', advertisedList.value);
+      // console.log('广告 advertisedList.value', advertisedList.value);
     });
   }
 
@@ -46,4 +45,4 @@ export const useAdvertisedStore = defineStore('advertisedStore', () => {
     advertisedList,
     getAdvertising,
   };
-});
+}

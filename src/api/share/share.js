@@ -77,3 +77,21 @@ export const getConfigurationApi = (data = {}) => {
   );
   return server(`/p/indexImg/getConfiguration`, Method.GET, obj);
 };
+
+//获取热门评论
+export const getHotCommListApi = (data = {}) => {
+  const obj = Object.assign({}, data || {});
+  return server(`/p/indexImg/getHotCommList`, Method.GET, obj);
+};
+
+//获取评论详情
+export const getCommDetailApi = (data = {}) => {
+  const obj = Object.assign({}, data || {});
+  return server(`/p/indexImg/getCommDetail/${obj.prodCommId}`, Method.GET, obj);
+};
+
+//获取评论总计
+export const getCountHotCommApi = (data = {}) => {
+  const obj = Object.assign({}, data || {});
+  return server(`/p/indexImg/countHotComm`, Method.GET, obj);
+};

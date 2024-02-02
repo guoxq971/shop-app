@@ -107,7 +107,7 @@ const collapseList = ref(
 // 获取折叠面板信息
 function getCopyright() {
   getConfigurationApi().then((res) => {
-    console.log('网站管理内容', res);
+    // console.log('网站管理内容', res);
     collapseList.value = res.data.map((e) => {
       return {
         detail: e,
