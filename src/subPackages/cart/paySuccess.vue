@@ -12,28 +12,32 @@
       <view class="header-text">Payment Success!</view>
     </view>
     <view class="container-body">
-      <view class="body-total">
-        <sub>$</sub>
-        <text>155.21</text>
+      <view class="order-info" style="margin-top: 30rpx">
+        <text class="info-name">Order No:</text>
+        <text>{{ info.orderNumber }}</text>
       </view>
-      <view class="body-order">
-        <view class="order-info">
-          <text class="info-name">Order No:</text>
-          <text>20210921123456</text>
-        </view>
-        <view class="order-info">
-          <text class="info-name">Time:</text>
-          <text>2021-09-21 12:34:56</text>
-        </view>
-        <view class="order-info">
-          <text class="info-name">Payment Method:</text>
-          <text>WeChat</text>
-        </view>
-        <view class="order-info">
-          <text class="info-name">Payment Status:</text>
-          <text>Success</text>
-        </view>
-      </view>
+      <!--      <view class="body-total">-->
+      <!--        <sub>$</sub>-->
+      <!--        <text>155.21</text>-->
+      <!--      </view>-->
+      <!--      <view class="body-order">-->
+      <!--        <view class="order-info">-->
+      <!--          <text class="info-name">Order No:</text>-->
+      <!--          <text>{{ info.orderNumber }}</text>-->
+      <!--        </view>-->
+      <!--        <view class="order-info">-->
+      <!--          <text class="info-name">Time:</text>-->
+      <!--          <text>2021-09-21 12:34:56</text>-->
+      <!--        </view>-->
+      <!--        <view class="order-info">-->
+      <!--          <text class="info-name">Payment Method:</text>-->
+      <!--          <text>WeChat</text>-->
+      <!--        </view>-->
+      <!--        <view class="order-info">-->
+      <!--          <text class="info-name">Payment Status:</text>-->
+      <!--          <text>Success</text>-->
+      <!--        </view>-->
+      <!--      </view>-->
     </view>
 
     <view class="container-footer">
@@ -46,6 +50,16 @@
 <script setup>
 import statusBar from '@/components/statusBar/statusBar.vue';
 import { NavBar, Icon, Button } from 'vant';
+import { onLoad } from '@dcloudio/uni-app';
+import { reactive } from 'vue';
+
+onLoad((options) => {
+  info.orderNumber = options.orderNumber;
+});
+
+const info = reactive({
+  orderNumber: '',
+});
 
 const onClickLeft = () => {
   uni.navigateTo({

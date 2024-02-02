@@ -1,51 +1,55 @@
 <template>
   <view class="container">
-    <!-- #ifdef H5 -->
-    <iframe width="100%" height="100%" :src="payUrl" :title="title" />
-    <!-- #endif -->
+    <template v-if="payUrl">
+      <!-- #ifdef H5 -->
+      <iframe width="100%" height="100%" :src="payUrl" title="支付" />
+      <!-- #endif -->
+    </template>
 
-    <!--    状态栏及导航栏盒子-->
-    <statusBar></statusBar>
-    <!--    导航栏-->
-    <NavBar title="Confirm the Order" fixed left-text="Back" left-arrow @click-left="onClickLeft" />
-    <view class="container-body">
-      <view class="body-info">
-        <view class="title">订单信息</view>
-        <view class="info-box">
-          <productBox v-for="item in list" :key="item.uuid" :info="item"></productBox>
-        </view>
-      </view>
-      <view class="body-address">
-        <view class="title">地址信息</view>
-        <view class="address-info">
-          <view class="address-info-box">
-            <view class="box-item">First Name:{{ addressInfo.firstName }}</view>
-            <view class="box-item">Last Name:{{ addressInfo.lastName }}</view>
-          </view>
-          <view class="address-info-box">
-            <view class="box-item">Email:{{ addressInfo.email }}</view>
-            <view class="box-item">Phone:{{ addressInfo.phone }}</view>
-          </view>
-          <view class="address-info-box">
-            <view class="box-item">Address 1:{{ addressInfo.address }}</view>
-            <view class="box-item">Address 2:{{ addressInfo.addressTwo }}</view>
-          </view>
-          <view class="address-info-box">
-            <view class="box-item">Country:{{ addressInfo.countryId }}</view>
-            <view class="box-item">Postal Code:{{ addressInfo.postalCode }}</view>
-          </view>
-          <view class="address-info-box">
-            <view class="box-item">Citity:{{ addressInfo.city }}</view>
-            <view class="box-item">State/Province/Territory:{{ addressInfo.state }}</view>
+    <template v-else>
+      <!--    状态栏及导航栏盒子-->
+      <statusBar></statusBar>
+      <!--    导航栏-->
+      <NavBar title="Confirm the Order" fixed left-text="Back" left-arrow @click-left="onClickLeft" />
+      <view class="container-body">
+        <view class="body-info">
+          <view class="title">订单信息</view>
+          <view class="info-box">
+            <productBox v-for="item in list" :key="item.uuid" :info="item"></productBox>
           </view>
         </view>
+        <view class="body-address">
+          <view class="title">地址信息</view>
+          <view class="address-info">
+            <view class="address-info-box">
+              <view class="box-item">First Name:{{ addressInfo.firstName }}</view>
+              <view class="box-item">Last Name:{{ addressInfo.lastName }}</view>
+            </view>
+            <view class="address-info-box">
+              <view class="box-item">Email:{{ addressInfo.email }}</view>
+              <view class="box-item">Phone:{{ addressInfo.phone }}</view>
+            </view>
+            <view class="address-info-box">
+              <view class="box-item">Address 1:{{ addressInfo.address }}</view>
+              <view class="box-item">Address 2:{{ addressInfo.addressTwo }}</view>
+            </view>
+            <view class="address-info-box">
+              <view class="box-item">Country:{{ addressInfo.countryId }}</view>
+              <view class="box-item">Postal Code:{{ addressInfo.postalCode }}</view>
+            </view>
+            <view class="address-info-box">
+              <view class="box-item">Citity:{{ addressInfo.city }}</view>
+              <view class="box-item">State/Province/Territory:{{ addressInfo.state }}</view>
+            </view>
+          </view>
+        </view>
+        <view class="body-button">
+          <Button :type="payWay === 'PayPal' ? 'primary' : 'default'" size="small" @click="changeWay('PayPal')" class="m-r12">PayPal</Button>
+          <Button :type="payWay === 'Apple' ? 'primary' : 'default'" @click="changeWay('Apple')" size="small">Apple Pay</Button>
+        </view>
       </view>
-      <view class="body-button">
-        <Button :type="payWay === 'PayPal' ? 'primary' : 'default'" size="small" @click="changeWay('PayPal')" class="m-r12">PayPal</Button>
-        <Button :type="payWay === 'Apple' ? 'primary' : 'default'" @click="changeWay('Apple')" size="small">Apple Pay</Button>
-      </view>
-    </view>
-    <TotalPayment @checkOut="checkOut"></TotalPayment>
+      <TotalPayment @checkOut="checkOut"></TotalPayment>
+    </template>
   </view>
 </template>
 
@@ -60,7 +64,7 @@ import { storeToRefs } from 'pinia';
 import statusBar from '@/components/statusBar/statusBar.vue';
 import { orderInfo, createOrder, paymentOrder } from '@/api/cart/payment';
 
-const payUrl = ref('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-7TM62110E6497035C');
+const payUrl = ref('');
 const countStore = useCountStore();
 const checkOut = async () => {
   const obj = {
@@ -86,15 +90,15 @@ const checkOut = async () => {
     // 支付
     const pRes = await paymentOrder(pObj);
     if (pRes) {
-      payUrl.value = res.data;
+      payUrl.value = pRes.data;
       // await countStore.clearCart();
       // uni.navigateTo({
       //   url: '/subPackages/cart/paySuccess',
       // });
     } else {
-      // uni.navigateTo({
-      //   url: '/subPackages/cart/payFail',
-      // });
+      uni.navigateTo({
+        url: '/subPackages/cart/payFail',
+      });
     }
   }
 };
@@ -150,7 +154,6 @@ const getOrderInfo = async () => {
     });
     originData = res.data;
   }
-  console.log('res', res);
 };
 
 onMounted(() => {

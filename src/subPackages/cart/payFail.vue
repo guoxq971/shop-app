@@ -1,26 +1,55 @@
 <!--成功或失败-->
 <template>
   <view class="container">
-    <!--    状态栏-->
-    <status-bar></status-bar>
-    <!--    导航栏-->
-    <NavBar title="Payment Fail" fixed left-text="Back" left-arrow @click-left="onClickLeft" />
-    <view class="container-header">
-      <view class="header-icon">
-        <Icon name="close"></Icon>
+    <template v-if="payUrl">
+      <!-- #ifdef H5 -->
+      <iframe width="100%" height="100%" :src="payUrl" title="支付" />
+      <!-- #endif -->
+    </template>
+    <template v-else>
+      <!--    状态栏-->
+      <status-bar></status-bar>
+      <!--    导航栏-->
+      <NavBar title="Payment Fail" fixed left-text="Back" left-arrow @click-left="onClickLeft" />
+      <view class="container-header">
+        <view class="header-icon">
+          <Icon name="close"></Icon>
+        </view>
+        <view class="header-text">payment failure!</view>
       </view>
-      <view class="header-text">payment failure!</view>
-    </view>
-    <view class="container-footer">
-      <Button type="danger" round size="normal" class="footer-text">Pay Again</Button>
-      <Button type="danger" round size="normal" @click="goHome">Go Home</Button>
-    </view>
+      <view class="container-footer">
+        <Button type="danger" round size="normal" class="footer-text" @click="againPay">Pay Again</Button>
+        <Button type="danger" round size="normal" @click="goHome">Go Home</Button>
+      </view>
+    </template>
   </view>
 </template>
 
 <script setup>
 import statusBar from '@/components/statusBar/statusBar.vue';
 import { NavBar, Icon, Button } from 'vant';
+import { paymentOrder } from '@/api/cart/payment';
+
+import { onLoad } from '@dcloudio/uni-app';
+import { reactive, ref } from 'vue';
+
+const payUrl = ref('');
+onLoad((options) => {
+  info.orderNumber = options.orderNumber;
+});
+
+// 重新支付
+const againPay = async () => {
+  // 支付
+  const pRes = await paymentOrder(info);
+  if (pRes) {
+    payUrl.value = pRes.data;
+  }
+};
+
+const info = reactive({
+  orderNumber: '',
+});
 
 const onClickLeft = () => {
   uni.navigateTo({

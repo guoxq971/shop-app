@@ -88,8 +88,8 @@ const userinfo = reactive({
 
 const goOrderPage = (status) => {
   uni.navigateTo({
-    // url: `/subPackages/myOrder/orderListPage?status=${status}`,
-    url: '/subPackages/order/orderListPage',
+    url: `/subPackages/order/orderListPage?status=${status}`,
+    // url: '/subPackages/order/orderListPage',
     // url: '/subPackages/cart/CheckOut',
   });
 };

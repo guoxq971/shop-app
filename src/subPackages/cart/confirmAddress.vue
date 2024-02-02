@@ -35,7 +35,7 @@
           <view class="group-service">
             <view class="service-title">Delivery service</view>
             <view style="flex: 1">
-              <Cell :title="expressInfo.name" :value="expressInfo.expressFee" :label="expressInfo.label" center is-link @click="showPopup('delivery')">
+              <Cell :title="expressInfo.name" :value="expressInfo.expressFee" :border="false" :label="expressInfo.label" center is-link @click="showPopup('delivery')">
                 <template #value>
                   <view v-if="expressInfo.expressFee" style="display: flex; align-items: center; justify-content: flex-end">
                     <Price :price="expressInfo.expressFee" color="#969799"></Price>
