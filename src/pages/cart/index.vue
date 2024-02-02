@@ -1,7 +1,7 @@
 <template>
-  <view class="container van-safe-area-top van-safe-area-bottom">
+  <view class="container van-safe-area-top van-safe-area-bottom" style="background-color: red">
     <!--    状态栏及导航栏盒子-->
-    <statusBar></statusBar>
+    <statusBar bgColor="transparent"></statusBar>
     <!--        导航栏-->
     <NavBar shape fixed>
       <template #left>
@@ -90,7 +90,6 @@ const checkAddress = () => {
     overflow: hidden;
     flex-direction: column;
     align-content: space-between;
-
     background-color: #edeff6;
   }
 }

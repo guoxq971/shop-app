@@ -1,7 +1,7 @@
 <!--状态栏 和 导航栏-->
 <template>
   <view :style="{ height: statusHeight + 'px', backgroundColor: bgColor }" />
-  <view :style="{ height: navBarHeight + 'px' }"></view>
+  <view :style="{ height: navBarHeight + 'px', backgroundColor: bgColor }"></view>
 </template>
 
 <script setup>

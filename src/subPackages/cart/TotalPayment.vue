@@ -115,3 +115,9 @@ const changeAll = (value) => {
   margin-right: 4rpx;
 }
 </style>
+
+<style>
+body {
+  background-color: green;
+}
+</style>

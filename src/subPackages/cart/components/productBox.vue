@@ -10,7 +10,7 @@
           <slot name="title-right"></slot>
         </view>
       </view>
-      <view class="right-size">{{ info.productSpec }}</view>
+      <view class="right-size">{{ info.productSpec || '' }}</view>
       <view class="right-price">
         <view class="price-num">
           <sub style="margin-right: 4rpx">$</sub>
