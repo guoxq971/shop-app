@@ -42,27 +42,27 @@ defineProps({
   .options-wrap {
     display: flex;
     flex-direction: column;
-    margin-bottom: 14px;
+    margin-bottom: 20rpx;
     &:last-child {
       margin-bottom: 0;
     }
     .option-title {
       display: flex;
-      font-size: 13px;
+      font-size: 26rpx;
       color: #8e8e8e;
-      margin-bottom: 3px;
+      margin-bottom: 6rpx;
     }
     .option-list {
       display: flex;
       flex-wrap: wrap;
       .option-list-item {
         display: flex;
-        padding: 8px 10px;
+        padding: 16rpx 20rpx;
         background: #fff;
-        border: 1px solid #bbb;
-        margin: 0px 10px 2px 0px;
-        border-radius: 4px;
-        font-size: 14px;
+        border: 2rpx solid #bbb;
+        border-radius: 4rpx;
+        font-size: 28rpx;
+        margin: 0 20rpx 4rpx 0;
       }
       .active-option-list-item {
         background: #000;

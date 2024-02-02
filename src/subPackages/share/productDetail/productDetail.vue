@@ -45,6 +45,8 @@
       <!--sku商品联级选择-->
       <SkuGoodsPropSelect :specList="specList" :selectSpec="selectSpec" :changeSpec="changeSpec" />
 
+      <GapWrap />
+
       <!--定制-->
       <CustomizationWrap
         v-model:front-name="detail.customization.frontName"
