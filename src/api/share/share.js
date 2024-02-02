@@ -89,3 +89,9 @@ export const getCommDetailApi = (data = {}) => {
   const obj = Object.assign({}, data || {});
   return server(`/p/indexImg/getCommDetail/${obj.prodCommId}`, Method.GET, obj);
 };
+
+//获取评论总计
+export const getCountHotCommApi = (data = {}) => {
+  const obj = Object.assign({}, data || {});
+  return server(`/p/indexImg/countHotComm`, Method.GET, obj);
+};

@@ -156,7 +156,7 @@ import priceWrap from '@/subPackages/share/priceWrap.vue';
 import copyrightWrap from '@/subPackages/share/components/copyrightWrap/copyrightWrap.vue';
 import Advertised from '@/subPackages/share/components/advertised.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
-import { getHotCommListApi, getProdListByTagIdApi } from '@/api/share/share';
+import { getCountHotCommApi, getHotCommListApi, getProdListByTagIdApi } from '@/api/share/share';
 import { onShow } from '@dcloudio/uni-app';
 import { useAdvertised } from '@/hooks/useAdvertised';
 const { tabBarHeightUnit } = useSystemInfo();
@@ -164,6 +164,7 @@ const { tabBarHeightUnit } = useSystemInfo();
 onShow(() => {
   getHotList();
   getCommentList();
+  getCountHotComm();
   getAdvertising();
 });
 
@@ -253,7 +254,7 @@ commentList.value = Array.from({ length: commentCount.value }, () => {
 // 获取热门评论列表
 function getCommentList() {
   getHotCommListApi().then((res) => {
-    console.log('热门评论', res);
+    // console.log('热门评论', res);
     commentList.value = res.data.map((e) => {
       const url = e.imgList.length > 0 ? e.imgList[0] : '';
       return {
@@ -281,6 +282,13 @@ function onGoComment(item) {
 // 查看评论图片
 function onSeeCommentPic(item) {
   showImagePreview(item.imgList.map((e) => uni.$basePathImg + e));
+}
+function getCountHotComm() {
+  getCountHotCommApi().then((res) => {
+    // console.log('评论数量', res);
+    commentCount.value = res.data.commQuantity;
+    commentLevel.value = res.data.score;
+  });
 }
 
 // 分类2
