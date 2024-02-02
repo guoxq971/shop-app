@@ -30,7 +30,7 @@
         </view>
         <view class="list">
           <view class="not-data" v-if="hotList.length === 0">not data</view>
-          <view class="item" v-for="item in hotList" :key="item.id">
+          <view class="item" v-for="item in hotList" :key="item.id" @click="onGoods(item)">
             <view class="image-wrap">
               <VanImage :src="$basePathImg + item.url"></VanImage>
             </view>
@@ -199,6 +199,13 @@ const hotList = ref(
     };
   }),
 );
+// 跳转商品详情
+function onGoods(item) {
+  uni.navigateTo({
+    url: `/subPackages/share/productDetail/productDetail?id=${item.id}`,
+  });
+}
+// 获取热门商品列表
 function getHotList() {
   getProdListByTagIdApi().then((res) => {
     // console.log('热门商品', res);

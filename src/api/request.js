@@ -60,7 +60,7 @@ export function server(url, method, params = {}, tkn = false) {
         } else {
           // 失败
           showFailToast(res.data.msg);
-          resolve();
+          reject();
         }
       },
       // 失败

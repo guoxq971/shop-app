@@ -42,15 +42,8 @@
 
       <GapWrap />
 
-      <!--颜色/风格-->
-      <ColorStyleWrap type="row" :list="detail.styleList" v-model:active="activeStyle" />
-
-      <GapWrap />
-
-      <!--尺码-->
-      <sizeListWrap :list="detail.sizeList" v-model:active="activeSize" />
-
-      <GapWrap />
+      <!--sku商品联级选择-->
+      <SkuGoodsPropSelect :specList="specList" :selectSpec="selectSpec" :changeSpec="changeSpec" />
 
       <!--定制-->
       <CustomizationWrap
@@ -159,7 +152,7 @@
   </view>
 
   <!--选择产品参数-弹窗-->
-  <SelectProductDetailPop ref="selectProductDetailPopRef" />
+  <SelectProductDetailPop ref="selectProductDetailPopRef" @emitSelectSpec="EmitSelectSpec" />
   <!--购物车-弹窗-->
   <ShoppingCartPop ref="shoppingCartPopRef" />
 </template>
@@ -170,14 +163,14 @@ import GapWrap from '../components/gapWrap/gapWrap.vue';
 import GoodsListMore from '../components/goodsList/goodsListMore.vue';
 import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
 import ShoppingCartPop from '../shoppingCartPop/shoppingCartPop.vue';
-import ColorStyleWrap from '../components/colorStyleWrap/colorStyleWrap.vue';
-import SizeListWrap from '../components/sizeListWrap/sizeListWrap.vue';
+import SkuGoodsPropSelect from '@/subPackages/share/components/skuGoodsPropSelect/skuGoodsPropSelect.vue';
 import CustomizationWrap from '../components/customizationWrap/customizationWrap.vue';
 import { ref, watch } from 'vue';
 import { randomTool } from '@/utils/commom';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
 import { onLoad } from '@dcloudio/uni-app';
 import { getDetailApi, getListCommentApi, getRelationApi } from '@/api/share/share';
+import { useSkuSelect } from '@/hooks/useSkuSelect/useSkuSelect';
 const { tabBarHeightUnit } = useSystemInfo();
 
 // 返回上一页
@@ -187,77 +180,21 @@ function onGoBack() {
 
 const prodId = ref('');
 onLoad((e) => {
-  console.log('onload e 产品详情', e);
+  // console.log('onload e 产品详情', e);
   prodId.value = e.id;
   getGoodsDetail();
 });
 
-let uniqueArray = (list, fName) => {
-  return Array.from(new Set(list.map((item) => item[fName]))).map((fieldName) => {
-    return list.find((item) => item[fName] === fieldName);
-  });
-};
 // 获取商品详情
 function getGoodsDetail() {
   detail.value.comment.list = [];
   detail.value.goodsList = [];
   getDetailApi({ prodId: prodId.value }).then((res) => {
-    console.log('商品详情', res);
+    // console.log('商品详情', res);
     const d = res.data;
-    skuList.value = d.skuList.map((e) => {
-      const propArr = e.properties.split(';');
-      let color = '';
-      let size = '';
-      for (let propItem of propArr) {
-        const item = propItem.split(':');
-        if (item[0] === 'color') {
-          color = item[1];
-        }
-        if (item[0] === 'size') {
-          size = item[1];
-        }
-      }
-      return {
-        detail: e,
-        skuId: e.skuId,
-        color,
-        size,
-      };
-    });
-    let colorList = [];
-    let sizeList = uniqueArray(
-      skuList.value.map((e) => {
-        return {
-          detail: e,
-          skuId: e.skuId,
-          id: randomTool.uuid(),
-          name: e.size,
-          url: e.detail.pic,
-          color: e.color,
-          size: e.size,
-          disabled: false,
-        };
-      }),
-      'name',
-    );
-    let styleList = uniqueArray(
-      skuList.value.map((e) => {
-        return {
-          detail: e,
-          skuId: e.skuId,
-          id: randomTool.uuid(),
-          name: e.color,
-          color: e.color,
-          size: e.size,
-          url: e.detail.pic,
-          disabled: false,
-        };
-      }),
-      'name',
-    );
-    console.log('skuList', skuList.value);
-    console.log('styleList', styleList);
-    console.log('sizeList', sizeList);
+
+    // sku商品联级选择
+    dataInit(disposeData(d.skuList));
 
     detail.value.prodId = d.prodId;
     detail.value.url = d.pic;
@@ -267,12 +204,6 @@ function getGoodsDetail() {
     detail.value.review = '';
     detail.value.paid = d.payQuantity;
     detail.value.title = d.prodName;
-    detail.value.colorList = colorList;
-    detail.value.styleList = styleList;
-    detail.value.sizeList = sizeList;
-    // detail.value.colorList = d.propertiesList.filter((e) => e.propName === 'color').map((e) => ({ id: randomTool.uuid(), name: e.propValue, url: '' }));
-    // detail.value.styleList = detail.value.colorList;
-    // detail.value.sizeList = d.propertiesList.filter((e) => e.propName === 'size').map((e) => ({ id: randomTool.uuid(), name: e.propValue }));
     // 简介, 库存, 物流描述
     detail.value.intro = d.centent;
     // detail.value.stock = '';
@@ -286,7 +217,7 @@ function getGoodsDetail() {
 // 获取商品相关评论
 function getListComment(type = 0) {
   getListCommentApi({ prodId: prodId.value, type: type }).then((res) => {
-    console.log('评论列表', res);
+    // console.log('评论列表', res);
     detail.value.comment.list = res.data.map((e) => ({
       detail: e,
       id: randomTool.uuid(),
@@ -301,7 +232,7 @@ function getListComment(type = 0) {
 // 获取商品相关产品
 function getRelation() {
   getRelationApi({ prodId: prodId.value }).then((res) => {
-    console.log('相关产品', res);
+    // console.log('相关产品', res);
     detail.value.goodsList = res.data.map((e) => ({
       detail: e,
       id: e.prodId,
@@ -342,12 +273,9 @@ function onAddToCart() {
   selectProductDetailPopRef.value.open({
     type: 'cart',
     prodId: detail.value.prodId,
-    sizeList: detail.value.sizeList,
-    activeSize: activeSize.value,
-    colorStyleList: detail.value.styleList,
-    activeStyleColor: activeStyle.value,
     customization: detail.value.customization,
-    skuList: skuList.value,
+    mData: mData.value,
+    selectSpec: selectSpec.value,
   });
 }
 
@@ -355,15 +283,31 @@ function onAddToCart() {
 function onBuyNow() {
   selectProductDetailPopRef.value.open({
     type: 'buy',
-    sizeList: detail.value.sizeList,
-    activeSize: activeSize.value,
-    colorStyleList: detail.value.styleList,
-    activeStyleColor: activeStyle.value,
     customization: detail.value.customization,
   });
 }
 
-const skuList = ref([]);
+// sku商品联级选择
+const optionsList = ref([]);
+const { changeSpec, specList, selectSpec, dataInit, disposeData, mData, setSelectSpec, getSkuInfo } = useSkuSelect();
+// 回显选择
+function EmitSelectSpec(data) {
+  setSelectSpec(data);
+}
+watch(
+  () => selectSpec.value,
+  (val) => {
+    if (val) {
+      const sku = getSkuInfo(val);
+      if (sku) {
+        detail.value.price = sku.detail.price;
+        detail.value.oldPrice = sku.detail.oriPrice;
+      }
+    }
+  },
+  { deep: true, immediate: true },
+);
+
 const detail = ref({
   prodId: '',
   url: '', //randomTool.image(),
@@ -377,20 +321,6 @@ const detail = ref({
   paid: '20w',
   // 标题
   title: '', //randomTool.title(),
-  // 颜色列表
-  colorList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), name: randomTool.color() })),
-  // 样式列表
-  styleList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
-  // 尺码列表
-  sizeList: [
-    // { id: randomTool.uuid(), name: 'XS' },
-    // { id: randomTool.uuid(), name: 'S' },
-    // { id: randomTool.uuid(), name: 'M' },
-    // { id: randomTool.uuid(), name: 'L' },
-    // { id: randomTool.uuid(), name: 'XL' },
-    // { id: randomTool.uuid(), name: '2XL' },
-    // { id: randomTool.uuid(), name: '2XLLLLLLLLLLLLLL' },
-  ],
   // 定制
   customization: {
     frontName: '',
@@ -431,45 +361,6 @@ const onSwipe = (index) => {
   swipeRef.value.swipeTo(index);
 };
 
-// 切换颜色/样式
-const activeStyle = ref('');
-watch(activeStyle, (val) => {
-  if (val === '') {
-    detail.value.sizeList.forEach((e) => {
-      e.disabled = false;
-    });
-    return;
-  }
-  // style.name = 当前选中的颜色
-  const style = detail.value.styleList.find((e) => e.id === val);
-  if (!style) return;
-  // 如果skuList中存在当前选中的颜色, 则找出当前选中颜色对应的尺码
-  const sizeList = skuList.value.filter((e) => e.color === style.name).map((e) => e.size);
-  // sizeList中不存在sizeList的尺码, 则将其disabled
-  detail.value.sizeList.forEach((e) => {
-    e.disabled = !sizeList.includes(e.name);
-  });
-});
-// 激活的尺码
-const activeSize = ref('');
-watch(activeSize, (val) => {
-  if (val === '') {
-    detail.value.styleList.forEach((e) => {
-      e.disabled = false;
-    });
-    return;
-  }
-  // size.name = 当前选中的尺码
-  const size = detail.value.sizeList.find((e) => e.id === val);
-  if (!size) return;
-  // 如果skuList中存在当前选中的尺码, 则找出当前选中尺码对应的颜色
-  const colorList = skuList.value.filter((e) => e.size === size.name).map((e) => e.color);
-  // styleList中不存在colorList的颜色, 则将其disabled
-  detail.value.styleList.forEach((e) => {
-    e.disabled = !colorList.includes(e.name);
-  });
-});
-
 // 查看定制效果
 function onLookEffect() {
   uni.showToast({
@@ -505,6 +396,45 @@ function onWriteComment() {
 </script>
 
 <style scoped lang="scss">
+// 购买选项
+.options-container {
+  .options-wrap {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .option-title {
+      display: flex;
+      font-size: 13px;
+      color: #8e8e8e;
+      margin-bottom: 3px;
+    }
+    .option-list {
+      display: flex;
+      flex-wrap: wrap;
+      .option-list-item {
+        display: flex;
+        padding: 8px 10px;
+        background: #fff;
+        border: 1px solid #bbb;
+        margin: 0px 10px 2px 0px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .active-option-list-item {
+        background: #000;
+        color: #fff;
+      }
+      .disabled-option-list-item {
+        background: gray;
+        color: #fff;
+      }
+    }
+  }
+}
+
 .van-image {
   width: 100%;
   height: 100%;
@@ -513,6 +443,7 @@ function onWriteComment() {
 $tabbarHeight: v-bind(tabBarHeightUnit);
 .product-detail-container-bd {
   height: 100vh;
+  background: #fbfbfb;
 
   // 返回上一页
   .go-back {
