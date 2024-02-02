@@ -4,7 +4,7 @@
     <view class="title">Color/Style</view>
     <!--风格-->
     <view class="style-list-wrap" :class="{ 'style-list-wrap-col': isCol }">
-      <view class="style-wrap" :class="{ 'active-border': item.id === activeStyle }" v-for="item in list" :key="item.id" @click="onActiveStyle(item)">
+      <view class="style-wrap" :class="{ 'active-border': item.id === activeStyle, disabled: item.disabled }" v-for="item in list" :key="item.id" @click="onActiveStyle(item)">
         <vanImage :src="item.url"></vanImage>
       </view>
     </view>
@@ -26,12 +26,21 @@ const isCol = computed(() => props.type === 'col');
 
 const activeStyle = useVModel(props, 'active', emit);
 function onActiveStyle(item) {
+  if (item?.disabled) return;
+  // 如果相同就取消选中
+  if (activeStyle.value === item.id) {
+    activeStyle.value = '';
+    return;
+  }
   activeStyle.value = item.id;
   emit('select', item);
 }
 </script>
 
 <style scoped lang="scss">
+.disabled {
+  filter: blur(0.6px);
+}
 .van-image {
   width: 100%;
   height: 100%;

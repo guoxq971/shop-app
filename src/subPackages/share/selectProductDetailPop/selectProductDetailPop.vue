@@ -1,15 +1,9 @@
 <!--选择产品信息-->
 <template>
-  <Popup v-model:show="show" position="bottom" :style="{ height: '85%' }">
+  <Popup v-model:show="show" position="bottom" :style="{ height: '85%' }" @close="close">
     <view class="select-product-container-bd">
       <view class="select-product-container">
-        <!--颜色/风格-->
-        <ColorStyleWrap :list="colorStyleList" v-model:active="activeStyleColor" type="col" />
-
-        <GapWrap />
-
-        <!--尺码列表-->
-        <SizeListWrap :list="sizeList" v-model:active="activeSize" />
+        <SkuGoodsPropSelect :specList="specList" :selectSpec="selectSpec" :changeSpec="changeSpec" />
 
         <GapWrap />
 
@@ -41,43 +35,43 @@
 </template>
 
 <script setup>
-import { Popup, Stepper } from 'vant';
-import { ref } from 'vue';
-import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
-import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
-import GapWrap from '../gapWrap/gapWrap.vue';
-import CustomizationWrap from '@/subPackages/share/customizationWrap/customizationWrap.vue';
+import { Popup, Stepper, showToast } from 'vant';
+import { ref, watch } from 'vue';
+import GapWrap from '../components/gapWrap/gapWrap.vue';
+import CustomizationWrap from '@/subPackages/share/components/customizationWrap/customizationWrap.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
+import { useCountStore } from '@/store/useCartTotalStore';
+import SkuGoodsPropSelect from '@/subPackages/share/components/skuGoodsPropSelect/skuGoodsPropSelect.vue';
+import { useSkuSelect } from '@/hooks/useSkuSelect/useSkuSelect';
 const { tabBarHeightUnit } = useSystemInfo();
-
+const countStore = useCountStore();
+const emit = defineEmits(['emitSelectSpec']);
+const { changeSpec, specList, selectSpec, dataInit, setSelectSpec, getSkuInfo } = useSkuSelect();
 defineExpose({
   open: (param) => {
-    // 尺码列表
-    sizeList.value = param.sizeList;
-    activeSize.value = param.activeSize;
-    // color/style
-    colorStyleList.value = param.colorStyleList;
-    activeStyleColor.value = param.activeStyleColor;
+    dataInit(param.mData);
+    setSelectSpec(param.selectSpec);
+
     // 定制
     customization.value = param.customization;
+    prodId.value = param.prodId;
     // 类型
     type.value = param.type;
 
     show.value = true;
   },
-  close: () => {
-    show.value = false;
-  },
+  close,
 });
+
+function close() {
+  emit('emitSelectSpec', selectSpec.value);
+  show.value = false;
+}
+
 const show = ref(false);
 const type = ref('');
+const prodId = ref('');
 const quantity = ref(1);
-
-const sizeList = ref([]);
-const activeSize = ref('');
-
-const colorStyleList = ref([]);
-const activeStyleColor = ref('');
 
 const customization = ref({
   frontName: '',
@@ -86,8 +80,31 @@ const customization = ref({
   backNumber: '',
 });
 
-// 添加到购物车 //TODO:cjh 添加购物车的接口需要一个skuId
-function onAddCart() {}
+// 添加到购物车
+function onAddCart() {
+  const sku = getSkuInfo(selectSpec.value);
+  if (!sku) {
+    console.log('123');
+    showToast({
+      message: 'Please select the product information',
+      duration: 2000,
+    });
+
+    return;
+  }
+  countStore
+    .addCart({
+      count: quantity.value, // 产品数量
+      prodId: prodId.value, // 产品id
+      skuId: sku.id, // skuId
+    })
+    .then((res) => {
+      showToast({
+        message: 'Add to cart successfully',
+        duration: 2000,
+      });
+    });
+}
 // 购买
 function onBuy() {}
 </script>

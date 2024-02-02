@@ -6,9 +6,7 @@
 
     <view class="body-wrap">
       <!--广告-->
-      <view class="advertised" style="height: 100rpx">
-        <VanImage class="image" :src="advertisedList[0].url" />
-      </view>
+      <Advertised height="100rpx" :src="advertisedList[0].url"></Advertised>
 
       <!--分类-->
       <view class="category-wrap">
@@ -22,9 +20,7 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 700rpx">
-        <VanImage class="image" :src="advertisedList[1].url" />
-      </view>
+      <Advertised height="700rpx" :src="advertisedList[1].url"></Advertised>
 
       <!--热门商品-->
       <view class="hot-commodity-wrap">
@@ -34,7 +30,7 @@
         </view>
         <view class="list">
           <view class="not-data" v-if="hotList.length === 0">not data</view>
-          <view class="item" v-for="item in hotList" :key="item.id">
+          <view class="item" v-for="item in hotList" :key="item.id" @click="onGoods(item)">
             <view class="image-wrap">
               <VanImage :src="$basePathImg + item.url"></VanImage>
             </view>
@@ -85,9 +81,7 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 250rpx">
-        <VanImage class="image" :src="advertisedList[2].url" />
-      </view>
+      <Advertised height="250rpx" :src="advertisedList[2].url"></Advertised>
 
       <!--分类2-->
       <view class="category-wrap2">
@@ -104,21 +98,11 @@
       </view>
 
       <!--广告-->
-      <view class="advertised" style="height: 550rpx">
-        <VanImage class="image" :src="advertisedList[3].url" />
-      </view>
-      <view class="advertised" style="height: 220rpx">
-        <VanImage class="image" :src="advertisedList[4].url" />
-      </view>
-      <view class="advertised" style="height: 220rpx">
-        <VanImage class="image" :src="advertisedList[5].url" />
-      </view>
-      <view class="advertised" style="height: 220rpx">
-        <VanImage class="image" :src="advertisedList[6].url" />
-      </view>
-      <view class="advertised" style="height: 700rpx">
-        <VanImage class="image" :src="advertisedList[7].url" />
-      </view>
+      <Advertised height="550rpx" :src="advertisedList[3].url"></Advertised>
+      <Advertised height="220rpx" :src="advertisedList[4].url"></Advertised>
+      <Advertised height="220rpx" :src="advertisedList[5].url"></Advertised>
+      <Advertised height="220rpx" :src="advertisedList[6].url"></Advertised>
+      <Advertised height="700rpx" :src="advertisedList[7].url"></Advertised>
 
       <!--评论-->
       <view class="comment-wrap">
@@ -130,9 +114,13 @@
           <view class="title-right">move</view>
         </view>
         <view class="list">
-          <view class="item" v-for="item in commentList" :key="item.id">
+          <view class="item" v-for="item in commentList" :key="item.id" @click="onGoComment(item)">
             <view class="comment-image-wrap">
-              <VanImage :src="item.url"></VanImage>
+              <view class="image-n" v-if="item.imgList.length >= 2" @click.stop="onSeeCommentPic(item)">
+                <Icon class="icon" name="photo-o" />
+                <text class="text">+{{ item.imgList.length }}</text>
+              </view>
+              <VanImage :src="$basePathImg + item.url"></VanImage>
             </view>
             <view class="item-body-wrap">
               <view class="line name">{{ item.name }}</view>
@@ -161,39 +149,27 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Rate, Icon, TextEllipsis, Image as VanImage } from 'vant';
+import { Rate, Icon, TextEllipsis, Image as VanImage, showImagePreview } from 'vant';
 import { randomWord, randomImage, uuid, randomTool } from '@/utils/commom';
 import bmNavbar from '@/subPackages/share/navbar.vue';
 import priceWrap from '@/subPackages/share/priceWrap.vue';
-import copyrightWrap from '@/subPackages/share/copyrightWrap/copyrightWrap.vue';
+import copyrightWrap from '@/subPackages/share/components/copyrightWrap/copyrightWrap.vue';
+import Advertised from '@/subPackages/share/components/advertised.vue';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
-import { getAdvertisingApi, getProdListByTagIdApi } from '@/api/share/share';
+import { getCountHotCommApi, getHotCommListApi, getProdListByTagIdApi } from '@/api/share/share';
 import { onShow } from '@dcloudio/uni-app';
+import { useAdvertised } from '@/hooks/useAdvertised';
 const { tabBarHeightUnit } = useSystemInfo();
 
 onShow(() => {
   getHotList();
+  getCommentList();
+  getCountHotComm();
   getAdvertising();
 });
 
-// 广告位 TODO: 404接口
-const advertisedList = ref(
-  Array.from({ length: 10 }, () => {
-    return { id: uuid(), name: randomWord(), url: randomImage() };
-  }),
-);
-function getAdvertising() {
-  getAdvertisingApi().then((res) => {
-    console.log('广告', res);
-    advertisedList.value = res.data.records.map((e) => {
-      return {
-        id: e.id,
-        name: e.name,
-        url: e.pic,
-      };
-    });
-  });
-}
+// 广告
+const { advertisedList, getAdvertising } = useAdvertised();
 
 // 分类
 const categoryList = ref([
@@ -212,21 +188,27 @@ const categoryList = ref([
 ]);
 
 // 热门商品
-const hotList = ref(
-  Array.from({ length: 0 }, () => {
-    const nowPrice = randomTool.price();
-    const orgPrice = randomTool.price();
-    return {
-      id: uuid(),
-      name: randomWord(),
-      url: randomImage(),
-      nowPrice: nowPrice,
-      orgPrice: orgPrice,
-      diffPrice: (nowPrice - orgPrice).toFixed(2),
-      title: randomTool.title(),
-    };
-  }),
-);
+const hotList = ref([]);
+hotList.value = Array.from({ length: 0 }, () => {
+  const nowPrice = randomTool.price();
+  const orgPrice = randomTool.price();
+  return {
+    id: uuid(),
+    name: randomWord(),
+    url: randomImage(),
+    nowPrice: nowPrice,
+    orgPrice: orgPrice,
+    diffPrice: (nowPrice - orgPrice).toFixed(2),
+    title: randomTool.title(),
+  };
+});
+// 跳转商品详情
+function onGoods(item) {
+  uni.navigateTo({
+    url: `/subPackages/share/productDetail/productDetail?id=${item.id}`,
+  });
+}
+// 获取热门商品列表
 function getHotList() {
   getProdListByTagIdApi().then((res) => {
     // console.log('热门商品', res);
@@ -246,26 +228,68 @@ function getHotList() {
 }
 
 // 评论
-const commentLevel = ref(5);
-const commentCount = ref(randomTool.num(0, 20));
-const commentList = ref(
-  Array.from({ length: commentCount.value }, () => {
-    const nowPrice = randomTool.price();
-    const orgPrice = randomTool.price();
-    return {
-      id: uuid(),
-      name: randomWord(),
-      url: randomImage(),
-      level: randomTool.num(0, 5),
-      content: randomTool.title(30),
-      nowPrice: nowPrice,
-      orgPrice: orgPrice,
-      diffPrice: (nowPrice - orgPrice).toFixed(2),
-      title: randomTool.title(),
-      time: randomTool.time(),
-    };
-  }),
-);
+const commentLevel = ref(0); //评论等级
+const commentCount = ref(0); //评论条数
+// commentCount.value = randomTool.num(0, 20);
+const commentList = ref(); //评论列表
+commentList.value = Array.from({ length: commentCount.value }, () => {
+  const nowPrice = randomTool.price();
+  const orgPrice = randomTool.price();
+  return {
+    id: randomTool.uuid(),
+    name: randomTool.word(),
+    url: randomTool.image(),
+    imgList: Array.from({ length: randomTool.num(1, 5) }, () => {
+      return randomTool.image();
+    }),
+    level: randomTool.num(0, 5),
+    content: randomTool.title(30),
+    nowPrice: nowPrice,
+    orgPrice: orgPrice,
+    diffPrice: (nowPrice - orgPrice).toFixed(2),
+    title: randomTool.title(),
+    time: randomTool.time(),
+  };
+});
+// 获取热门评论列表
+function getCommentList() {
+  getHotCommListApi().then((res) => {
+    // console.log('热门评论', res);
+    commentList.value = res.data.map((e) => {
+      const url = e.imgList.length > 0 ? e.imgList[0] : '';
+      return {
+        id: e.prodCommId,
+        name: e.userName,
+        url: url,
+        imgList: e.imgList,
+        level: e.score,
+        content: e.content,
+        nowPrice: '',
+        orgPrice: '',
+        diffPrice: '',
+        title: e.content,
+        time: e.recTime,
+      };
+    });
+  });
+}
+// 跳转评论详情
+function onGoComment(item) {
+  uni.navigateTo({
+    url: `/subPackages/share/commentDetail/commentDetail?id=${item.id}`,
+  });
+}
+// 查看评论图片
+function onSeeCommentPic(item) {
+  showImagePreview(item.imgList.map((e) => uni.$basePathImg + e));
+}
+function getCountHotComm() {
+  getCountHotCommApi().then((res) => {
+    // console.log('评论数量', res);
+    commentCount.value = res.data.commQuantity;
+    commentLevel.value = res.data.score;
+  });
+}
 
 // 分类2
 const menuArr = ref([
@@ -351,8 +375,8 @@ const menuArr = ref([
     // 广告
     .advertised {
       background: #f2f2f2;
-      border-top: 1rpx solid #bbb;
-      border-bottom: 1rpx solid #bbb;
+      border-top: 2rpx solid #bbb;
+      border-bottom: 2rpx solid #bbb;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -420,7 +444,7 @@ const menuArr = ref([
         }
         .title-right {
           text-decoration: underline;
-          font-size: 12px;
+          font-size: 24rpx;
         }
       }
       .list {
@@ -451,7 +475,7 @@ const menuArr = ref([
           }
 
           .item-body-wrap {
-            padding: 3px 8px 9px 8px;
+            padding: 6rpx 16rpx 18rpx 16rpx;
 
             .line {
               min-height: 44rpx;
@@ -468,7 +492,7 @@ const menuArr = ref([
             .diff-num {
             }
             .title {
-              font-size: 22rpx;
+              font-size: 24rpx;
               letter-spacing: 0.2rpx;
               margin-top: 8rpx;
             }
@@ -554,6 +578,7 @@ const menuArr = ref([
           display: flex;
           align-items: center;
           .count {
+            font-size: 26rpx;
             margin-left: 20rpx;
           }
         }
@@ -571,7 +596,7 @@ const menuArr = ref([
 
         .item {
           width: 49%;
-          border-radius: 4px;
+          border-radius: 8rpx;
           overflow: hidden;
           margin-bottom: 20rpx;
           border: 2rpx solid #e8e8e8;
@@ -580,6 +605,28 @@ const menuArr = ref([
             margin-bottom: 18rpx;
             width: 100%;
             height: 450rpx;
+            position: relative;
+            .image-n {
+              position: absolute;
+              right: 5px;
+              top: 5px;
+              z-index: 1;
+              background: rgba(255, 255, 255, 0.8);
+              border-radius: 21%;
+              padding: 5px 5px;
+              color: #22201f;
+              display: flex;
+              align-items: center;
+              .icon {
+                font-size: 20px;
+                margin-right: 3px;
+                font-weight: bold;
+              }
+              .text {
+                font-size: 14px;
+                font-weight: bold;
+              }
+            }
             image {
               width: 100%;
               height: 100%;
@@ -587,7 +634,7 @@ const menuArr = ref([
           }
 
           .item-body-wrap {
-            padding: 3px 8px 9px 8px;
+            padding: 6rpx 16rpx 18rpx 16rpx;
             .line {
               font-size: 20rpx;
               display: flex;
@@ -598,18 +645,19 @@ const menuArr = ref([
               }
             }
             .name {
-              font-size: 16px;
+              font-size: 32rpx;
               font-weight: 600;
             }
             .time {
-              font-size: 12px;
+              font-size: 24rpx;
               color: #6f6f6f;
-              letter-spacing: 0.6px;
+              letter-spacing: 1.2rpx;
             }
             .title {
               width: 100%;
-              font-size: 14px;
-              letter-spacing: 0.4px;
+              font-size: 26rpx;
+              letter-spacing: 0.8rpx;
+              line-height: 1.4;
             }
           }
         }
@@ -621,6 +669,7 @@ const menuArr = ref([
         display: flex;
         justify-content: center;
         .more-btn {
+          font-size: 28rpx;
           border: 2rpx solid #4d4d4d;
           padding: 14rpx 32rpx;
         }

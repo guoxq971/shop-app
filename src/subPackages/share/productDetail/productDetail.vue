@@ -1,10 +1,8 @@
 <!--产品详情-->
 <template>
   <view class="product-detail-container-bd">
-    <view class="go-back" @click="onGoBack">
-      <Icon name="arrow-left"></Icon>
-      <text>BACK</text>
-    </view>
+    <Back />
+
     <view class="product-detail-container">
       <!--轮播-->
       <Swipe ref="swipeRef">
@@ -42,13 +40,8 @@
 
       <GapWrap />
 
-      <!--颜色/风格-->
-      <ColorStyleWrap type="row" :list="detail.styleList" v-model:active="activeStyle" />
-
-      <GapWrap />
-
-      <!--尺码-->
-      <sizeListWrap :list="detail.sizeList" v-model:active="activeSize" />
+      <!--sku商品联级选择-->
+      <SkuGoodsPropSelect :specList="specList" :selectSpec="selectSpec" :changeSpec="changeSpec" />
 
       <GapWrap />
 
@@ -159,35 +152,31 @@
   </view>
 
   <!--选择产品参数-弹窗-->
-  <SelectProductDetailPop ref="selectProductDetailPopRef" />
+  <SelectProductDetailPop ref="selectProductDetailPopRef" @emitSelectSpec="EmitSelectSpec" />
   <!--购物车-弹窗-->
   <ShoppingCartPop ref="shoppingCartPopRef" />
 </template>
 
 <script setup>
 import { Icon, Rate, TextEllipsis, Swipe, SwipeItem, Image as VanImage, showImagePreview } from 'vant';
-import GapWrap from '../gapWrap/gapWrap.vue';
-import GoodsListMore from '../goodsList/goodsListMore.vue';
+import GapWrap from '../components/gapWrap/gapWrap.vue';
+import GoodsListMore from '../components/goodsList/goodsListMore.vue';
 import SelectProductDetailPop from '../selectProductDetailPop/selectProductDetailPop.vue';
 import ShoppingCartPop from '../shoppingCartPop/shoppingCartPop.vue';
-import ColorStyleWrap from '../colorStyleWrap/colorStyleWrap.vue';
-import SizeListWrap from '../sizeListWrap/sizeListWrap.vue';
-import CustomizationWrap from '../customizationWrap/customizationWrap.vue';
-import { ref } from 'vue';
+import SkuGoodsPropSelect from '@/subPackages/share/components/skuGoodsPropSelect/skuGoodsPropSelect.vue';
+import CustomizationWrap from '../components/customizationWrap/customizationWrap.vue';
+import { ref, watch } from 'vue';
 import { randomTool } from '@/utils/commom';
 import { useSystemInfo } from '@/hooks/useSystemInfo';
 import { onLoad } from '@dcloudio/uni-app';
 import { getDetailApi, getListCommentApi, getRelationApi } from '@/api/share/share';
+import { useSkuSelect } from '@/hooks/useSkuSelect/useSkuSelect';
+import Back from '@/subPackages/share/components/back.vue';
 const { tabBarHeightUnit } = useSystemInfo();
-
-// 返回上一页
-function onGoBack() {
-  uni.navigateBack();
-}
 
 const prodId = ref('');
 onLoad((e) => {
-  console.log('onload e 产品详情', e);
+  // console.log('onload e 产品详情', e);
   prodId.value = e.id;
   getGoodsDetail();
 });
@@ -197,8 +186,13 @@ function getGoodsDetail() {
   detail.value.comment.list = [];
   detail.value.goodsList = [];
   getDetailApi({ prodId: prodId.value }).then((res) => {
-    console.log('商品详情', res);
+    // console.log('商品详情', res);
     const d = res.data;
+
+    // sku商品联级选择
+    dataInit(disposeData(d.skuList));
+
+    detail.value.prodId = d.prodId;
     detail.value.url = d.pic;
     detail.value.imageList = d.imgList.map((e) => ({ id: randomTool.uuid(), url: e }));
     detail.value.price = d.price;
@@ -206,9 +200,6 @@ function getGoodsDetail() {
     detail.value.review = '';
     detail.value.paid = d.payQuantity;
     detail.value.title = d.prodName;
-    detail.value.colorList = d.propertiesList.filter((e) => e.propName === 'color').map((e) => ({ id: randomTool.uuid(), name: e.propValue, url: '' }));
-    detail.value.styleList = detail.value.colorList;
-    detail.value.sizeList = d.propertiesList.filter((e) => e.propName === 'size').map((e) => ({ id: randomTool.uuid(), name: e.propValue }));
     // 简介, 库存, 物流描述
     detail.value.intro = d.centent;
     // detail.value.stock = '';
@@ -222,7 +213,7 @@ function getGoodsDetail() {
 // 获取商品相关评论
 function getListComment(type = 0) {
   getListCommentApi({ prodId: prodId.value, type: type }).then((res) => {
-    console.log('评论列表', res);
+    // console.log('评论列表', res);
     detail.value.comment.list = res.data.map((e) => ({
       detail: e,
       id: randomTool.uuid(),
@@ -230,14 +221,14 @@ function getListComment(type = 0) {
       name: e.userName,
       level: e.score,
       content: e.content,
-      imageList: [],
+      imageList: e.imgList,
     }));
   });
 }
 // 获取商品相关产品
 function getRelation() {
   getRelationApi({ prodId: prodId.value }).then((res) => {
-    console.log('相关产品', res);
+    // console.log('相关产品', res);
     detail.value.goodsList = res.data.map((e) => ({
       detail: e,
       id: e.prodId,
@@ -277,11 +268,10 @@ const selectProductDetailPopRef = ref(null);
 function onAddToCart() {
   selectProductDetailPopRef.value.open({
     type: 'cart',
-    sizeList: detail.value.sizeList,
-    activeSize: activeSize.value,
-    colorStyleList: detail.value.styleList,
-    activeStyleColor: activeStyle.value,
+    prodId: detail.value.prodId,
     customization: detail.value.customization,
+    mData: mData.value,
+    selectSpec: selectSpec.value,
   });
 }
 
@@ -289,15 +279,33 @@ function onAddToCart() {
 function onBuyNow() {
   selectProductDetailPopRef.value.open({
     type: 'buy',
-    sizeList: detail.value.sizeList,
-    activeSize: activeSize.value,
-    colorStyleList: detail.value.styleList,
-    activeStyleColor: activeStyle.value,
     customization: detail.value.customization,
   });
 }
 
+// sku商品联级选择
+const optionsList = ref([]);
+const { changeSpec, specList, selectSpec, dataInit, disposeData, mData, setSelectSpec, getSkuInfo } = useSkuSelect();
+// 回显选择
+function EmitSelectSpec(data) {
+  setSelectSpec(data);
+}
+watch(
+  () => selectSpec.value,
+  (val) => {
+    if (val) {
+      const sku = getSkuInfo(val);
+      if (sku) {
+        detail.value.price = sku.detail.price;
+        detail.value.oldPrice = sku.detail.oriPrice;
+      }
+    }
+  },
+  { deep: true, immediate: true },
+);
+
 const detail = ref({
+  prodId: '',
   url: '', //randomTool.image(),
   imageList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
   // 价格
@@ -309,20 +317,6 @@ const detail = ref({
   paid: '20w',
   // 标题
   title: '', //randomTool.title(),
-  // 颜色列表
-  colorList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), name: randomTool.color() })),
-  // 样式列表
-  styleList: Array.from({ length: 0 }, () => ({ id: randomTool.uuid(), url: randomTool.image() })),
-  // 尺码列表
-  sizeList: [
-    // { id: randomTool.uuid(), name: 'XS' },
-    // { id: randomTool.uuid(), name: 'S' },
-    // { id: randomTool.uuid(), name: 'M' },
-    // { id: randomTool.uuid(), name: 'L' },
-    // { id: randomTool.uuid(), name: 'XL' },
-    // { id: randomTool.uuid(), name: '2XL' },
-    // { id: randomTool.uuid(), name: '2XLLLLLLLLLLLLLL' },
-  ],
   // 定制
   customization: {
     frontName: '',
@@ -363,15 +357,6 @@ const onSwipe = (index) => {
   swipeRef.value.swipeTo(index);
 };
 
-// 切换颜色/样式
-const activeStyle = ref();
-
-// 激活的尺码
-const activeSize = ref('');
-function onActiveSize(item) {
-  activeSize.value = item.id;
-}
-
 // 查看定制效果
 function onLookEffect() {
   uni.showToast({
@@ -407,6 +392,45 @@ function onWriteComment() {
 </script>
 
 <style scoped lang="scss">
+// 购买选项
+.options-container {
+  .options-wrap {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .option-title {
+      display: flex;
+      font-size: 13px;
+      color: #8e8e8e;
+      margin-bottom: 3px;
+    }
+    .option-list {
+      display: flex;
+      flex-wrap: wrap;
+      .option-list-item {
+        display: flex;
+        padding: 8px 10px;
+        background: #fff;
+        border: 1px solid #bbb;
+        margin: 0px 10px 2px 0px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .active-option-list-item {
+        background: #000;
+        color: #fff;
+      }
+      .disabled-option-list-item {
+        background: gray;
+        color: #fff;
+      }
+    }
+  }
+}
+
 .van-image {
   width: 100%;
   height: 100%;
@@ -415,18 +439,7 @@ function onWriteComment() {
 $tabbarHeight: v-bind(tabBarHeightUnit);
 .product-detail-container-bd {
   height: 100vh;
-
-  // 返回上一页
-  .go-back {
-    position: absolute;
-    top: 10rpx;
-    left: 10rpx;
-    z-index: 1;
-    background: #000;
-    color: #fff;
-    padding: 14rpx;
-    font-size: 24rpx;
-  }
+  background: #fbfbfb;
 
   // 底部
   .tabbar-wrap {

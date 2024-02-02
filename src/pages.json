@@ -3,32 +3,32 @@
     {
       "path": "pages/share/index",
       "style": {
-        "navigationBarTitleText": "share"
+        "navigationBarTitleText": "Share"
       }
     },
     {
       "path": "pages/shop/index",
       "style": {
-        "navigationBarTitleText": "shop"
+        "navigationBarTitleText": "Shop"
       }
     },
     {
       "path": "pages/new/index",
       "style": {
-        "navigationBarTitleText": "new"
+        "navigationBarTitleText": "New"
       }
     },
     {
       "path": "pages/cart/index",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTitleText": "cart"
+        "navigationBarTitleText": "Cart"
       }
     },
     {
       "path": "pages/me/index",
       "style": {
-        "navigationBarTitleText": "heool"
+        "navigationBarTitleText": "Heool"
       }
     }
   ],
@@ -39,19 +39,25 @@
         {
           "path": "test",
           "style": {
-            "navigationBarTitleText": "test"
+            "navigationBarTitleText": "Test"
+          }
+        },
+        {
+          "path": "commentDetail/commentDetail",
+          "style": {
+            "navigationBarTitleText": "Comment Detail"
           }
         },
         {
           "path": "themeSelected/index",
           "style": {
-            "navigationBarTitleText": "themeSelected"
+            "navigationBarTitleText": "Theme Selected"
           }
         },
         {
           "path": "productList/index",
           "style": {
-            "navigationBarTitleText": "productList"
+            "navigationBarTitleText": "Product List"
           }
         },
         {
