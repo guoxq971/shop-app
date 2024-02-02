@@ -2,34 +2,34 @@
   <!--van-safe-area-top van-safe-area-bottom-->
   <view class="container" style="background-color: red">
     <!--状态栏及导航栏盒子-->
-    <statusBar bgColor="transparent"></statusBar>
+    <!--    <statusBar bgColor="transparent"></statusBar>-->
     <!--导航栏-->
-    <NavBar shape fixed>
-      <template #left>
-        <view>
-          <text>Cart</text>
-          <sup v-if="store.cartNum">({{ store.cartNum }})</sup>
-        </view>
-      </template>
-      <template #title>
-        <view>
-          <Search shape="round" :clearable="false" :style="{ height: navBarHeight + 'px' }" v-model="name" left-icon="" placeholder="请输入搜索内容" right-icon="search">
-            <template #left-icon />
-          </Search>
-        </view>
-      </template>
-      <template #right>
-        <Button size="small">Manage</Button>
-      </template>
-    </NavBar>
+    <!--    <NavBar shape fixed>-->
+    <!--      <template #left>-->
+    <!--        <view>-->
+    <!--          <text>Cart</text>-->
+    <!--          <sup v-if="store.cartNum">({{ store.cartNum }})</sup>-->
+    <!--        </view>-->
+    <!--      </template>-->
+    <!--      <template #title>-->
+    <!--        <view>-->
+    <!--          <Search shape="round" :clearable="false" :style="{ height: navBarHeight + 'px' }" v-model="name" left-icon="" placeholder="请输入搜索内容" right-icon="search">-->
+    <!--            <template #left-icon />-->
+    <!--          </Search>-->
+    <!--        </view>-->
+    <!--      </template>-->
+    <!--      <template #right>-->
+    <!--        <Button size="small">Manage</Button>-->
+    <!--      </template>-->
+    <!--    </NavBar>-->
 
     <!--列表-->
     <view class="container-body">
-      <cartListPage ref="cartListPage"></cartListPage>
+      <!--      <cartListPage ref="cartListPage"></cartListPage>-->
     </view>
 
     <!--统计-->
-    <!--<TotalPayment isCheckBox @checkOut="checkAddress"></TotalPayment>-->
+    <!--    <TotalPayment isCheckBox @checkOut="checkAddress"></TotalPayment>-->
   </view>
 </template>
 
@@ -49,7 +49,7 @@ const store = useCountStore();
 
 const { globalData } = getApp();
 
-const { systemInfo, statusHeight, navBarHeight, tabBarHeight, tabBarHeightUnit, statusHeightUnit } = useSystemInfo();
+const { statusHeight, navBarHeight, tabBarHeight, tabBarHeightUnit, statusHeightUnit } = useSystemInfo();
 // 高度
 const TBHeight = ref(tabBarHeight + 'px');
 // 状态栏高度 + px
@@ -82,17 +82,20 @@ const checkAddress = () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: calc(100vh - v-bind(tabBarHeightUnit) - 80px);
-  background-color: red;
+  max-height: calc(100vh - v-bind(tabBarHeightUnit));
+  height: calc(100vh - v-bind(tabBarHeightUnit));
+  /* #ifdef APP */
+  max-height: calc(100vh);
+  height: calc(100vh);
+  /* #endif */
 
   // 列表
   .container-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    //overflow: hidden;
+    //  flex: 1;
     //  bottom: 50px;
+    //  display: flex;
+    //  overflow: hidden;
+    //  flex-direction: column;
     //  align-content: space-between;
     //  background-color: pink;
   }

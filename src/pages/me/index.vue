@@ -98,9 +98,9 @@ const goOrderPage = (status) => {
 <style scoped lang="scss">
 .userinfo-container {
   overflow: hidden;
-  height: calc(100vh - v-bind(tabBarHeightUnit));
+  max-height: calc(100vh - v-bind(tabBarHeightUnit));
   /* #ifdef APP */
-  height: calc(100vh);
+  max-height: calc(100vh);
   /* #endif */
   background-color: #f4f4f4;
 

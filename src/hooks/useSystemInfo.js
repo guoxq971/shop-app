@@ -36,6 +36,7 @@ export function useSystemInfo() {
   phoneWidth = menuButtonInfo.left;
   // #endif
   return {
+    systemInfo,
     statusHeight,
     statusHeightUnit,
     phoneWidth,

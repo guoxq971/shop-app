@@ -70,6 +70,9 @@ const changeVal = () => {
 </script>
 
 <style scoped lang="scss">
+:deep(van-checkbox-group) {
+  overflow: auto;
+}
 .body-group {
   padding: 10rpx 10rpx 0;
   flex: 1;

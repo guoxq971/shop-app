@@ -121,6 +121,8 @@
     }
   },
   "tabBar": {
+    "custom": true,
+    "height": "50px",
     "color": "#999999",
     "borderStyle": "black",
     "selectedColor": "#169bd5",
