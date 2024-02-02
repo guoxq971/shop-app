@@ -63,9 +63,8 @@ import { onLoad, onShow } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import { randomTool, randomImage, randomWord, uuid } from '@/utils/commom';
 import { getGoodsRecommendApi, getGoodsListApi } from '@/api/share/share';
-import { useAdvertisedStore } from '@/store/useAdvertisedStore';
 import Advertised from '@/subPackages/share/components/advertised.vue';
-import { storeToRefs } from 'pinia';
+import { useAdvertised } from '@/hooks/useAdvertised';
 
 // 返回上一页
 function onBack() {
@@ -76,12 +75,11 @@ onShow(() => {
   getRecommendGoodsList();
   param.value.pageNum = 1;
   getGoodsList();
-  adStore.getAdvertising({ sort: 21 });
+  getAdvertising({ sort: 21 });
 });
 
 // 广告
-const adStore = useAdvertisedStore();
-const { advertisedList } = storeToRefs(adStore);
+const { advertisedList, getAdvertising } = useAdvertised();
 
 // 获取推荐商品列表
 function getRecommendGoodsList() {

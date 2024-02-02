@@ -2,8 +2,8 @@ import { showToast, showFailToast } from 'vant';
 
 // 请求地址
 // const baseUrl = 'http://192.168.2.165:61001'
-// const baseUrl = 'http://192.168.2.3:8086'; // 金厚本地
-const baseUrl = 'http://192.168.2.58:8086'; // wpk本地
+const baseUrl = 'http://192.168.2.3:8086'; // 金厚本地
+// const baseUrl = 'http://192.168.2.58:8086'; // wpk本地
 
 export const Method = {
   GET: 'GET',

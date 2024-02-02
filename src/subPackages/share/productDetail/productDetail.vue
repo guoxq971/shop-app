@@ -1,10 +1,8 @@
 <!--产品详情-->
 <template>
   <view class="product-detail-container-bd">
-    <view class="go-back" @click="onGoBack">
-      <Icon name="arrow-left"></Icon>
-      <text>BACK</text>
-    </view>
+    <Back />
+
     <view class="product-detail-container">
       <!--轮播-->
       <Swipe ref="swipeRef">
@@ -173,12 +171,8 @@ import { useSystemInfo } from '@/hooks/useSystemInfo';
 import { onLoad } from '@dcloudio/uni-app';
 import { getDetailApi, getListCommentApi, getRelationApi } from '@/api/share/share';
 import { useSkuSelect } from '@/hooks/useSkuSelect/useSkuSelect';
+import Back from '@/subPackages/share/components/back.vue';
 const { tabBarHeightUnit } = useSystemInfo();
-
-// 返回上一页
-function onGoBack() {
-  uni.navigateBack();
-}
 
 const prodId = ref('');
 onLoad((e) => {
@@ -446,18 +440,6 @@ $tabbarHeight: v-bind(tabBarHeightUnit);
 .product-detail-container-bd {
   height: 100vh;
   background: #fbfbfb;
-
-  // 返回上一页
-  .go-back {
-    position: absolute;
-    top: 10rpx;
-    left: 10rpx;
-    z-index: 1;
-    background: #000;
-    color: #fff;
-    padding: 14rpx;
-    font-size: 24rpx;
-  }
 
   // 底部
   .tabbar-wrap {
