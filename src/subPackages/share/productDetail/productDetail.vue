@@ -221,7 +221,7 @@ function getListComment(type = 0) {
       name: e.userName,
       level: e.score,
       content: e.content,
-      imageList: [],
+      imageList: e.imgList,
     }));
   });
 }
